@@ -14,9 +14,9 @@ from paths import PROJECT_ROOT
 
 
 # import
-trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/data/dataClean.csv', parse_dates=['date'])
-masterLookup = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/expBall&runsToCome/5_masterLookup.csv')
-chaseSituations = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/matchMarket/chaseSituationBuilder.csv')
+trainData = pd.read_csv(PROJECT_ROOT / 'women/data/dataClean.csv', parse_dates=['date'])
+masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/5_masterLookup.csv')
+chaseSituations = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/chaseSituationBuilder.csv')
 
 
 
@@ -220,7 +220,7 @@ chaseLookup['m_chaseWin%'] = colsWrong['m_chaseWin%']
 
 
 # exports
-# chaseLookup.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/matchMarket/1_chaseLookup.csv', index=False)
+# chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/1_chaseLookup.csv', index=False)
 
 
 

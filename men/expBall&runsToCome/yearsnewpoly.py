@@ -10,9 +10,9 @@ from pygam import f
 from paths import PROJECT_ROOT
 
 # import data and the runs to come modelled numbers
-trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/dataClean.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'men/data/dataClean.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
-masterLookup = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/expBall&runsToCome/4_masterLookup.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/4_masterLookup.csv')
 
 
 
@@ -160,8 +160,8 @@ runsToComeYear = pd.pivot_table(trainData, values=['totalInningRunsToComeAdj', '
                                                                                                                                     ascending=[True, True, True])
 
 # export
-masterLookup.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/expBall&runsToCome/5_masterLookup.csv', index=False)
-# trainData.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/expBall&runsToCome/5_trainData.csv', index=False)
+masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/5_masterLookup.csv', index=False)
+# trainData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/5_trainData.csv', index=False)
 
 
 

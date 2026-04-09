@@ -13,10 +13,10 @@ from paths import PROJECT_ROOT
 
 
 # import necessary data
-trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/dataClean.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'men/data/dataClean.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
-simData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/expBall&runsToCome/ballSimsClassOrd.csv')
-masterLookup = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/expBall&runsToCome/2_masterLookup.csv')
+simData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/ballSimsClassOrd.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/2_masterLookup.csv')
 
 # situationMoments = simData.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'] \
 #     .agg(count='count', std='std', min='min', max='max', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)) \
@@ -169,5 +169,5 @@ print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalIn
 
 
 # export
-masterLookup.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/expBall&runsToCome/4_masterLookup.csv', index=False)
+masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/4_masterLookup.csv', index=False)
 

@@ -4,7 +4,7 @@ import time
 from paths import PROJECT_ROOT
 
 # import files
-masterLookup = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/expBall&runsToCome/2_masterLookup.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'expBall&runsToCome/2_masterLookup.csv')
 
 # the master lookup has values for ord and year, we don't want those for the sim, so drop them
 masterLookup = masterLookup.drop_duplicates(subset=['totalInningWickets', 'inningBallNumber']).reset_index(drop=True)
@@ -134,7 +134,7 @@ for index, row in toSim.iterrows():
 
 
 # export the ball simulations
-allSimBalls.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/expBall&runsToCome/ballSims.csv', index=False)
+allSimBalls.to_csv(PROJECT_ROOT / 'expBall&runsToCome/ballSims.csv', index=False)
 
 
 

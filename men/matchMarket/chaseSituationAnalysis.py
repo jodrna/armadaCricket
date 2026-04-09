@@ -3,8 +3,8 @@ import numpy as np
 from paths import PROJECT_ROOT
 
 # import file for analysis
-chaseLookup = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/matchMarket/2_chaseLookup.csv')
-trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/matchMarket/trainDataModelled.csv', parse_dates=['date'])
+chaseLookup = pd.read_csv(PROJECT_ROOT / 'matchMarket/2_chaseLookup.csv')
+trainData = pd.read_csv(PROJECT_ROOT / 'matchMarket/trainDataModelled.csv', parse_dates=['date'])
 
 
 runsRequired, runsRequiredBuffer = 171, 0

@@ -3,7 +3,7 @@ import numpy as np
 from paths import PROJECT_ROOT
 
 # import
-trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'women/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', parse_dates=['date'])
 
 
 trainData = trainData.rename(columns={'innings': 'inningNumber', 'wickets': 'totalInningWickets', 'bowlerwicket': 'isWicketBowler', 'noball': 'noballRuns', 'over': 'overNumber',
@@ -58,5 +58,5 @@ trainData['runsRequiredAdj'] = trainData['runsRequired'] - trainData['RA_Sum']
 trainData['totalInningRunsToComeAdj'] = trainData['totalInningRunsToCome'] - trainData['RA_Sum']
 
 # export the cleaned data
-trainData.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/data/dataClean.csv', index=False)
+trainData.to_csv(PROJECT_ROOT / 'women/data/dataClean.csv', index=False)
 

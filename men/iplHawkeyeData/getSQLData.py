@@ -8,7 +8,7 @@
 
 #
 # # load your local file (must contain a match id column)
-# df = pd.read_csv("/Users/jordan/Documents/ArmadaCricket/Development/iplHawkeyeData/iplData.csv")
+# df = pd.read_csv("/Users/jordan/Documents/ArmadaCricket/iplHawkeyeData/iplData.csv")
 #
 # # # ---- build list of ids for SQL IN (...) ----
 # # match_ids = (
@@ -72,7 +72,7 @@
 #
 # df = df.drop(columns=["new_innings", 'ballAge'])
 #
-# df.to_csv("/Users/jordan/Documents/ArmadaCricket/Development/iplHawkeyeData/iplData.csv", index=False)
+# df.to_csv("/Users/jordan/Documents/ArmadaCricket/iplHawkeyeData/iplData.csv", index=False)
 #
 #
 #

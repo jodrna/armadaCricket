@@ -14,10 +14,10 @@ from paths import PROJECT_ROOT
 
 
 # import data
-trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/data/dataClean.csv', parse_dates=['date'])
-# simsClass = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/expBall&runsToCome/ballSimsClass.csv')
-simClassAdjusted = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/expBall&runsToCome/ballSimsClassRateAdjusted.csv')
-# oldSTD = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/expBall&runsToCome/old_SD.csv')
+trainData = pd.read_csv(PROJECT_ROOT / 'women/data/dataClean.csv', parse_dates=['date'])
+# simsClass = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/ballSimsClass.csv')
+simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/ballSimsClassRateAdjusted.csv')
+# oldSTD = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/old_SD.csv')
 
 # filter out the 2nd innings which we don't use in this instance
 trainData = trainData[trainData['inningNumber'] == 1]

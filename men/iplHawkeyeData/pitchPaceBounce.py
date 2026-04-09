@@ -9,7 +9,7 @@ from paths import PROJECT_ROOT
 # -----------------------
 # 1) Load + clean
 # -----------------------
-df = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/iplHawkeyeData/iplData.csv')
+df = pd.read_csv(PROJECT_ROOT / 'iplHawkeyeData/iplData.csv')
 df = df.dropna()
 
 

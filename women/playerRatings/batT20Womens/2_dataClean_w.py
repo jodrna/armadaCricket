@@ -4,9 +4,9 @@ from paths import PROJECT_ROOT
 
 
 # read data
-bat_data = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/data/combinedBatData.csv', parse_dates=['date'])
-player_info = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/auxiliaries/playerInfo.csv', parse_dates=['dob'])
-ratings = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/auxiliaries/batRatingsFor.csv')
+bat_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/data/combinedBatData.csv', parse_dates=['date'])
+player_info = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/auxiliaries/playerInfo.csv', parse_dates=['dob'])
+ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/auxiliaries/batRatingsFor.csv')
 
 # # if we want to do a test we can select just one batsman to speed it up using this filter
 # bat_data = bat_data[bat_data['batsman'] == 'Alana King']
@@ -123,5 +123,5 @@ bat_data['careerT20MatchNumber'] = bat_data.groupby('playerid')['uniqueMatchMark
 
 
 # export the clean bat data
-bat_data.to_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/data/combinedBatDataClean.csv', index=False)
+bat_data.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/data/combinedBatDataClean.csv', index=False)
 

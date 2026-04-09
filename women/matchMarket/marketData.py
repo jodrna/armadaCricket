@@ -3,7 +3,7 @@ import numpy as np
 from paths import PROJECT_ROOT
 
 # import
-marketData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/Predictions.csv')
+marketData = pd.read_csv(PROJECT_ROOT / 'Predictions.csv')
 marketData = marketData[marketData['providermarketname'] == 'Match Odds']
 marketData = marketData[marketData['InningsNo'] == 2]
 marketData = marketData[~marketData['Summary'].str.contains('DLS|D/L', na=False)]

@@ -9,7 +9,7 @@ from paths import PROJECT_ROOT
 # -----------------------
 # 1) Load + clean
 # -----------------------
-df = pd.read_csv("/Development/iplHawkeyeData/iplData.csv")
+df = pd.read_csv("/iplHawkeyeData/iplData.csv")
 df = df.dropna()
 
 num_cols = [

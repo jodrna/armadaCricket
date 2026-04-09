@@ -5,8 +5,8 @@ import sklearn.utils
 from paths import PROJECT_ROOT
 
 # import dataframes
-trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/data/dataClean.csv', parse_dates=['date'])
-chaseLookup = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/matchMarket/1_chaseLookup.csv')
+trainData = pd.read_csv(PROJECT_ROOT / 'women/data/dataClean.csv', parse_dates=['date'])
+chaseLookup = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/1_chaseLookup.csv')
 chaseLookup = chaseLookup.reset_index(drop=True)
 
 # only look at second innings data
@@ -43,7 +43,7 @@ chaseLookup = chaseLookup.drop(labels=['inningBallNumber'], axis=1)    # remove 
 
 
 # export
-chaseLookup.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/matchMarket/2_chaseLookup.csv', index=False)
+chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/2_chaseLookup.csv', index=False)
 
 
-# chaseLookupMen = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/matchMarket/2_chaseLookup.csv')
+# chaseLookupMen = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/2_chaseLookup.csv')

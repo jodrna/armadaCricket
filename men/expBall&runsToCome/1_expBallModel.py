@@ -10,7 +10,7 @@ from paths import PROJECT_ROOT
 
 
 # import and filter to 1st innings only
-trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/dataClean.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'men/data/dataClean.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
 
 # extras averages, must be done here at the start before we remove these for modelling ball by ball
@@ -212,7 +212,7 @@ masterLookup['predTotalInningRuns'] = np.where(masterLookup['predTotalInningRuns
 
 
 # export
-masterLookup.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/expBall&runsToCome/1_masterLookup.csv', index=False)
+masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/1_masterLookup.csv', index=False)
 
 
 

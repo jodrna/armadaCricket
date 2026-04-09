@@ -123,9 +123,9 @@ for x in np.arange(0, 2, 1):
     allaway_wkts = n2h_factors['all_away_wkts_factor'].mean()
 
     if x == 0:
-        ratings = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsJungle.csv', parse_dates=['date'])
+        ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsJungle.csv', parse_dates=['date'])
     else:
-        ratings = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsRasoi.csv', parse_dates=['date'])
+        ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsRasoi.csv', parse_dates=['date'])
 
     # 2. Data Prep - Filters & Adjustments
     bat_data = bat_data.loc[bat_data['competition'].isin(['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',

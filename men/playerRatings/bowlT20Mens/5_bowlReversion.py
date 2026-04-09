@@ -6,14 +6,14 @@ from paths import PROJECT_ROOT
 
 for x in np.arange(0, 2, 1):
     # read data
-    bowl_data = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlDataClean.csv', parse_dates=['date', 'dob'])
+    bowl_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlDataClean.csv', parse_dates=['date', 'dob'])
     bowl_data = bowl_data[bowl_data['format'] == 't20']
 
     # read ratingsT20
     if x == 0:
-        ratings = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsJungle2.csv', parse_dates=['date'])
+        ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsJungle2.csv', parse_dates=['date'])
     else:
-        ratings = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsRasoi2.csv', parse_dates=['date'])
+        ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsRasoi2.csv', parse_dates=['date'])
 
     # filter out bowl data dummies
     bowl_data = bowl_data[(bowl_data['balls_bowled'] > 0)]
@@ -67,7 +67,7 @@ for x in np.arange(0, 2, 1):
     # create a table for simple sql upload
     sql_upload = ratings.loc[ratings['date'] == ratings['date'].max()].copy()
     sql_upload.loc[:, 'last_match_date'] = ratings.loc[ratings['matchid'] != 101, 'date'].max()
-    bowler_names = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlData.csv', parse_dates=['date']).loc[:, ['bowlerid', 'bowler']].drop_duplicates()  # this is done to make sure all names have ratingsT20, even if an id is matched to two names like Shaheen
+    bowler_names = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlData.csv', parse_dates=['date']).loc[:, ['bowlerid', 'bowler']].drop_duplicates()  # this is done to make sure all names have ratingsT20, even if an id is matched to two names like Shaheen
     sql_upload = sql_upload.merge(bowler_names, how='left', left_on=['playerid'], right_on=['bowlerid'])
     sql_upload = sql_upload.loc[:, ['last_match_date', 'bowler_y', 'playerid', 'host', 'ord_w', 'balls_bowled_w', 'run_rating', 'wkt_rating', 'competition', 'rep_run_weight', 'run_rating_3', 'rep_wkt_weight', 'wkt_rating_3']]
     sql_upload.insert(sql_upload.columns.get_loc("wkt_rating") + 1, 'external_rating', 28)
@@ -76,11 +76,11 @@ for x in np.arange(0, 2, 1):
 
     # export the detailed ratingsT20 and table for sql upload
     if x == 0:
-        ratings.to_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsJungle3.csv', index=False)
-        sql_upload.to_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/sqlUploadJungle.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsJungle3.csv', index=False)
+        sql_upload.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/sqlUploadJungle.csv', index=False)
     else:
-        ratings.to_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsRasoi3.csv', index=False)
-        sql_upload.to_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/sqlUploadRasoi.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsRasoi3.csv', index=False)
+        sql_upload.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/sqlUploadRasoi.csv', index=False)
 
 
 
