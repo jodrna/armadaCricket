@@ -7,17 +7,19 @@ __pycache__/
 *.py[cod]
 
 # -------------------------
-# Ignore EVERYTHING inside outputs folders
+# Ignore EVERYTHING inside outputs
 # -------------------------
 **/outputs/**
 !**/outputs/
+!**/outputs/*.py
 !**/outputs/.gitkeep
 
 # -------------------------
-# Ignore EVERYTHING inside data folders
+# Ignore EVERYTHING inside data
 # -------------------------
 **/data/**
 !**/data/
+!**/data/*.py
 !**/data/.gitkeep
 
 # -------------------------
