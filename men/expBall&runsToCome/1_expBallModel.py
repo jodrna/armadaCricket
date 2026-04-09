@@ -247,6 +247,3 @@ masterLookup.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/expBa
 # plt.show()
 #
 #
-
-
-

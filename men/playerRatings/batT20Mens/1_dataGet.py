@@ -4,8 +4,8 @@ from urllib.parse import quote
 from pathlib import Path
 
 # sql connections
-# connection = sqlalchemy.create_engine('postgresql://willhowie:%s@77.68.112.208:5432/postgres' % quote('Y2kN61@!x'))
-connection = sqlalchemy.create_engine('postgresql://jordan:%s@77.68.112.208:5432/postgres' % quote('cricket123'))
+# connection = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
+connection = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
 
 BASE_DIR = Path(__file__).resolve().parent
 

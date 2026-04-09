@@ -11,7 +11,7 @@ runpy.run_path("4_bowlReplacement.py")
 runpy.run_path("5_bowlReversion.py")
 
 # SQL connection (engine)
-engine = sqlalchemy.create_engine('postgresql://jordan:%s@77.68.112.208:5432/postgres' % quote('cricket123'))
+engine = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
 
 # Import
 jungle = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/sqlUploadJungle.csv')

@@ -4,7 +4,7 @@ from sqlalchemy import text
 from urllib.parse import quote
 
 # SQL connection (engine)
-engine = sqlalchemy.create_engine('postgresql://jordan:%s@77.68.112.208:5432/postgres' % quote('cricket123'))
+engine = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
 
 # Import
 player = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/sqlUploadPlayer.csv')

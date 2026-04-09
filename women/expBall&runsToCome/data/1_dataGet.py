@@ -5,7 +5,7 @@ from urllib.parse import quote
 from datetime import datetime, timedelta
 
 
-engine = sqlalchemy.create_engine('postgresql://jordan:%s@77.68.112.208:5432/postgres' % quote('cricket123'))
+engine = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
 connection = engine.connect()
 
 # format_date_new = last_date.strftime("%m/%d/%Y")
