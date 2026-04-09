@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 # import
-trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/Cleaned_t20bbb3_adjusted_runs_to_come_3.csv', parse_dates=['date'])
+trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/men/data/Cleaned_t20bbb3_adjusted_runs_to_come_3.csv', parse_dates=['date'])
 
 # rename columns
 trainData = trainData.rename(columns={'innings': 'inningNumber', 'wickets': 'totalInningWickets', 'bowlerwicket': 'isWicketBowler', 'noball': 'noballRuns', 'over': 'overNumber',
@@ -60,6 +60,6 @@ trainData['totalInningRunsToComeAdj'] = trainData['totalInningRunsToCome'] - tra
 
 
 # export the cleaned data
-trainData.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/dataClean.csv', index=False)
+trainData.to_csv('/Users/jordan/Documents/ArmadaCricket/men/data/dataClean.csv', index=False)
 
 

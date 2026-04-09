@@ -24,8 +24,8 @@ sql_data = pd.read_sql_query(sql_query, con=connection, params=(format_date,)) #
 
 
 # export then import again, simple way to get date format correct
-sql_data.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/sqldataforclean2023.csv', index=False)
-raw_data = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/sqldataforclean2023.csv')
+sql_data.to_csv('/Users/jordan/Documents/ArmadaCricket/men/data/sqldataforclean2023.csv', index=False)
+raw_data = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/men/data/sqldataforclean2023.csv')
 
 raw_data = raw_data.sort_values(by=['matchid', 'innings', 'delivery2'])
 
@@ -129,4 +129,4 @@ raw_data['over'] = raw_data['over_number'] + 1
 
 
 # export data
-raw_data.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/cleanedT20BBB.csv', index=False)
+raw_data.to_csv('/Users/jordan/Documents/ArmadaCricket/men/data/cleanedT20BBB.csv', index=False)
