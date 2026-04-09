@@ -1,11 +1,10 @@
 # import sqlalchemy
 # import pandas as pd
 # from urllib.parse import quote
+# from db import engine
 #
-# # sql connection
-# connection = sqlalchemy.create_engine(
-#     "postgresql://jordan:%s@77.68.112.208:5432/postgres" % quote("cricket123")
-# )
+# connection = engine.connect()
+
 #
 # # load your local file (must contain a match id column)
 # df = pd.read_csv("/Users/jordan/Documents/ArmadaCricket/Development/iplHawkeyeData/iplData.csv")

@@ -3,6 +3,9 @@ import sqlalchemy
 from sqlalchemy import text
 from urllib.parse import quote
 import runpy
+from db import engine
+
+connection = engine.connect()
 
 # run the outputs
 runpy.run_path("2_dataClean.py")
@@ -10,8 +13,6 @@ runpy.run_path("3_bowlModel.py")
 runpy.run_path("4_bowlReplacement.py")
 runpy.run_path("5_bowlReversion.py")
 
-# SQL connection (engine)
-engine = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
 
 # Import
 jungle = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/sqlUploadJungle.csv')

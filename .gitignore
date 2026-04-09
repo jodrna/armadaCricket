@@ -26,4 +26,4 @@ __pycache__/
 # KEEP auxiliaries (including CSVs)
 # -------------------------
 !**/auxiliaries/
-!**/auxiliaries/**
+!**/auxiliaries/**.env

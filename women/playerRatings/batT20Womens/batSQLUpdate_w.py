@@ -2,9 +2,10 @@ import pandas as pd
 import sqlalchemy
 from sqlalchemy import text
 from urllib.parse import quote
+from db import engine
 
-# SQL connection (engine)
-engine = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
+connection = engine.connect()
+
 
 # Import
 player = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/sqlUploadPlayer.csv')

@@ -2,9 +2,9 @@ import sqlalchemy
 import pandas as pd
 import numpy as np
 from urllib.parse import quote
-from datetime import datetime, timedelta
+import os
+from db import engine
 
-engine = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
 connection = engine.connect()
 
 # format_date_new = last_date.strftime("%m/%d/%Y")
@@ -130,4 +130,3 @@ raw_data['over'] = raw_data['over_number'] + 1
 
 # export data
 raw_data.to_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/cleanedT20BBB.csv', index=False)
-

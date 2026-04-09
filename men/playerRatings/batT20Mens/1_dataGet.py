@@ -2,10 +2,9 @@ import sqlalchemy
 import pandas as pd
 from urllib.parse import quote
 from pathlib import Path
+from db import engine
 
-# sql connections
-# connection = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
-connection = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
+connection = engine.connect()
 
 BASE_DIR = Path(__file__).resolve().parent
 

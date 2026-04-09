@@ -1,9 +1,9 @@
 import sqlalchemy
 import pandas as pd
 from urllib.parse import quote
+from db import engine
 
-# sql connections
-connection = sqlalchemy.create_engine('postgresql://x:%s@77.68.112.208:5432/postgres' % quote('x'))
+connection = engine.connect()
 
 combinedBatData = pd.read_sql_query('''select id, matchid, date,
                                 case when competition = 'WT20I' then
