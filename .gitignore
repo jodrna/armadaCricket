@@ -1,0 +1,27 @@
+# -------------------------
+# System / IDE
+# -------------------------
+.DS_Store
+.idea/
+__pycache__/
+*.py[cod]
+
+# -------------------------
+# Ignore EVERYTHING inside outputs folders
+# -------------------------
+**/outputs/**
+!**/outputs/
+!**/outputs/.gitkeep
+
+# -------------------------
+# Ignore EVERYTHING inside data folders
+# -------------------------
+**/data/**
+!**/data/
+!**/data/.gitkeep
+
+# -------------------------
+# KEEP auxiliaries (including CSVs)
+# -------------------------
+!**/auxiliaries/
+!**/auxiliaries/**
