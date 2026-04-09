@@ -27,3 +27,4 @@ __pycache__/
 # -------------------------
 !**/auxiliaries/
 !**/auxiliaries/**.env
+/.env
