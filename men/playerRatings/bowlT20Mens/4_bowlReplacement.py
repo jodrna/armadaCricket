@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn import preprocessing
 import statsmodels.api as sm
+from paths import PROJECT_ROOT
 
 
 def build_training_features_bowl(bowl_data, ratings):

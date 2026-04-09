@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from paths import PROJECT_ROOT
 
 
 # read data

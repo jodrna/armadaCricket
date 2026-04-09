@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.neural_network import MLPRegressor
 import sklearn.utils
+from paths import PROJECT_ROOT
 
 # import dataframes
 trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/data/dataClean.csv', parse_dates=['date'])

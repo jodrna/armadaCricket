@@ -2,7 +2,8 @@
 # import pandas as pd
 # from urllib.parse import quote
 # from db import engine
-#
+# from paths import PROJECT_ROOT
+
 # connection = engine.connect()
 
 #

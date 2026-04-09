@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from scipy.optimize import least_squares
 from bowlFunctions import newMethodBins, buildRunRatingsOriginal, buildWktRatingsOriginal, qualityMethodBins
+from paths import PROJECT_ROOT
 
 
 # -------------------------

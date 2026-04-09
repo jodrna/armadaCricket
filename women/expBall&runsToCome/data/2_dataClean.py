@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from paths import PROJECT_ROOT
 
 # import
 trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', parse_dates=['date'])

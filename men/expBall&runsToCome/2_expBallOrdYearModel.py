@@ -4,6 +4,7 @@ from sklearn.ensemble import HistGradientBoostingRegressor, HistGradientBoosting
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import log_loss
+from paths import PROJECT_ROOT
 
 # import datasets and filter to 1st innings only
 trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/dataClean.csv', parse_dates=['date'])

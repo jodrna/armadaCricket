@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from paths import PROJECT_ROOT
 
 # import file for analysis
 chaseLookup = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/matchMarket/2_chaseLookup.csv')

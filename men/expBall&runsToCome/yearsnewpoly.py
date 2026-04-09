@@ -2,12 +2,12 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
-
 import matplotlib.pyplot as plt
 from pygam import LinearGAM
 from pygam import s
 from pygam import l
 from pygam import f
+from paths import PROJECT_ROOT
 
 # import data and the runs to come modelled numbers
 trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/men/data/dataClean.csv', parse_dates=['date'])

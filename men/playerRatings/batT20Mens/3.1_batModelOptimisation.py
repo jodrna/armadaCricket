@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from scipy.optimize import least_squares
 from batFunctions import qualityMethodBins, newMethodBins, buildRunRatingsOriginal, buildRunRatingsMapOne, buildRunRatingsMapTwo, buildRunRatingsMapPriority, buildWktRatingsMapPriority, buildWktRatingsOriginal
+from paths import PROJECT_ROOT
 
 
 # -------------------------

@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn import preprocessing
 import numpy as np
 import statsmodels.api as sm
+from paths import PROJECT_ROOT
 
 
 def rep_weight(faced, rating, rep_ratio, mode='run'):

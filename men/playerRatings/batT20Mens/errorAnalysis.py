@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from batFunctions import qualityMethodBins, newMethodBins
+from paths import PROJECT_ROOT
+
 
 # --- Load Data ---
 ratingsJungle = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsJungle3.csv')

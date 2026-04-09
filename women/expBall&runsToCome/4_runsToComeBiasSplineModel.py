@@ -9,6 +9,7 @@ from sklearn.neural_network import MLPRegressor
 from scipy.interpolate import UnivariateSpline
 from sklearn.metrics import mean_absolute_error
 from scipy.stats import kurtosis
+from paths import PROJECT_ROOT
 
 # import necessary data
 trainData = pd.read_csv('/Users/jordan/Documents/ArmadaCricket/Development/women/data/dataClean.csv', parse_dates=['date'])

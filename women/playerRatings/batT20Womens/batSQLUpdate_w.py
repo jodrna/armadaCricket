@@ -3,6 +3,7 @@ import sqlalchemy
 from sqlalchemy import text
 from urllib.parse import quote
 from db import engine
+from paths import PROJECT_ROOT
 
 connection = engine.connect()
 

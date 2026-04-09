@@ -1,1 +1,33 @@
 1. update dataget for the match market and bbb predictions to the adjusted numbers
+2.
+
+
+
+
+FIXES
+# batters n2h check if improvements
+# womens batters n2h
+# mens bowlers n2h check
+
+# replacement values code cleaning up to match women's batters
+    # batters both done now
+    # bowlers need done for men and women
+
+BIG
+# women's ODI batter ratings
+# women's bowlers
+
+
+PROJECTS
+# ipl pitch data continues
+    # do we need different pitch ratings by phase, or innings stage
+    # pitch consistency, uneven bounce and 2 paced
+    # test average pitch pace and bounce ball by ball, is it consistent through the game, or is ball 1 typically bouncier than ball 120, shouldn't be as we control for phase
+    #
+
+# match market data
+
+
+SIDE ISSUES
+# duplicate ID's
+

@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import KFold
 from sklearn.metrics import r2_score, mean_absolute_error
+from paths import PROJECT_ROOT
 
 
 # -----------------------

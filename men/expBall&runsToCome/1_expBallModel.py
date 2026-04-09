@@ -6,6 +6,7 @@ from sklearn.ensemble import HistGradientBoostingRegressor, HistGradientBoosting
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LogisticRegression
+from paths import PROJECT_ROOT
 
 
 # import and filter to 1st innings only

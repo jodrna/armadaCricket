@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from numba import njit
 from collections import defaultdict
+from paths import PROJECT_ROOT
 
 
 def qualityMethodBins(

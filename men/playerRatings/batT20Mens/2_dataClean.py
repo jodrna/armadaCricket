@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
+from paths import PROJECT_ROOT
 
 BASE_DIR = Path(__file__).resolve().parent
 

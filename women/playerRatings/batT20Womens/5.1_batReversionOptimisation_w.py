@@ -4,6 +4,7 @@ from scipy.optimize import least_squares
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from batFunctions_w import qualityMethodBins, newMethodBins
+from paths import PROJECT_ROOT
 
 
 # read data and ratingsT20

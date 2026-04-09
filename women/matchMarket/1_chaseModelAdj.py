@@ -10,6 +10,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_val_predict, KFold
 from sklearn.metrics import log_loss
+from paths import PROJECT_ROOT
 
 
 # import

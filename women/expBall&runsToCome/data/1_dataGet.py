@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from urllib.parse import quote
 from db import engine
+from paths import PROJECT_ROOT
 
 connection = engine.connect()
 

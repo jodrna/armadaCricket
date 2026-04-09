@@ -6,6 +6,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from pathlib import Path
+from paths import PROJECT_ROOT
 
 
 BASE_DIR = Path(__file__).resolve().parent

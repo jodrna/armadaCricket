@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from datetime import date, datetime, timedelta
+from paths import PROJECT_ROOT
 
 
 for x in np.arange(0, 2, 1):

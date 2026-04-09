@@ -3,6 +3,7 @@ from sklearn import preprocessing
 import numpy as np
 import statsmodels.api as sm
 from pathlib import Path
+from paths import PROJECT_ROOT
 
 BASE_DIR = Path(__file__).resolve().parent
 

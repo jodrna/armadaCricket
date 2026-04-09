@@ -3,13 +3,13 @@ import numpy as np
 from datetime import date, datetime, timedelta
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
-
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, KeepInFrame
 from reportlab.lib.styles import getSampleStyleSheet
 from pathlib import Path
+from paths import PROJECT_ROOT
 
 BASE_DIR = Path(__file__).resolve().parent
 
