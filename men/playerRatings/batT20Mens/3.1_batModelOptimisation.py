@@ -8,11 +8,11 @@ from paths import PROJECT_ROOT
 # -------------------------
 # Imports
 # -------------------------
-bat_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
-n2h_factors = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/auxiliaries/batN2HFactors.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
-n2h_grad = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/auxiliaries/batN2HFactorsGradient.csv').rename(columns={'balls_faced_host_mean_y': 'balls_faced_host'})
-current_ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsJungle3.csv')
-bat_weightings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/auxiliaries/batWeightings.csv')
+bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+n2h_factors = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batN2HFactors.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
+n2h_grad = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batN2HFactorsGradient.csv').rename(columns={'balls_faced_host_mean_y': 'balls_faced_host'})
+current_ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle3.csv')
+bat_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batWeightings.csv')
 
 
 # -------------------------

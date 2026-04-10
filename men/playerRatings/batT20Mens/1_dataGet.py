@@ -1,15 +1,10 @@
-import sqlalchemy
 import pandas as pd
-from urllib.parse import quote
-from pathlib import Path
 from db import engine
 from paths import PROJECT_ROOT
-
 connection = engine.connect()
 
-BASE_DIR = Path(__file__).resolve().parent
 
-
+# sql query to get data from database
 allData = pd.read_sql_query("""
 SELECT id,
        matchid,
@@ -233,11 +228,10 @@ balls_per_match.columns = ['playerid', 'ballspermatch']
 
 
 # bat files
-combinedBatData.to_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'data' / 'combinedBatData.csv', index=False)
-playerInfo.to_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'auxiliaries' / 'playerInfo.csv', index=False)
+combinedBatData.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatData.csv', index=False)
+playerInfo.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/playerInfo.csv', index=False)
 
 # bowl files
-combinedBowlData.to_csv(BASE_DIR / 'bowl_t20_mens' / 'all' / 'data' / 'combinedBowlData.csv', index=False)
-balls_per_match.to_csv(BASE_DIR / 'bowl_t20_mens' / 'all' / 'data' / 'ballsPerMatch.csv', index=False)
-playerInfo.to_csv(BASE_DIR / 'bowl_t20_mens' / 'all' / 'auxiliaries' / 'playerInfo.csv', index=False)
-
+combinedBowlData.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBowlData.csv', index=False)
+balls_per_match.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/ballsPerMatch.csv', index=False)
+playerInfo.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/playerInfo.csv', index=False)

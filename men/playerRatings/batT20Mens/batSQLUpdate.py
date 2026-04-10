@@ -1,27 +1,25 @@
 import pandas as pd
 import sqlalchemy
 from sqlalchemy import text
-from urllib.parse import quote
 import runpy
 from db import engine
 from paths import PROJECT_ROOT
-
 connection = engine.connect()
 
 # run the outputs
-runpy.run_path("1_dataGet.py")
-runpy.run_path("2_dataClean.py")
-runpy.run_path("3_batModel.py")
-runpy.run_path("4_batReplacement.py")
-runpy.run_path("5_batReversion.py")
+# runpy.run_path("1_dataGet.py")
+# runpy.run_path("2_dataClean.py")
+# runpy.run_path("3_batModel.py")
+# runpy.run_path("4_batReplacement.py")
+# runpy.run_path("5_batReversion.py")
 
 
 # Import
-jungle = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/sqlUploadJungle.csv')
-rasoi = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/sqlUploadRasoi.csv')
+jungle = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/sqlUploadJungle.csv')
+rasoi = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/sqlUploadRasoi.csv')
 bat_sqldata_combo = jungle.merge(rasoi, on = ('batter', 'playerid', 'host', 'external_rating', 'competition'), suffixes=('_jungle', '_rasoi'))
-ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsJungle3.csv')
-player_info = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/auxiliaries/playerInfo.csv', parse_dates=['dob'])
+ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle3.csv')
+player_info = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/playerInfo.csv', parse_dates=['dob'])
 
 # merge in cricinfo player id
 bat_sqldata_combo = bat_sqldata_combo.merge(player_info.loc[:, ['playerid', 'cricinfo_id']], on='playerid', how='left')

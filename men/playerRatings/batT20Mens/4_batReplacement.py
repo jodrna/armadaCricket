@@ -2,10 +2,8 @@ import pandas as pd
 from sklearn import preprocessing
 import numpy as np
 import statsmodels.api as sm
-from pathlib import Path
 from paths import PROJECT_ROOT
 
-BASE_DIR = Path(__file__).resolve().parent
 
 
 def rep_weight(faced, rating, rep_ratio, mode='run'):
@@ -100,18 +98,11 @@ def build_features(df, transformers, is_training=True, target_type='run', comp_c
 
 for x in np.arange(0, 2, 1):
     # 1. Import Data
-    bat_data = pd.read_csv(
-        BASE_DIR / 'bat_t20_mens' / 'all' / 'data' / 'combinedBatDataClean.csv',
-        parse_dates=['date', 'dob']
-    )
+    bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+    n2h_factors = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batN2HFactors.csv')
+    tier_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/tierData.csv')
 
-    n2h_factors = pd.read_csv(
-        BASE_DIR / 'bat_t20_mens' / 'all' / 'auxiliaries' / 'batN2HFactors.csv'
-    )
 
-    tier_data = pd.read_csv(
-        BASE_DIR / 'bat_t20_mens' / 'all' / 'auxiliaries' / 'tierData.csv'
-    )
 
     n2h_factors['host_2'] = np.where((n2h_factors['host_2'] == 'United Arab Emirates') & (n2h_factors['nationality'] == 'Afghanistan'),
                                     'Afghanistan',
@@ -123,9 +114,9 @@ for x in np.arange(0, 2, 1):
     allaway_wkts = n2h_factors['all_away_wkts_factor'].mean()
 
     if x == 0:
-        ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsJungle.csv', parse_dates=['date'])
+        ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle.csv', parse_dates=['date'])
     else:
-        ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsRasoi.csv', parse_dates=['date'])
+        ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsRasoi.csv', parse_dates=['date'])
 
     # 2. Data Prep - Filters & Adjustments
     bat_data = bat_data.loc[bat_data['competition'].isin(['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
@@ -254,15 +245,10 @@ for x in np.arange(0, 2, 1):
 
     # 9. Export
     if x == 0:
-        ratings.to_csv(
-            BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'batRatingsJungle2.csv',
-            index=False
-        )
+        ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle2.csv', index=False)
+
     else:
-        ratings.to_csv(
-            BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'batRatingsRasoi2.csv',
-            index=False
-        )
+        ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsRasoi2.csv', index=False)
 
 
 actualsPDF = actuals.loc[:, ['age',

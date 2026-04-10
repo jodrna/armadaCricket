@@ -8,10 +8,8 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, KeepInFrame
 from reportlab.lib.styles import getSampleStyleSheet
-from pathlib import Path
 from paths import PROJECT_ROOT
 
-BASE_DIR = Path(__file__).resolve().parent
 
 # -------------------------
 # Report filter
@@ -25,22 +23,14 @@ match_id = 101
 
 for x in np.arange(0, 2, 1):
     # read data
-    bat_data = pd.read_csv(
-        BASE_DIR / 'bat_t20_mens' / 'all' / 'data' / 'combinedBatDataClean.csv',
-        parse_dates=['date', 'dob']
-    )
+    bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
 
     # read ratingsT20
     if x == 0:
-        ratings = pd.read_csv(
-            BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'batRatingsJungle2.csv',
-            parse_dates=['date']
-        )
+        ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle2.csv', parse_dates=['date'])
     else:
-        ratings = pd.read_csv(
-            BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'batRatingsRasoi2.csv',
-            parse_dates=['date']
-        )
+        ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsRasoi2.csv', parse_dates=['date'])
+
 
     bat_data = bat_data[bat_data['format'] == 't20']
 
@@ -159,7 +149,7 @@ for x in np.arange(0, 2, 1):
     sql_upload = ratings.loc[ratings['date'] == ratings['date'].max()].copy()
     sql_upload.loc[:, 'last_match_date'] = ratings.loc[ratings['matchid'] != 101, 'date'].max()
     # this is done to make sure all names have ratingsT20, even if an id is matched to two names like Shaheen
-    batter_names = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/data/combinedBatDataClean.csv', parse_dates=['date']).loc[:, ['playerid', 'batsman']].drop_duplicates()
+    batter_names = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date']).loc[:, ['playerid', 'batsman']].drop_duplicates()
     sql_upload = sql_upload.merge(batter_names, how='left', left_on=['playerid'], right_on=['playerid'])
     # isolate the columns we want
     sql_upload = sql_upload.loc[:, ['last_match_date', 'batsman_y', 'playerid', 'host', 'ord_r', 'balls_faced_r', 'run_rating', 'wkt_rating', 'competition', 'rep_run_weight', 'run_rating_3', 'rep_wkt_weight', 'wkt_rating_3']]
@@ -171,35 +161,17 @@ for x in np.arange(0, 2, 1):
 
     # export the detailed ratingsT20 and table for sql upload
     if x == 0:
-        ratings.to_csv(
-            BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'batRatingsJungle3.csv',
-            index=False
-        )
-        sql_upload.to_csv(
-            BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'sqlUploadJungle.csv',
-            index=False
-        )
+        ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle3.csv', index=False)
+        sql_upload.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/sqlUploadJungle.csv', index=False)
     else:
-        ratings.to_csv(
-            BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'batRatingsRasoi3.csv',
-            index=False
-        )
-        sql_upload.to_csv(
-            BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'sqlUploadRasoi.csv',
-            index=False
-        )
+        ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsRasoi3.csv', index=False)
+        sql_upload.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/sqlUploadRasoi.csv', index=False)
 
-    rating_breakdown_year = pd.read_csv(
-        BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'rating_breakdown_year.csv'
-    )
 
-    rating_breakdown_host_comp = pd.read_csv(
-        BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'rating_breakdown_host_comp.csv'
-    )
 
-    rating_breakdown_format = pd.read_csv(
-        BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'rating_breakdown_format.csv'
-    )
+    rating_breakdown_year = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_year.csv')
+    rating_breakdown_host_comp = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_host_comp.csv')
+    rating_breakdown_format = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_format.csv')
 
 summary_row = pdf_sql_upload.copy()
 summary_row = summary_row[summary_row['batsman'] == player_name]
@@ -207,12 +179,12 @@ summary_row = summary_row[summary_row['competition'] == competition_filter]
 summary_row = summary_row[summary_row['host'] == host_filter]
 summary_row = summary_row.sort_values('date').tail(1)
 
-pdf_path = BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / f'{player_name}_report.pdf'
+pdf_path = PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/' / f'{player_name}_report.pdf'
 
 styles = getSampleStyleSheet()
 story = []
 doc = SimpleDocTemplate(
-    pdf_path,
+    str(pdf_path),
     pagesize=landscape(A4),
     rightMargin=5,
     leftMargin=5,

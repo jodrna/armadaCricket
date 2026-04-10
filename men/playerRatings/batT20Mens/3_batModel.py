@@ -9,21 +9,13 @@ from pathlib import Path
 from paths import PROJECT_ROOT
 
 
-BASE_DIR = Path(__file__).resolve().parent
-
 # -------------------------
 # Imports
 # -------------------------
-bat_data = pd.read_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'data' / 'combinedBatDataClean.csv', parse_dates=['date', 'dob'])
-
-n2h_factors = pd.read_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'auxiliaries' / 'batN2HFactors.csv')[
-    ['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']
-]
-
-n2h_grad = pd.read_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'auxiliaries' / 'batN2HFactorsGradient.csv') \
-    .rename(columns={'balls_faced_host_mean_y': 'balls_faced_host'})
-
-bat_weightings = pd.read_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'auxiliaries' / 'batWeightings.csv')
+bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+n2h_factors = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batN2HFactors.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
+n2h_grad = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batN2HFactorsGradient.csv').rename(columns={'balls_faced_host_mean_y': 'balls_faced_host'})
+bat_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batWeightings.csv')
 
 
 # -------------------------
@@ -311,11 +303,11 @@ for x in np.arange(0, 2, 1):
         recencies_w['recency_weight_bbb_wkt'] = recencies_w['recency_weight_match_sum_x'] / recencies_w['recency_weight_match_sum_y'] / recencies_w['balls_faced_2']
 
         recencies = pd.merge(recencies_r.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_runs']], recencies_w.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_wkt']], how='outer')
-        recencies.to_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'recenciesJungle.csv', index=False)
-        ratings.to_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'batRatingsJungle.csv', index=False)
+        recencies.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/recenciesJungle.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle.csv', index=False)
 
     else:
-        ratings.to_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'batRatingsRasoi.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsRasoi.csv', index=False)
 
 # -------------------------
 # Report filter
@@ -572,9 +564,7 @@ rating_breakdown_host_comp = sort_with_total_last(rating_breakdown_host_comp, 'h
 rating_breakdown_format = sort_with_total_last(rating_breakdown_format, 'format', 'contribution')
 
 
-
-rating_breakdown_year.to_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'rating_breakdown_year.csv', index=False)
-rating_breakdown_host_comp.to_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'rating_breakdown_host_comp.csv', index=False)
-rating_breakdown_format.to_csv(BASE_DIR / 'bat_t20_mens' / 'all' / 'outputs' / 'rating_breakdown_format.csv', index=False)
-
-
+# exports
+rating_breakdown_year.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_year.csv', index=False)
+rating_breakdown_host_comp.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_host_comp.csv', index=False)
+rating_breakdown_format.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_format.csv', index=False)

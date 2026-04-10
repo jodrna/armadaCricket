@@ -1,13 +1,12 @@
 import pandas as pd
 import numpy as np
-from pathlib import Path
 from paths import PROJECT_ROOT
 
-BASE_DIR = Path(__file__).resolve().parent
 
-bat_data = pd.read_csv(BASE_DIR / 'data' / 'combinedBatData.csv', parse_dates=['date'])
-player_info = pd.read_csv(BASE_DIR / 'auxiliaries' / 'playerInfo.csv', parse_dates=['dob'])
-ratings = pd.read_csv(BASE_DIR / 'auxiliaries' / 'batRatingsFor.csv')
+# imports
+bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatData.csv', parse_dates=['date'])
+player_info = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/playerInfo.csv', parse_dates=['dob'])
+ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batRatingsFor.csv')
 
 
 # # if we want to do a test we can select just one batsman to speed it up using this filter
@@ -134,7 +133,7 @@ bat_data = bat_data.drop(columns=['uniqueMatchMarker'])
 
 
 # export the clean bat data
-bat_data.to_csv(BASE_DIR / 'data' / 'combinedBatDataClean.csv', index=False)
+bat_data.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', index=False)
 
 
 
