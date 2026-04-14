@@ -7,11 +7,10 @@ from paths import PROJECT_ROOT
 # -------------------------
 # Imports
 # -------------------------
-bowl_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlDataClean.csv', parse_dates=['date', 'dob'])
-bowl_weightings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/auxiliaries/bowlWeightings.csv')
-n2h_factors_seam = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/auxiliaries/bowlN2HFactorsSeam.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
-n2h_factors_spin = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/auxiliaries/bowlN2HFactorsSpin.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
-
+bowl_data = pd.read_csv(PROJECT_ROOT / '/Users/jordan/Documents/armadaCricket/men/playerRatings/bowlT20Mens/data/combinedBowlDataClean.csv', parse_dates=['date', 'dob'])
+bowl_weightings = pd.read_csv(PROJECT_ROOT / '/Users/jordan/Documents/armadaCricket/men/playerRatings/bowlT20Mens/auxiliaries/bowlWeightings.csv')
+n2h_factors_seam = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlN2HFactorsSeam.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
+n2h_factors_spin = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlN2HFactorsSpin.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
 
 # -------------------------
 # Test one bowler
@@ -298,10 +297,10 @@ for x in np.arange(0, 2, 1):
         recencies_w['recency_weight_bbb_wkt'] = recencies_w['recency_weight_match_sum_x'] / recencies_w['recency_weight_match_sum_y'] / recencies_w['balls_bowled_2']
 
         recencies = pd.merge(recencies_r.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_runs']], recencies_w.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_wkt']], how='outer')
-        recencies.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/recencies.csv', index=False)
-        ratings.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsJungle.csv', index=False)
+        recencies.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/recencies.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsJungle.csv', index=False)
     else:
-        ratings.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsRasoi.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsRasoi.csv', index=False)
 
 
 

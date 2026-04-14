@@ -4,12 +4,12 @@ from bowlFunctions import qualityMethodBins, newMethodBins
 from paths import PROJECT_ROOT
 
 # --- Load Data ---
-ratingsJungle = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsJungle3.csv')
-ratingsRasoi = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsRasoi3.csv')
-bowl_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlDataClean.csv', parse_dates=['date', 'dob'])
+ratingsJungle = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsJungle3.csv')
+ratingsRasoi = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsRasoi3.csv')
+bowl_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/combinedBowlDataClean.csv', parse_dates=['date', 'dob'])
 
 # --- Load and merge weights ---
-bat_weightings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/auxiliaries/bowlWeightings.csv')
+bat_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlWeightings.csv')
 bowl_data = bowl_data.merge(bat_weightings, on='balls_bowled_career', how='left')
 
 # bowl_data['runs_weight_curve'] = bowl_data['runs_weight_curve'].fillna(1)

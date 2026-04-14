@@ -5,7 +5,6 @@ from urllib.parse import quote
 import runpy
 from db import engine
 from paths import PROJECT_ROOT
-
 connection = engine.connect()
 
 # run the outputs
@@ -16,13 +15,12 @@ runpy.run_path("5_bowlReversion.py")
 
 
 # Import
-jungle = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/sqlUploadJungle.csv')
-rasoi = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/sqlUploadRasoi.csv')
+jungle = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/sqlUploadJungle.csv')
+rasoi = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/sqlUploadRasoi.csv')
 bowl_sqldata_combo = jungle.merge(rasoi, on = ('bowler', 'playerid', 'host', 'external_rating', 'competition'), suffixes=('_jungle', '_rasoi'))
-ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/outputs/bowlRatingsJungle3.csv')
-player_info = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/auxiliaries/playerInfo.csv', parse_dates=['dob'])       # date of birth, hand, nationality, bowler type etc
+ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsJungle3.csv')
+player_info = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/playerInfo.csv', parse_dates=['dob'])       # date of birth, hand, nationality, bowler type etc
 
-ratings = ratings[ratings['bowler'] == 'Usman Tariq']
 # merge in cricinfo player id
 bowl_sqldata_combo = bowl_sqldata_combo.merge(player_info.loc[:, ['playerid', 'cricinfo_id', 'name']], on='playerid', how='left')
 bowl_sqldata_combo['bowler'] = bowl_sqldata_combo['name']

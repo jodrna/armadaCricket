@@ -7,10 +7,10 @@ from paths import PROJECT_ROOT
 # -------------------------
 # Imports
 # -------------------------
-bowl_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlData.csv', parse_dates=['date'])   # ball by ball data
-player_info = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/auxiliaries/playerInfo.csv', parse_dates=['dob'])       # date of birth, hand, nationality, bowler type etc
-balls_per_match = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/ballsPerMatch.csv')       # average balls bowled per match for all bowlers, used in rep values
-ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/auxiliaries/bowlRatingsFor.csv')             # list of comps and hosts we want ratingsT20 for
+bowl_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/combinedBowlData.csv', parse_dates=['date'])   # ball by ball data
+player_info = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/playerInfo.csv', parse_dates=['dob'])       # date of birth, hand, nationality, bowler type etc
+balls_per_match = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/ballsPerMatch.csv')       # average balls bowled per match for all bowlers, used in rep values
+ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlRatingsFor.csv')       # list of comps and hosts we want ratingsT20 for
 
 
 # -------------------------
@@ -322,6 +322,6 @@ types2 = pd.pivot_table(bowl_data, values=['date'], index=['bowlertype_2', 'bowl
 # -------------------------
 # Export
 # -------------------------
-bowl_data.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlDataClean.csv', index=False)
+bowl_data.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/combinedBowlDataClean.csv', index=False)
 
 
