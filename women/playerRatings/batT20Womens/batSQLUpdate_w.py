@@ -9,10 +9,10 @@ connection = engine.connect()
 
 
 # Import
-player = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/sqlUploadPlayer.csv')
-innings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/sqlUploadInnings.csv')
+player = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/sqlUploadJungle.csv')
+innings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/sqlUploadRasoi.csv')
 bat_sqldata_combo = player.merge(innings, on = ('batter', 'playerid', 'host', 'external_rating', 'competition'), suffixes=('_jungle', '_rasoi'))
-ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/batRatingsPlayer3.csv')
+ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/batRatingsJungle3.csv')
 
 # to SQl
 player.to_sql("batter_ratings_jungle_w", con=engine, schema="player_ratings", if_exists='replace', index=False)

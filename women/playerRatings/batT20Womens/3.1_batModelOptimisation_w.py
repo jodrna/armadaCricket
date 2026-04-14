@@ -9,7 +9,7 @@ bat_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/play
 # n2h_factors = n2h_factors.loc[:, ['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
 # coeff_adjust = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/auxiliaries/batN2HFactorsCoeffs.csv')
 # coeff_values = coeff_adjust.mean().to_dict()  # this makes a dictionary of values, the mean of each column (there is only one value for each column) named the name of each column. I can call on these values later
-# current_ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/batRatingsPlayer3.csv')
+# current_ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/batRatingsJungle3.csv')
 
 # split odi innings
 bat_data['competition'] = np.where(bat_data['competition'] == 'ODI', np.where(bat_data['ballsremaining'] < 84, 'ODI2', 'ODI1'), bat_data['competition'])

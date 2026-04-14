@@ -17,10 +17,6 @@ def rep_weight(faced, rating, rep_ratio, mode='run'):
     return weight, rating_2
 
 
-
-
-
-
 def build_features(df, transformers, is_training=True, target_type='run'):
     """
     Constructs the X matrix for the model.
@@ -116,10 +112,10 @@ def build_features(df, transformers, is_training=True, target_type='run'):
 
 for x in np.arange(0, 2, 1):
     # 1. Import Data
-    bat_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+    bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
     bat_data = bat_data[bat_data['format'] == 't20']
 
-    n2h_factors = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/auxiliaries/batN2HFactors.csv')
+    n2h_factors = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batN2HFactors.csv')
     allaway_runs = n2h_factors['all_away_runs_factor'].mean()
     allaway_wkts = n2h_factors['all_away_wkts_factor'].mean()
     bat_data = bat_data.merge(n2h_factors, on=('nationality', 'host'), how='left')
@@ -128,10 +124,10 @@ for x in np.arange(0, 2, 1):
 
 
     if x == 0:
-        ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/batRatingsPlayer.csv', parse_dates=['date'], dtype={'battingteam': str} )
+        ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle.csv', parse_dates=['date'], dtype={'battingteam': str} )
 
     else:
-        ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/batRatingsInnings.csv', parse_dates=['date'], dtype={'battingteam': str} )
+        ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi.csv', parse_dates=['date'], dtype={'battingteam': str} )
 
     # Clean competition names, needed for womens  because of the \ in the names
     bat_data['competition'] = bat_data['competition'].str.replace(r"\\'", "'", regex=True)
@@ -274,8 +270,8 @@ for x in np.arange(0, 2, 1):
 
     # 9. Export
     if x == 0:
-        ratings.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/batRatingsPlayer2.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle2.csv', index=False)
     else:
-        ratings.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/batRatingsInnings2.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi2.csv', index=False)
 
 

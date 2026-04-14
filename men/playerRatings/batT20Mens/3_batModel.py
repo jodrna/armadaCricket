@@ -303,7 +303,7 @@ for x in np.arange(0, 2, 1):
         recencies_w['recency_weight_bbb_wkt'] = recencies_w['recency_weight_match_sum_x'] / recencies_w['recency_weight_match_sum_y'] / recencies_w['balls_faced_2']
 
         recencies = pd.merge(recencies_r.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_runs']], recencies_w.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_wkt']], how='outer')
-        recencies.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/recenciesJungle.csv', index=False)
+        recencies.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/recencies.csv', index=False)
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle.csv', index=False)
 
     else:

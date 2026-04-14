@@ -8,9 +8,9 @@ from paths import PROJECT_ROOT
 
 
 # read data and ratingsT20
-bat_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
-ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/batRatingsPlayer2.csv', parse_dates=['date'])
-current_ratings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/outputs/batRatingsPlayer3.csv')
+bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle2.csv', parse_dates=['date'])
+current_ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle3.csv')
 
 
 

@@ -1,9 +1,6 @@
-import sqlalchemy
 import pandas as pd
-from urllib.parse import quote
 from db import engine
 from paths import PROJECT_ROOT
-
 connection = engine.connect()
 
 combinedBatData = pd.read_sql_query('''select id, matchid, date,
@@ -34,14 +31,10 @@ playerInfo = pd.read_sql_query("select name, newid as playerid, nationality, dob
 
 
 # bat files
-# t20BatData.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/data/t20BatData.csv', index=False)
-# odiBatData.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/data/odiBatData.csv', index=False)
-combinedBatData.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/data/combinedBatData.csv', index=False)
-playerInfo.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/auxiliaries/playerInfo.csv', index=False)
+combinedBatData.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/combinedBatData.csv', index=False)
+playerInfo.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/playerInfo.csv', index=False)
 
-# # bowl files
-# # t20BowlData.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/t20BowlData.csv', index=False)
-# # odiBowlData.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/odiBowlData.csv', index=False)
+# bowl files
 # combinedBowlData.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlData.csv', index=False)
 # balls_per_match.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/ballsPerMatch.csv', index=False)
 # playerInfo.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/auxiliaries/playerInfo.csv', index=False)
