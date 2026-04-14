@@ -35,8 +35,8 @@ combinedBatData.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/com
 playerInfo.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/playerInfo.csv', index=False)
 
 # bowl files
-# combinedBowlData.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlData.csv', index=False)
-# balls_per_match.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/ballsPerMatch.csv', index=False)
-# playerInfo.to_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/auxiliaries/playerInfo.csv', index=False)
+# combinedBowlData.to_csv(PROJECT_ROOT / '', index=False)
+# balls_per_match.to_csv(PROJECT_ROOT / '', index=False)
+# playerInfo.to_csv(PROJECT_ROOT / '', index=False)
 
 

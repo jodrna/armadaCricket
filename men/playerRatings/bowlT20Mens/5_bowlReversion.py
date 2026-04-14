@@ -67,7 +67,7 @@ for x in np.arange(0, 2, 1):
     # create a table for simple sql upload
     sql_upload = ratings.loc[ratings['date'] == ratings['date'].max()].copy()
     sql_upload.loc[:, 'last_match_date'] = ratings.loc[ratings['matchid'] != 101, 'date'].max()
-    bowler_names = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bowl_t20_mens/all/data/combinedBowlData.csv', parse_dates=['date']).loc[:, ['bowlerid', 'bowler']].drop_duplicates()  # this is done to make sure all names have ratingsT20, even if an id is matched to two names like Shaheen
+    bowler_names = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/combinedBowlDataClean.csv', parse_dates=['date']).loc[:, ['bowlerid', 'bowler']].drop_duplicates()  # this is done to make sure all names have ratingsT20, even if an id is matched to two names like Shaheen
     sql_upload = sql_upload.merge(bowler_names, how='left', left_on=['playerid'], right_on=['bowlerid'])
     sql_upload = sql_upload.loc[:, ['last_match_date', 'bowler_y', 'playerid', 'host', 'ord_w', 'balls_bowled_w', 'run_rating', 'wkt_rating', 'competition', 'rep_run_weight', 'run_rating_3', 'rep_wkt_weight', 'wkt_rating_3']]
     sql_upload.insert(sql_upload.columns.get_loc("wkt_rating") + 1, 'external_rating', 28)
@@ -81,8 +81,5 @@ for x in np.arange(0, 2, 1):
     else:
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsRasoi3.csv', index=False)
         sql_upload.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/sqlUploadRasoi.csv', index=False)
-
-
-
 
 

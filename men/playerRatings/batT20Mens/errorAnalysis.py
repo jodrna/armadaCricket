@@ -5,12 +5,12 @@ from paths import PROJECT_ROOT
 
 
 # --- Load Data ---
-ratingsJungle = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsJungle3.csv')
-ratingsRasoi = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/outputs/batRatingsRasoi3.csv')
-bat_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+ratingsJungle = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle3.csv')
+ratingsRasoi = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsRasoi3.csv')
+bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
 
 # --- Load and merge weights ---
-bat_weightings = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_mens/all/auxiliaries/batWeightings.csv')
+bat_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batWeightings.csv')
 bat_data = bat_data.merge(bat_weightings, on='balls_faced_career', how='left')
 
 # bat_data['runs_weight_curve'] = bat_data['runs_weight_curve'].fillna(1)
