@@ -119,7 +119,6 @@ bat_data = bat_data.merge(home_league.drop_duplicates(subset=['date', 'playerid'
 # work out percentage of balls in ipl and internationals for home players in domestic leagues vs the league average
 bat_data['overseas_pct'] = bat_data['ipl_t20i_balls_faced'] / (bat_data['ipl_t20i_balls_faced'] + bat_data['home_league_balls_faced'])
 league_overseas_pct = pd.pivot_table(bat_data, values=['overseas_pct'], index=['competition'], aggfunc='mean').reset_index()   # get the league average
-#league_overseas_pct.to_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Jordan\league_overseas_pct_o.csv', index=False)
 bat_data = bat_data.merge(league_overseas_pct, how='left', on=['competition'])   # merge in the league average
 bat_data['overseas_pct'] = bat_data['overseas_pct_x'] / bat_data['overseas_pct_y']   # now calculate player vs league average
 bat_data = bat_data.drop(labels=['overseas_pct_x', 'overseas_pct_y'], axis=1)
