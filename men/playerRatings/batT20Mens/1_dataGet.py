@@ -232,6 +232,6 @@ combinedBatData.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combine
 playerInfo.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/playerInfo.csv', index=False)
 
 # bowl files
-combinedBowlData.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBowlData.csv', index=False)
-balls_per_match.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/ballsPerMatch.csv', index=False)
-playerInfo.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/playerInfo.csv', index=False)
+combinedBowlData.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/combinedBowlData.csv', index=False)
+balls_per_match.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/ballsPerMatch.csv', index=False)
+playerInfo.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/playerInfo.csv', index=False)

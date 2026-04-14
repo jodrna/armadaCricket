@@ -7,11 +7,11 @@ from paths import PROJECT_ROOT
 connection = engine.connect()
 
 # run the outputs
-# runpy.run_path("1_dataGet.py")
-# runpy.run_path("2_dataClean.py")
-# runpy.run_path("3_batModel.py")
-# runpy.run_path("4_batReplacement.py")
-# runpy.run_path("5_batReversion.py")
+runpy.run_path("1_dataGet.py")
+runpy.run_path("2_dataClean.py")
+runpy.run_path("3_batModel.py")
+runpy.run_path("4_batReplacement.py")
+runpy.run_path("5_batReversion.py")
 
 
 # Import
