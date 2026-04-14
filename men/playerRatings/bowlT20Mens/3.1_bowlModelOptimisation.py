@@ -8,8 +8,8 @@ from paths import PROJECT_ROOT
 # -------------------------
 # Imports
 # -------------------------
-bowl_data = pd.read_csv(PROJECT_ROOT / '/Users/jordan/Documents/armadaCricket/men/playerRatings/bowlT20Mens/data/combinedBowlDataClean.csv', parse_dates=['date', 'dob'])
-bowl_weightings = pd.read_csv(PROJECT_ROOT / '/Users/jordan/Documents/armadaCricket/men/playerRatings/bowlT20Mens/auxiliaries/bowlWeightings.csv')
+bowl_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/combinedBowlDataClean.csv', parse_dates=['date', 'dob'])
+bowl_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlWeightings.csv')
 n2h_factors_seam = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlN2HFactorsSeam.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
 n2h_factors_spin = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlN2HFactorsSpin.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
 current_ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsJungle3.csv', parse_dates=['date'])
