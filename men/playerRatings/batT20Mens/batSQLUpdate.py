@@ -32,17 +32,18 @@ bat_sqldata_combo.to_sql("batter_ratings_combo_odi", con=engine, schema="player_
 
 # Use a connection from the engine to execute GRANT statements
 with engine.connect() as conn:
-    conn.execute(text("GRANT SELECT ON TABLE player_ratings.batter_ratings_jungle TO tableau;"
-                       "GRANT SELECT ON TABLE player_ratings.batter_ratings_jungle TO willhowie;"
-                      "GRANT SELECT ON TABLE player_ratings.batter_ratings_rasoi TO tableau;"
-                      "GRANT SELECT ON TABLE player_ratings.batter_ratings_rasoi TO willhowie;"
-                      "GRANT SELECT ON TABLE player_ratings.batter_ratings_combo_odi TO tableau;"
-                     "GRANT SELECT ON TABLE player_ratings.batter_ratings_combo_odi TO willhowie;"
+    conn.execute(text("GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_jungle TO tableau;"
+                       "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_jungle TO willhowie;"
+                       "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_jungle TO jordan;"
+                      "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_rasoi TO tableau;"
+                      "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_rasoi TO willhowie;"
+                      "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_rasoi TO jordan;"
+                      "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_combo_odi TO tableau;"
+                     "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_combo_odi TO willhowie;"
+                      "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_combo_odi TO jordan;"
+
                       ))
     conn.commit()
-
-
-
 
 
 
@@ -57,8 +58,9 @@ sql_upload_2.to_sql("batter_ratings_historic", con=engine, schema="player_rating
 # Use a connection from the engine to execute GRANT statements
 with engine.connect() as conn:
     conn.execute(text(
-                      "GRANT SELECT ON TABLE player_ratings.batter_ratings_historic TO willhowie;"
-                      "GRANT SELECT ON TABLE player_ratings.batter_ratings_historic TO jakelingard;"
+                      "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic TO willhowie;"
+                      "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic TO jakelingard;"
+                      "GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic TO jordan;"
     ))
     conn.commit()
 
