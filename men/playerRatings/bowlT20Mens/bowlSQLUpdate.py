@@ -4,7 +4,6 @@ from sqlalchemy import text
 import runpy
 from db import engine
 from paths import PROJECT_ROOT
-
 connection = engine.connect()
 
 # # run the outputs
@@ -47,7 +46,7 @@ truncate_and_upload(rasoi, 'bowler_ratings_rasoi')
 truncate_and_upload(bowl_sqldata_combo, 'bowler_ratings_combo_odi')
 
 # Use a connection from the engine to execute GRANT statements
-with engine.connect() as conn:
+with engine.begin() as conn:
     conn.execute(text(
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_jungle TO tableau;'
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_jungle TO willhowie;'
@@ -59,7 +58,6 @@ with engine.connect() as conn:
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_combo_odi TO willhowie;'
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_combo_odi TO jordan;'
     ))
-    conn.commit()
 
 
 # upload historic outputs
@@ -75,12 +73,9 @@ truncate_and_upload(
 )
 
 # Use a connection from the engine to execute GRANT statements
-with engine.connect() as conn:
+with engine.begin() as conn:
     conn.execute(text(
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic TO willhowie;'
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic TO jakelingard;'
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic TO jordan;'
     ))
-    conn.commit()
-
-
