@@ -14,6 +14,7 @@ connection = engine.connect()
 
 
 # Import
+recencies = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/recencies.csv')
 jungle = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/sqlUploadJungle.csv')
 rasoi = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/sqlUploadRasoi.csv')
 bowl_sqldata_combo = jungle.merge(rasoi, on=('bowler', 'playerid', 'host', 'external_rating', 'competition'), suffixes=('_jungle', '_rasoi'))
@@ -44,6 +45,7 @@ def truncate_and_upload(df, table_name, dtype=None):
 truncate_and_upload(jungle, 'bowler_ratings_jungle')
 truncate_and_upload(rasoi, 'bowler_ratings_rasoi')
 truncate_and_upload(bowl_sqldata_combo, 'bowler_ratings_combo_odi')
+truncate_and_upload(recencies, 'bowl_recency_weightings_wh')
 
 # Use a connection from the engine to execute GRANT statements
 with engine.begin() as conn:
@@ -57,6 +59,9 @@ with engine.begin() as conn:
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_combo_odi TO tableau;'
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_combo_odi TO willhowie;'
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_combo_odi TO jordan;'
+        'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowl_recency_weightings_wh TO tableau;'
+        'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowl_recency_weightings_wh TO willhowie;'
+        'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowl_recency_weightings_wh TO jordan;'
     ))
 
 
