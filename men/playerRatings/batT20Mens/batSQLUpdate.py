@@ -1,10 +1,20 @@
 import pandas as pd
+from datetime import date, timedelta
 import sqlalchemy
 from sqlalchemy import text
 import runpy
 from db import engine
 from paths import PROJECT_ROOT
 connection = engine.connect()
+
+run_type = 1 # 1 will only run if new matches are present in the db since last run, 0 is push through regardless
+sql_test = pd.read_sql_query("""select max(last_match_date_jungle) as last_match_date_jungle from player_ratings.batter_ratings_combo_odi""", con=connection)
+last_date = str(sql_test['last_match_date_jungle'].iloc[0])[:10]
+yesterday = (date.today() - timedelta(days=1)).isoformat()
+if (last_date == yesterday) & (run_type == 1):
+    print("Date is yesterday, stopping.")
+    exit()
+
 
 # run the outputs
 # runpy.run_path('1_dataGet.py')
