@@ -8,14 +8,14 @@ from paths import PROJECT_ROOT
 
 for x in np.arange(0, 2, 1):
     # read data
-    bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+    bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/batDataCombinedClean_w.csv', parse_dates=['date', 'dob'])
     bat_data = bat_data[bat_data['format'] == 't20']
 
     # read ratingsT20
     if x == 0:
-        ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle2.csv', parse_dates=['date'])
+        ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle2_w.csv', parse_dates=['date'])
     else:
-        ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi2.csv', parse_dates=['date'])
+        ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi2_w.csv', parse_dates=['date'])
 
     # revert the rep values for tailenders
     ratings['rep_run_ratio'] = np.where(ratings['ord_r'] > 8, (((1 - ratings['rep_run_ratio']) / 2) * np.minimum(2, np.abs(ratings['ord_r'] - 8))) + ratings['rep_run_ratio'], ratings['rep_run_ratio'])
@@ -129,7 +129,7 @@ for x in np.arange(0, 2, 1):
     # Filter the DataFrame to keep only rows with the maximum date
     sql_upload = ratings[ratings['date'] == (ratings['date'].max())]
     # this is done to make sure all names have ratingsT20, even if an id is matched to two names like Shaheen
-    batter_names = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/combinedBatDataClean.csv', parse_dates=['date']).loc[:, ['playerid', 'batsman']].drop_duplicates()
+    batter_names = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/batDataCombinedClean_w.csv', parse_dates=['date']).loc[:, ['playerid', 'batsman']].drop_duplicates()
     sql_upload = sql_upload.merge(batter_names, how='left', left_on=['playerid'], right_on=['playerid'])
     # isolate the columns we want
     sql_upload = sql_upload.loc[:, ['batsman_y', 'playerid', 'host', 'ord_r', 'balls_faced_r', 'run_rating', 'wkt_rating', 'competition', 'rep_run_weight', 'run_rating_3', 'rep_wkt_weight', 'wkt_rating_3']]
@@ -138,11 +138,11 @@ for x in np.arange(0, 2, 1):
 
     # export the detailed ratingsT20 and table for sql upload
     if x == 0:
-        ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle3.csv', index=False)
-        sql_upload.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadJungle.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle3_w.csv', index=False)
+        sql_upload.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadJungle_w.csv', index=False)
     else:
-        ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi3.csv', index=False)
-        sql_upload.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadRasoi.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi3_w.csv', index=False)
+        sql_upload.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadRasoi_w.csv', index=False)
 
 
 

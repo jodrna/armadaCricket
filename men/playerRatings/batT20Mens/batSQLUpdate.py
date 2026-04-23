@@ -6,16 +6,16 @@ from db import engine
 from paths import PROJECT_ROOT
 connection = engine.connect()
 
-# # run the outputs
+# run the outputs
 # runpy.run_path('1_dataGet.py')
-# runpy.run_path('2_dataClean.py')
-# runpy.run_path('3_batModel.py')
-# runpy.run_path('4_batReplacement.py')
-# runpy.run_path('5_batReversion.py')
+runpy.run_path('2_batDataClean.py')
+runpy.run_path('3_batModel.py')
+runpy.run_path('4_batReplacement.py')
+runpy.run_path('5_batReversion.py')
 
 
 # Import
-recencies = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/recencies.csv')
+recencies = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRecencies.csv')
 jungle = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/sqlUploadJungle.csv')
 rasoi = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/sqlUploadRasoi.csv')
 bat_sqldata_combo = jungle.merge(rasoi, on=('batter', 'playerid', 'host', 'external_rating', 'competition'), suffixes=('_jungle', '_rasoi'))

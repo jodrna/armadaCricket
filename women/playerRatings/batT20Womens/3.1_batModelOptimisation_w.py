@@ -4,7 +4,7 @@ from scipy.optimize import least_squares
 from batFunctions_w import qualityMethodBins, newMethodBins, buildRunRatingsOriginal, buildRunRatingsMapOne, buildRunRatingsMapTwo, buildRunRatingsMapPriority, buildWktRatingsMapPriority, buildWktRatingsOriginal
 from paths import PROJECT_ROOT
 
-bat_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+bat_data = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/data/batDataCombinedClean.csv', parse_dates=['date', 'dob'])
 # n2h_factors = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/auxiliaries/batN2HFactors.csv')
 # n2h_factors = n2h_factors.loc[:, ['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
 # coeff_adjust = pd.read_csv(PROJECT_ROOT / 'OneDrive - Decimal Data Services Ltd/player_ratings/bat_t20_womens/all/auxiliaries/batN2HFactorsCoeffs.csv')

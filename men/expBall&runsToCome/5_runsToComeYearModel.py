@@ -7,9 +7,9 @@ from paths import PROJECT_ROOT
 
 
 # import data and the runs to come modelled numbers
-trainData = pd.read_csv(PROJECT_ROOT / 'men/data/dataClean.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
-masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/4_masterLookup.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/4_masterLookup.csv')
 
 
 trainData['totalInningRunsToCome'] = trainData['totalInningRunsToComeAdj']

@@ -227,11 +227,19 @@ balls_per_match = pd.read_sql_query("select * "
 balls_per_match.columns = ['playerid', 'ballspermatch']
 
 
+# tier data
+tier_data = pd.read_sql_query("select * "
+                                        "from match_data.tier_lookup2", con=connection)
+tier_data.columns = ['competition', 'avg_runs', 'avg_wkts', 'allgames']
+
 # bat files
-combinedBatData.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatData.csv', index=False)
+combinedBatData.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombined.csv', index=False)
 playerInfo.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/playerInfo.csv', index=False)
+tier_data.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batTierData.csv', index=False)
 
 # bowl files
-combinedBowlData.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/combinedBowlData.csv', index=False)
+combinedBowlData.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/bowlDataCombined.csv', index=False)
 balls_per_match.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/ballsPerMatch.csv', index=False)
 playerInfo.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/playerInfo.csv', index=False)
+tier_data.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlTierData.csv', index=False)
+

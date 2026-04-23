@@ -9,7 +9,7 @@ from paths import PROJECT_ROOT
 
 
 # read data and ratingsT20
-bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombinedClean.csv', parse_dates=['date', 'dob'])
 current_ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle3.csv')
 ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle2.csv')
 

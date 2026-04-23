@@ -7,7 +7,7 @@ from paths import PROJECT_ROOT
 # -------------------------
 # Imports
 # -------------------------
-bowl_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/combinedBowlDataClean.csv', parse_dates=['date', 'dob'])
+bowl_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/bowlDataCombinedClean.csv', parse_dates=['date', 'dob'])
 bowl_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlWeightings.csv')
 n2h_factors_seam = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlN2HFactorsSeam.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
 n2h_factors_spin = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlN2HFactorsSpin.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
@@ -284,20 +284,20 @@ for x in np.arange(0, 2, 1):
     # Exports
     # -------------------------
     if x == 0:
-        recencies_r = lookbacks_player_r[(lookbacks_player_r['competition'] == 'T20I') & (lookbacks_player_r['host'] == 'West Indies') & (lookbacks_player_r['date'] == lookbacks_player_r['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_bowled_2']]
+        recencies_r = lookbacks_player_r[((lookbacks_player_r['competition'] == 'T20I') | (lookbacks_player_r['competition'] == 'tier_2')) & (lookbacks_player_r['host'] == 'West Indies') & (lookbacks_player_r['date'] == lookbacks_player_r['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_bowled_2']]
         recencies_r['recency_weight_match_sum'] = recencies_r['recency_weight'] * recencies_r['balls_bowled_2']
         recencies_t = pd.pivot_table(recencies_r, index=['playerid'], values=['recency_weight_match_sum'], aggfunc='sum').reset_index()
         recencies_r = recencies_r.merge(recencies_t, how='left', on=['playerid'])
         recencies_r['recency_weight_bbb_runs'] = recencies_r['recency_weight_match_sum_x'] / recencies_r['recency_weight_match_sum_y'] / recencies_r['balls_bowled_2']
 
-        recencies_w = lookbacks_player_w[(lookbacks_player_w['competition'] == 'T20I') & (lookbacks_player_w['host'] == 'West Indies') & (lookbacks_player_w['date'] == lookbacks_player_r['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_bowled_2']]
+        recencies_w = lookbacks_player_w[((lookbacks_player_r['competition'] == 'T20I') | (lookbacks_player_r['competition'] == 'tier_2')) & (lookbacks_player_w['host'] == 'West Indies') & (lookbacks_player_w['date'] == lookbacks_player_r['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_bowled_2']]
         recencies_w['recency_weight_match_sum'] = recencies_w['recency_weight'] * recencies_w['balls_bowled_2']
         recencies_t = pd.pivot_table(recencies_w, index=['playerid'], values=['recency_weight_match_sum'], aggfunc='sum').reset_index()
         recencies_w = recencies_w.merge(recencies_t, how='left', on=['playerid'])
         recencies_w['recency_weight_bbb_wkt'] = recencies_w['recency_weight_match_sum_x'] / recencies_w['recency_weight_match_sum_y'] / recencies_w['balls_bowled_2']
 
         recencies = pd.merge(recencies_r.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_runs']], recencies_w.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_wkt']], how='outer')
-        recencies.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/recencies.csv', index=False)
+        recencies.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRecencies.csv', index=False)
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsJungle.csv', index=False)
     else:
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsRasoi.csv', index=False)

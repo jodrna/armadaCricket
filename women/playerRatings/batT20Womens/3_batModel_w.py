@@ -17,10 +17,10 @@ from paths import PROJECT_ROOT
 
 for x in np.arange(0, 2, 1):
     # read data from documents
-    bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
-    n2h_factors = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batN2HFactors.csv')
+    bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/batDataCombinedClean_w.csv', parse_dates=['date', 'dob'])
+    n2h_factors = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batN2HFactors_w.csv')
     n2h_factors = n2h_factors.loc[:, ['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
-    # coeff_adjust = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batN2HFactorsCoeffs.csv')
+    # coeff_adjust = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batN2HFactorsCoeffs_w.csv')
     # coeff_values = coeff_adjust.mean().to_dict()  # this makes a dictionary of values, the mean of each column (there is only one value for each column) named the name of each column. I can call on these values later
 
     # filter a specific player
@@ -52,7 +52,7 @@ for x in np.arange(0, 2, 1):
     lookbacks_player['balls_ago'] = lookbacks_player['balls_faced_career'] - lookbacks_player['balls_faced_career_2']
 
     # don't actully use these but the function needs them for the outputs as its just the same as the optimisation function
-    bat_weightings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batWeightings.csv')
+    bat_weightings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batWeightings_w.csv')
     bat_data = bat_data.merge(bat_weightings, on='balls_faced_career', how='left')
     bat_data['runs_weight_curve'] = bat_data['runs_weight_curve'].fillna(1)
     bat_data['wkts_weight_curve'] = bat_data['wkts_weight_curve'].fillna(1)
@@ -155,12 +155,12 @@ for x in np.arange(0, 2, 1):
         recencies_w['recency_weight_bbb_wkt'] = recencies_w['recency_weight_match_sum_x'] / recencies_w['recency_weight_match_sum_y'] / recencies_w['balls_faced_2']
         # merge the runs and wickets
         recencies = pd.merge(recencies_r.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_runs']], recencies_w.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_wkt']], how='outer')
-        recencies.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/recencies.csv', index=False)
+        recencies.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRecencies_w.csv', index=False)
 
         # export ratingsT20
-        ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle_w.csv', index=False)
     else:
-        ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi.csv', index=False)
+        ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi_w.csv', index=False)
 
 
 

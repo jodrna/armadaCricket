@@ -12,7 +12,7 @@ from paths import PROJECT_ROOT
 # -------------------------
 # Imports
 # -------------------------
-bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombinedClean.csv', parse_dates=['date', 'dob'])
 n2h_factors = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batN2HFactors.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
 n2h_grad = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batN2HFactorsGradient.csv').rename(columns={'balls_faced_host_mean_y': 'balls_faced_host'})
 bat_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batWeightings.csv')
@@ -21,7 +21,7 @@ bat_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxili
 # -------------------------
 # Test one batsman
 # -------------------------
-# bat_data = bat_data[(bat_data['batsman'] == 'Liam Livingstone')]
+# bat_data = bat_data[(bat_data['batsman'] == 'Sikandar Raza')]
 
 
 # -------------------------
@@ -290,281 +290,284 @@ for x in np.arange(0, 2, 1):
     # Exports
     # -------------------------
     if x == 0:
-        recencies_r = lookbacks_player_r[(lookbacks_player_r['competition'] == 'T20I') & (lookbacks_player_r['host'] == 'West Indies') & (lookbacks_player_r['date'] == lookbacks_player_r['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_faced_2']]
+        recencies_r = lookbacks_player_r[((lookbacks_player_r['competition'] == 'T20I') | (lookbacks_player_r['competition'] == 'tier_2'))  & (lookbacks_player_r['host'] == 'West Indies') & (lookbacks_player_r['date'] == lookbacks_player_r['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_faced_2']]
         recencies_r['recency_weight_match_sum'] = recencies_r['recency_weight'] * recencies_r['balls_faced_2']
         recencies_t = pd.pivot_table(recencies_r, index=['playerid'], values=['recency_weight_match_sum'], aggfunc='sum').reset_index()
         recencies_r = recencies_r.merge(recencies_t, how='left', on=['playerid'])
         recencies_r['recency_weight_bbb_runs'] = recencies_r['recency_weight_match_sum_x'] / recencies_r['recency_weight_match_sum_y'] / recencies_r['balls_faced_2']
 
-        recencies_w = lookbacks_player_w[(lookbacks_player_w['competition'] == 'T20I') & (lookbacks_player_w['host'] == 'West Indies') & (lookbacks_player_w['date'] == lookbacks_player_w['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_faced_2']]
+        recencies_w = lookbacks_player_w[((lookbacks_player_r['competition'] == 'T20I') | (lookbacks_player_r['competition'] == 'tier_2'))  & (lookbacks_player_r['host'] == 'West Indies') & (lookbacks_player_r['date'] == lookbacks_player_r['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_faced_2']]
         recencies_w['recency_weight_match_sum'] = recencies_w['recency_weight'] * recencies_w['balls_faced_2']
         recencies_t = pd.pivot_table(recencies_w, index=['playerid'], values=['recency_weight_match_sum'], aggfunc='sum').reset_index()
         recencies_w = recencies_w.merge(recencies_t, how='left', on=['playerid'])
         recencies_w['recency_weight_bbb_wkt'] = recencies_w['recency_weight_match_sum_x'] / recencies_w['recency_weight_match_sum_y'] / recencies_w['balls_faced_2']
 
         recencies = pd.merge(recencies_r.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_runs']], recencies_w.loc[:, ['matchid_2', 'playerid', 'recency_weight_bbb_wkt']], how='outer')
-        recencies.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/recencies.csv', index=False)
+        recencies.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRecencies.csv', index=False)
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle.csv', index=False)
 
     else:
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsRasoi.csv', index=False)
 
-# -------------------------
-# Report filter
-# -------------------------
-player_name = 'Khawaja Nafay'
-competition_filter = 'T20I'
-host_filter = 'Sri Lanka'
-match_id = 101
-
-lookbacks_player_r = lookbacks_player_r[(lookbacks_player_r['batsman'] == player_name) &
-                                        (lookbacks_player_r['competition'] == competition_filter) &
-                                        (lookbacks_player_r['host'] == host_filter) &
-                                        (lookbacks_player_r['matchid'] == match_id)]
 
 
-# -------------------------
-# Breakdown dfs for run rating
-# -------------------------
-lookbacks_breakdown = lookbacks_player_r.copy()
-
-lookbacks_breakdown['year'] = pd.to_datetime(lookbacks_breakdown['date_2']).dt.year
-lookbacks_breakdown['n2h_value'] = lookbacks_breakdown['adj_realexprbat'] / lookbacks_breakdown['realexprbat_2']
-
-lookbacks_breakdown['format_group'] = np.where(
-    lookbacks_breakdown['competition_2'] == 'ODI1',
-    'odi1',
-    np.where(
-        lookbacks_breakdown['competition_2'] == 'ODI2',
-        'odi2',
-        't20'
-    )
-)
-
-total_weight_runs = lookbacks_breakdown['weight_runs'].sum()
-total_weight_exprbat = lookbacks_breakdown['weight_exprbat'].sum()
-
-final_run_rating = total_weight_runs / total_weight_exprbat
-
-
-# -------------------------
-# DF 1: by year
-# -------------------------
-rating_breakdown_year = (
-    lookbacks_breakdown.groupby('year', as_index=False)
-    .agg(
-        runs=('runs_2', 'sum'),
-        xruns=('adj_realexprbat', 'sum'),
-        balls_faced=('balls_faced_2', 'sum'),
-        weight_runs=('weight_runs', 'sum'),
-        weight_xruns=('weight_exprbat', 'sum')
-    )
-)
-
-rating_breakdown_year['raw_rating'] = rating_breakdown_year['runs'] / rating_breakdown_year['xruns']
-rating_breakdown_year['weight'] = rating_breakdown_year['weight_xruns'] / total_weight_exprbat
-rating_breakdown_year['contribution'] = rating_breakdown_year['weight_runs'] / total_weight_exprbat
-rating_breakdown_year['row_rating'] = rating_breakdown_year['weight_runs'] / rating_breakdown_year['weight_xruns']
-rating_breakdown_year['final_run_rating'] = final_run_rating
-
-rating_breakdown_year = rating_breakdown_year.loc[:, [
-    'year',
-    'balls_faced',
-    'runs',
-    'xruns',
-    'raw_rating',
-    'weight',
-    'contribution',
-    'row_rating',
-    'final_run_rating'
-]]
-
-total_row_year = pd.DataFrame([{
-    'year': 'TOTAL',
-    'balls_faced': rating_breakdown_year['balls_faced'].sum(),
-    'runs': rating_breakdown_year['runs'].sum(),
-    'xruns': rating_breakdown_year['xruns'].sum(),
-    'raw_rating': rating_breakdown_year['runs'].sum() / rating_breakdown_year['xruns'].sum(),
-    'weight': rating_breakdown_year['weight'].sum(),
-    'contribution': rating_breakdown_year['contribution'].sum(),
-    'row_rating': final_run_rating,
-    'final_run_rating': final_run_rating
-}])
-
-rating_breakdown_year = pd.concat([rating_breakdown_year, total_row_year], ignore_index=True)
-
-
-# -------------------------
-# DF 2: by host and competition
-# -------------------------
-rating_breakdown_host_comp = (
-    lookbacks_breakdown.groupby(['host_2', 'competition_2'], as_index=False)
-    .agg(
-        runs=('runs_2', 'sum'),
-        xruns=('adj_realexprbat', 'sum'),
-        balls_faced=('balls_faced_2', 'sum'),
-        weight_runs=('weight_runs', 'sum'),
-        weight_xruns=('weight_exprbat', 'sum')
-    )
-)
-
-n2h_host_comp = (
-    lookbacks_breakdown.groupby(['host_2', 'competition_2'])
-    .apply(lambda x: np.average(x['n2h_value'], weights=x['weight_exprbat']))
-    .reset_index(name='avg_n2h_value')
-)
-
-rating_breakdown_host_comp = rating_breakdown_host_comp.merge(
-    n2h_host_comp,
-    how='left',
-    on=['host_2', 'competition_2']
-)
-
-rating_breakdown_host_comp['raw_rating'] = rating_breakdown_host_comp['runs'] / rating_breakdown_host_comp['xruns']
-rating_breakdown_host_comp['weight'] = rating_breakdown_host_comp['weight_xruns'] / total_weight_exprbat
-rating_breakdown_host_comp['contribution'] = rating_breakdown_host_comp['weight_runs'] / total_weight_exprbat
-rating_breakdown_host_comp['row_rating'] = rating_breakdown_host_comp['weight_runs'] / rating_breakdown_host_comp['weight_xruns']
-rating_breakdown_host_comp['final_run_rating'] = final_run_rating
-
-rating_breakdown_host_comp = rating_breakdown_host_comp.rename(columns={
-    'host_2': 'host',
-    'competition_2': 'competition'
-})
-
-rating_breakdown_host_comp = rating_breakdown_host_comp.loc[:, [
-    'host',
-    'balls_faced',
-    'competition',
-    'avg_n2h_value',
-    'runs',
-    'xruns',
-    'raw_rating',
-    'weight',
-    'contribution',
-    'row_rating',
-    'final_run_rating'
-]]
-
-total_row_host_comp = pd.DataFrame([{
-    'host': 'TOTAL',
-    'balls_faced': rating_breakdown_host_comp['balls_faced'].sum(),
-    'competition': '',
-    'avg_n2h_value': np.average(
-        lookbacks_breakdown['n2h_value'],
-        weights=lookbacks_breakdown['weight_exprbat']
-    ),
-    'runs': rating_breakdown_host_comp['runs'].sum(),
-    'xruns': rating_breakdown_host_comp['xruns'].sum(),
-    'raw_rating': rating_breakdown_host_comp['runs'].sum() / rating_breakdown_host_comp['xruns'].sum(),
-    'weight': rating_breakdown_host_comp['weight'].sum(),
-    'contribution': rating_breakdown_host_comp['contribution'].sum(),
-    'row_rating': final_run_rating,
-    'final_run_rating': final_run_rating
-}])
-
-rating_breakdown_host_comp = pd.concat([rating_breakdown_host_comp, total_row_host_comp], ignore_index=True)
-
-
-# -------------------------
-# DF 3: by format
-# -------------------------
-rating_breakdown_format = (
-    lookbacks_breakdown.groupby('format_group', as_index=False)
-    .agg(
-        runs=('runs_2', 'sum'),
-        xruns=('adj_realexprbat', 'sum'),
-        balls_faced=('balls_faced_2', 'sum'),
-        weight_runs=('weight_runs', 'sum'),
-        weight_xruns=('weight_exprbat', 'sum')
-    )
-)
-
-n2h_format = (
-    lookbacks_breakdown.groupby('format_group')
-    .apply(lambda x: np.average(x['n2h_value'], weights=x['weight_exprbat']))
-    .reset_index(name='avg_n2h_value')
-)
-
-rating_breakdown_format = rating_breakdown_format.merge(
-    n2h_format,
-    how='left',
-    on='format_group'
-)
-
-rating_breakdown_format['raw_rating'] = rating_breakdown_format['runs'] / rating_breakdown_format['xruns']
-rating_breakdown_format['weight'] = rating_breakdown_format['weight_xruns'] / total_weight_exprbat
-rating_breakdown_format['contribution'] = rating_breakdown_format['weight_runs'] / total_weight_exprbat
-rating_breakdown_format['row_rating'] = rating_breakdown_format['weight_runs'] / rating_breakdown_format['weight_xruns']
-rating_breakdown_format['final_run_rating'] = final_run_rating
-
-format_order = {'t20': 0, 'odi1': 1, 'odi2': 2}
-rating_breakdown_format['format_sort'] = rating_breakdown_format['format_group'].map(format_order)
-rating_breakdown_format = rating_breakdown_format.sort_values('format_sort').drop(columns='format_sort').reset_index(drop=True)
-
-rating_breakdown_format = rating_breakdown_format.rename(columns={'format_group': 'format'})
-
-rating_breakdown_format = rating_breakdown_format.loc[:, [
-    'format',
-    'balls_faced',
-    'avg_n2h_value',
-    'runs',
-    'xruns',
-    'raw_rating',
-    'weight',
-    'contribution',
-    'row_rating',
-    'final_run_rating'
-]]
-
-total_row_format = pd.DataFrame([{
-    'format': 'TOTAL',
-    'balls_faced': rating_breakdown_format['balls_faced'].sum(),
-    'avg_n2h_value': np.average(
-        lookbacks_breakdown['n2h_value'],
-        weights=lookbacks_breakdown['weight_exprbat']
-    ),
-    'runs': rating_breakdown_format['runs'].sum(),
-    'xruns': rating_breakdown_format['xruns'].sum(),
-    'raw_rating': rating_breakdown_format['runs'].sum() / rating_breakdown_format['xruns'].sum(),
-    'weight': rating_breakdown_format['weight'].sum(),
-    'contribution': rating_breakdown_format['contribution'].sum(),
-    'row_rating': final_run_rating,
-    'final_run_rating': final_run_rating
-}])
-
-rating_breakdown_format = pd.concat([rating_breakdown_format, total_row_format], ignore_index=True)
-
-
-# -------------------------
-# Round all numeric columns to 2dp
-# -------------------------
-def round_df(df):
-    df = df.copy()
-    num_cols = df.select_dtypes(include=[np.number]).columns
-    df[num_cols] = df[num_cols].round(2)
-    return df
-
-rating_breakdown_year = round_df(rating_breakdown_year)
-rating_breakdown_host_comp = round_df(rating_breakdown_host_comp)
-rating_breakdown_format = round_df(rating_breakdown_format)
-
-
-# -------------------------
-# Sort by contribution with TOTAL last
-# -------------------------
-def sort_with_total_last(df, label_col, sort_col):
-    df_main = df[df[label_col] != 'TOTAL'].copy()
-    df_total = df[df[label_col] == 'TOTAL'].copy()
-
-    df_main = df_main.sort_values(sort_col, ascending=False)
-
-    return pd.concat([df_main, df_total], ignore_index=True)
-
-rating_breakdown_host_comp = sort_with_total_last(rating_breakdown_host_comp, 'host', 'contribution')
-rating_breakdown_format = sort_with_total_last(rating_breakdown_format, 'format', 'contribution')
-
-
-# exports
-rating_breakdown_year.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_year.csv', index=False)
-rating_breakdown_host_comp.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_host_comp.csv', index=False)
-rating_breakdown_format.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_format.csv', index=False)
+#
+# # -------------------------
+# # Report filter
+# # -------------------------
+# player_name = 'Khawaja Nafay'
+# competition_filter = 'T20I'
+# host_filter = 'Sri Lanka'
+# match_id = 101
+#
+# lookbacks_player_r = lookbacks_player_r[(lookbacks_player_r['batsman'] == player_name) &
+#                                         (lookbacks_player_r['competition'] == competition_filter) &
+#                                         (lookbacks_player_r['host'] == host_filter) &
+#                                         (lookbacks_player_r['matchid'] == match_id)]
+#
+#
+# # -------------------------
+# # Breakdown dfs for run rating
+# # -------------------------
+# lookbacks_breakdown = lookbacks_player_r.copy()
+#
+# lookbacks_breakdown['year'] = pd.to_datetime(lookbacks_breakdown['date_2']).dt.year
+# lookbacks_breakdown['n2h_value'] = lookbacks_breakdown['adj_realexprbat'] / lookbacks_breakdown['realexprbat_2']
+#
+# lookbacks_breakdown['format_group'] = np.where(
+#     lookbacks_breakdown['competition_2'] == 'ODI1',
+#     'odi1',
+#     np.where(
+#         lookbacks_breakdown['competition_2'] == 'ODI2',
+#         'odi2',
+#         't20'
+#     )
+# )
+#
+# total_weight_runs = lookbacks_breakdown['weight_runs'].sum()
+# total_weight_exprbat = lookbacks_breakdown['weight_exprbat'].sum()
+#
+# final_run_rating = total_weight_runs / total_weight_exprbat
+#
+#
+# # -------------------------
+# # DF 1: by year
+# # -------------------------
+# rating_breakdown_year = (
+#     lookbacks_breakdown.groupby('year', as_index=False)
+#     .agg(
+#         runs=('runs_2', 'sum'),
+#         xruns=('adj_realexprbat', 'sum'),
+#         balls_faced=('balls_faced_2', 'sum'),
+#         weight_runs=('weight_runs', 'sum'),
+#         weight_xruns=('weight_exprbat', 'sum')
+#     )
+# )
+#
+# rating_breakdown_year['raw_rating'] = rating_breakdown_year['runs'] / rating_breakdown_year['xruns']
+# rating_breakdown_year['weight'] = rating_breakdown_year['weight_xruns'] / total_weight_exprbat
+# rating_breakdown_year['contribution'] = rating_breakdown_year['weight_runs'] / total_weight_exprbat
+# rating_breakdown_year['row_rating'] = rating_breakdown_year['weight_runs'] / rating_breakdown_year['weight_xruns']
+# rating_breakdown_year['final_run_rating'] = final_run_rating
+#
+# rating_breakdown_year = rating_breakdown_year.loc[:, [
+#     'year',
+#     'balls_faced',
+#     'runs',
+#     'xruns',
+#     'raw_rating',
+#     'weight',
+#     'contribution',
+#     'row_rating',
+#     'final_run_rating'
+# ]]
+#
+# total_row_year = pd.DataFrame([{
+#     'year': 'TOTAL',
+#     'balls_faced': rating_breakdown_year['balls_faced'].sum(),
+#     'runs': rating_breakdown_year['runs'].sum(),
+#     'xruns': rating_breakdown_year['xruns'].sum(),
+#     'raw_rating': rating_breakdown_year['runs'].sum() / rating_breakdown_year['xruns'].sum(),
+#     'weight': rating_breakdown_year['weight'].sum(),
+#     'contribution': rating_breakdown_year['contribution'].sum(),
+#     'row_rating': final_run_rating,
+#     'final_run_rating': final_run_rating
+# }])
+#
+# rating_breakdown_year = pd.concat([rating_breakdown_year, total_row_year], ignore_index=True)
+#
+#
+# # -------------------------
+# # DF 2: by host and competition
+# # -------------------------
+# rating_breakdown_host_comp = (
+#     lookbacks_breakdown.groupby(['host_2', 'competition_2'], as_index=False)
+#     .agg(
+#         runs=('runs_2', 'sum'),
+#         xruns=('adj_realexprbat', 'sum'),
+#         balls_faced=('balls_faced_2', 'sum'),
+#         weight_runs=('weight_runs', 'sum'),
+#         weight_xruns=('weight_exprbat', 'sum')
+#     )
+# )
+#
+# n2h_host_comp = (
+#     lookbacks_breakdown.groupby(['host_2', 'competition_2'])
+#     .apply(lambda x: np.average(x['n2h_value'], weights=x['weight_exprbat']))
+#     .reset_index(name='avg_n2h_value')
+# )
+#
+# rating_breakdown_host_comp = rating_breakdown_host_comp.merge(
+#     n2h_host_comp,
+#     how='left',
+#     on=['host_2', 'competition_2']
+# )
+#
+# rating_breakdown_host_comp['raw_rating'] = rating_breakdown_host_comp['runs'] / rating_breakdown_host_comp['xruns']
+# rating_breakdown_host_comp['weight'] = rating_breakdown_host_comp['weight_xruns'] / total_weight_exprbat
+# rating_breakdown_host_comp['contribution'] = rating_breakdown_host_comp['weight_runs'] / total_weight_exprbat
+# rating_breakdown_host_comp['row_rating'] = rating_breakdown_host_comp['weight_runs'] / rating_breakdown_host_comp['weight_xruns']
+# rating_breakdown_host_comp['final_run_rating'] = final_run_rating
+#
+# rating_breakdown_host_comp = rating_breakdown_host_comp.rename(columns={
+#     'host_2': 'host',
+#     'competition_2': 'competition'
+# })
+#
+# rating_breakdown_host_comp = rating_breakdown_host_comp.loc[:, [
+#     'host',
+#     'balls_faced',
+#     'competition',
+#     'avg_n2h_value',
+#     'runs',
+#     'xruns',
+#     'raw_rating',
+#     'weight',
+#     'contribution',
+#     'row_rating',
+#     'final_run_rating'
+# ]]
+#
+# total_row_host_comp = pd.DataFrame([{
+#     'host': 'TOTAL',
+#     'balls_faced': rating_breakdown_host_comp['balls_faced'].sum(),
+#     'competition': '',
+#     'avg_n2h_value': np.average(
+#         lookbacks_breakdown['n2h_value'],
+#         weights=lookbacks_breakdown['weight_exprbat']
+#     ),
+#     'runs': rating_breakdown_host_comp['runs'].sum(),
+#     'xruns': rating_breakdown_host_comp['xruns'].sum(),
+#     'raw_rating': rating_breakdown_host_comp['runs'].sum() / rating_breakdown_host_comp['xruns'].sum(),
+#     'weight': rating_breakdown_host_comp['weight'].sum(),
+#     'contribution': rating_breakdown_host_comp['contribution'].sum(),
+#     'row_rating': final_run_rating,
+#     'final_run_rating': final_run_rating
+# }])
+#
+# rating_breakdown_host_comp = pd.concat([rating_breakdown_host_comp, total_row_host_comp], ignore_index=True)
+#
+#
+# # -------------------------
+# # DF 3: by format
+# # -------------------------
+# rating_breakdown_format = (
+#     lookbacks_breakdown.groupby('format_group', as_index=False)
+#     .agg(
+#         runs=('runs_2', 'sum'),
+#         xruns=('adj_realexprbat', 'sum'),
+#         balls_faced=('balls_faced_2', 'sum'),
+#         weight_runs=('weight_runs', 'sum'),
+#         weight_xruns=('weight_exprbat', 'sum')
+#     )
+# )
+#
+# n2h_format = (
+#     lookbacks_breakdown.groupby('format_group')
+#     .apply(lambda x: np.average(x['n2h_value'], weights=x['weight_exprbat']))
+#     .reset_index(name='avg_n2h_value')
+# )
+#
+# rating_breakdown_format = rating_breakdown_format.merge(
+#     n2h_format,
+#     how='left',
+#     on='format_group'
+# )
+#
+# rating_breakdown_format['raw_rating'] = rating_breakdown_format['runs'] / rating_breakdown_format['xruns']
+# rating_breakdown_format['weight'] = rating_breakdown_format['weight_xruns'] / total_weight_exprbat
+# rating_breakdown_format['contribution'] = rating_breakdown_format['weight_runs'] / total_weight_exprbat
+# rating_breakdown_format['row_rating'] = rating_breakdown_format['weight_runs'] / rating_breakdown_format['weight_xruns']
+# rating_breakdown_format['final_run_rating'] = final_run_rating
+#
+# format_order = {'t20': 0, 'odi1': 1, 'odi2': 2}
+# rating_breakdown_format['format_sort'] = rating_breakdown_format['format_group'].map(format_order)
+# rating_breakdown_format = rating_breakdown_format.sort_values('format_sort').drop(columns='format_sort').reset_index(drop=True)
+#
+# rating_breakdown_format = rating_breakdown_format.rename(columns={'format_group': 'format'})
+#
+# rating_breakdown_format = rating_breakdown_format.loc[:, [
+#     'format',
+#     'balls_faced',
+#     'avg_n2h_value',
+#     'runs',
+#     'xruns',
+#     'raw_rating',
+#     'weight',
+#     'contribution',
+#     'row_rating',
+#     'final_run_rating'
+# ]]
+#
+# total_row_format = pd.DataFrame([{
+#     'format': 'TOTAL',
+#     'balls_faced': rating_breakdown_format['balls_faced'].sum(),
+#     'avg_n2h_value': np.average(
+#         lookbacks_breakdown['n2h_value'],
+#         weights=lookbacks_breakdown['weight_exprbat']
+#     ),
+#     'runs': rating_breakdown_format['runs'].sum(),
+#     'xruns': rating_breakdown_format['xruns'].sum(),
+#     'raw_rating': rating_breakdown_format['runs'].sum() / rating_breakdown_format['xruns'].sum(),
+#     'weight': rating_breakdown_format['weight'].sum(),
+#     'contribution': rating_breakdown_format['contribution'].sum(),
+#     'row_rating': final_run_rating,
+#     'final_run_rating': final_run_rating
+# }])
+#
+# rating_breakdown_format = pd.concat([rating_breakdown_format, total_row_format], ignore_index=True)
+#
+#
+# # -------------------------
+# # Round all numeric columns to 2dp
+# # -------------------------
+# def round_df(df):
+#     df = df.copy()
+#     num_cols = df.select_dtypes(include=[np.number]).columns
+#     df[num_cols] = df[num_cols].round(2)
+#     return df
+#
+# rating_breakdown_year = round_df(rating_breakdown_year)
+# rating_breakdown_host_comp = round_df(rating_breakdown_host_comp)
+# rating_breakdown_format = round_df(rating_breakdown_format)
+#
+#
+# # -------------------------
+# # Sort by contribution with TOTAL last
+# # -------------------------
+# def sort_with_total_last(df, label_col, sort_col):
+#     df_main = df[df[label_col] != 'TOTAL'].copy()
+#     df_total = df[df[label_col] == 'TOTAL'].copy()
+#
+#     df_main = df_main.sort_values(sort_col, ascending=False)
+#
+#     return pd.concat([df_main, df_total], ignore_index=True)
+#
+# rating_breakdown_host_comp = sort_with_total_last(rating_breakdown_host_comp, 'host', 'contribution')
+# rating_breakdown_format = sort_with_total_last(rating_breakdown_format, 'format', 'contribution')
+#
+#
+# # exports
+# rating_breakdown_year.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_year.csv', index=False)
+# rating_breakdown_host_comp.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_host_comp.csv', index=False)
+# rating_breakdown_format.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_format.csv', index=False)

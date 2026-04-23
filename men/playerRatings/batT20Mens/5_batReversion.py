@@ -23,7 +23,7 @@ match_id = 101
 
 for x in np.arange(0, 2, 1):
     # read data
-    bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+    bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombinedClean.csv', parse_dates=['date', 'dob'])
 
     # read ratingsT20
     if x == 0:
@@ -149,7 +149,7 @@ for x in np.arange(0, 2, 1):
     sql_upload = ratings.loc[ratings['date'] == ratings['date'].max()].copy()
     sql_upload.loc[:, 'last_match_date'] = ratings.loc[ratings['matchid'] != 101, 'date'].max()
     # this is done to make sure all names have ratingsT20, even if an id is matched to two names like Shaheen
-    batter_names = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date']).loc[:, ['playerid', 'batsman']].drop_duplicates()
+    batter_names = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombinedClean.csv', parse_dates=['date']).loc[:, ['playerid', 'batsman']].drop_duplicates()
     sql_upload = sql_upload.merge(batter_names, how='left', left_on=['playerid'], right_on=['playerid'])
     # isolate the columns we want
     sql_upload = sql_upload.loc[:, ['last_match_date', 'batsman_y', 'playerid', 'host', 'ord_r', 'balls_faced_r', 'run_rating', 'wkt_rating', 'competition', 'rep_run_weight', 'run_rating_3', 'rep_wkt_weight', 'wkt_rating_3']]
@@ -169,97 +169,97 @@ for x in np.arange(0, 2, 1):
 
 
 
-    rating_breakdown_year = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_year.csv')
-    rating_breakdown_host_comp = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_host_comp.csv')
-    rating_breakdown_format = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_format.csv')
-
-summary_row = pdf_sql_upload.copy()
-summary_row = summary_row[summary_row['batsman'] == player_name]
-summary_row = summary_row[summary_row['competition'] == competition_filter]
-summary_row = summary_row[summary_row['host'] == host_filter]
-summary_row = summary_row.sort_values('date').tail(1)
-
-pdf_path = PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/' / f'{player_name}_report.pdf'
-
-styles = getSampleStyleSheet()
-story = []
-doc = SimpleDocTemplate(
-    str(pdf_path),
-    pagesize=landscape(A4),
-    rightMargin=5,
-    leftMargin=5,
-    topMargin=5,
-    bottomMargin=5
-)
-
-from reportlab.platypus import KeepInFrame
-
-content = []
-
-content.append(Paragraph(f'Player: {player_name}', styles['Heading2']))
-content.append(Paragraph(f'Competition: {competition_filter}', styles['BodyText']))
-content.append(Paragraph(f'Host: {host_filter}', styles['BodyText']))
-content.append(Paragraph(f'Match ID: {match_id}', styles['BodyText']))
-content.append(Spacer(1, 0.08 * inch))
-
-def make_table_from_df(df, title):
-    content.append(Paragraph(title, styles['Heading2']))
-    content.append(Spacer(1, 0.05 * inch))
-
-    df = df.copy()
-    df = df.round(2)
-    df = df.fillna('')
-
-    data = [df.columns.tolist()] + df.values.tolist()
-
-    available_width = landscape(A4)[0] - doc.leftMargin - doc.rightMargin
-    col_width = available_width / len(df.columns)
-
-    table = Table(data, colWidths=[col_width] * len(df.columns), repeatRows=1)
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
-        ('FONTSIZE', (0, 0), (-1, -1), 5),
-        ('LEADING', (0, 0), (-1, -1), 5.5),
-        ('TOPPADDING', (0, 0), (-1, -1), 1),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
-        ('LEFTPADDING', (0, 0), (-1, -1), 1),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 1),
-        ('VALIGN', (0, 0), (-1, -1), 'TOP')
-    ]))
-
-    content.append(table)
-    content.append(Spacer(1, 0.08 * inch))
-
-make_table_from_df(rating_breakdown_year, 'rating_breakdown_year')
-make_table_from_df(rating_breakdown_host_comp, 'rating_breakdown_host_comp')
-make_table_from_df(rating_breakdown_format, 'rating_breakdown_format')
-
-if len(summary_row) > 0:
-    replacement_value = round(summary_row['rep_run_ratio'].iloc[0], 2)
-    reversion_weight = round(summary_row['rep_run_weight'].iloc[0], 4)
-    rating_after_reversion = round(summary_row['run_rating_3'].iloc[0], 2)
-
-    content.append(Paragraph('Summary', styles['Heading2']))
-    content.append(Spacer(1, 0.05 * inch))
-    content.append(Paragraph(f'replacement value: {replacement_value}', styles['BodyText']))
-    content.append(Paragraph(f'reversion weight: {reversion_weight}', styles['BodyText']))
-    content.append(Paragraph(f'final rating: {rating_after_reversion}', styles['BodyText']))
-
-available_width = landscape(A4)[0] - doc.leftMargin - doc.rightMargin
-available_height = landscape(A4)[1] - doc.topMargin - doc.bottomMargin
-
-story.append(
-    KeepInFrame(
-        maxWidth=available_width,
-        maxHeight=available_height,
-        content=content,
-        mode='shrink'
-    )
-)
-
-doc.build(story)
-
-
-
+#     rating_breakdown_year = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_year.csv')
+#     rating_breakdown_host_comp = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_host_comp.csv')
+#     rating_breakdown_format = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/rating_breakdown_format.csv')
+#
+# summary_row = pdf_sql_upload.copy()
+# summary_row = summary_row[summary_row['batsman'] == player_name]
+# summary_row = summary_row[summary_row['competition'] == competition_filter]
+# summary_row = summary_row[summary_row['host'] == host_filter]
+# summary_row = summary_row.sort_values('date').tail(1)
+#
+# pdf_path = PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/' / f'{player_name}_report.pdf'
+#
+# styles = getSampleStyleSheet()
+# story = []
+# doc = SimpleDocTemplate(
+#     str(pdf_path),
+#     pagesize=landscape(A4),
+#     rightMargin=5,
+#     leftMargin=5,
+#     topMargin=5,
+#     bottomMargin=5
+# )
+#
+# from reportlab.platypus import KeepInFrame
+#
+# content = []
+#
+# content.append(Paragraph(f'Player: {player_name}', styles['Heading2']))
+# content.append(Paragraph(f'Competition: {competition_filter}', styles['BodyText']))
+# content.append(Paragraph(f'Host: {host_filter}', styles['BodyText']))
+# content.append(Paragraph(f'Match ID: {match_id}', styles['BodyText']))
+# content.append(Spacer(1, 0.08 * inch))
+#
+# def make_table_from_df(df, title):
+#     content.append(Paragraph(title, styles['Heading2']))
+#     content.append(Spacer(1, 0.05 * inch))
+#
+#     df = df.copy()
+#     df = df.round(2)
+#     df = df.fillna('')
+#
+#     data = [df.columns.tolist()] + df.values.tolist()
+#
+#     available_width = landscape(A4)[0] - doc.leftMargin - doc.rightMargin
+#     col_width = available_width / len(df.columns)
+#
+#     table = Table(data, colWidths=[col_width] * len(df.columns), repeatRows=1)
+#     table.setStyle(TableStyle([
+#         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+#         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+#         ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
+#         ('FONTSIZE', (0, 0), (-1, -1), 5),
+#         ('LEADING', (0, 0), (-1, -1), 5.5),
+#         ('TOPPADDING', (0, 0), (-1, -1), 1),
+#         ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
+#         ('LEFTPADDING', (0, 0), (-1, -1), 1),
+#         ('RIGHTPADDING', (0, 0), (-1, -1), 1),
+#         ('VALIGN', (0, 0), (-1, -1), 'TOP')
+#     ]))
+#
+#     content.append(table)
+#     content.append(Spacer(1, 0.08 * inch))
+#
+# make_table_from_df(rating_breakdown_year, 'rating_breakdown_year')
+# make_table_from_df(rating_breakdown_host_comp, 'rating_breakdown_host_comp')
+# make_table_from_df(rating_breakdown_format, 'rating_breakdown_format')
+#
+# if len(summary_row) > 0:
+#     replacement_value = round(summary_row['rep_run_ratio'].iloc[0], 2)
+#     reversion_weight = round(summary_row['rep_run_weight'].iloc[0], 4)
+#     rating_after_reversion = round(summary_row['run_rating_3'].iloc[0], 2)
+#
+#     content.append(Paragraph('Summary', styles['Heading2']))
+#     content.append(Spacer(1, 0.05 * inch))
+#     content.append(Paragraph(f'replacement value: {replacement_value}', styles['BodyText']))
+#     content.append(Paragraph(f'reversion weight: {reversion_weight}', styles['BodyText']))
+#     content.append(Paragraph(f'final rating: {rating_after_reversion}', styles['BodyText']))
+#
+# available_width = landscape(A4)[0] - doc.leftMargin - doc.rightMargin
+# available_height = landscape(A4)[1] - doc.topMargin - doc.bottomMargin
+#
+# story.append(
+#     KeepInFrame(
+#         maxWidth=available_width,
+#         maxHeight=available_height,
+#         content=content,
+#         mode='shrink'
+#     )
+# )
+#
+# doc.build(story)
+#
+#
+#

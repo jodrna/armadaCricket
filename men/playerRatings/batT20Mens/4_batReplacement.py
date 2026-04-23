@@ -98,9 +98,9 @@ def build_features(df, transformers, is_training=True, target_type='run', comp_c
 
 for x in np.arange(0, 2, 1):
     # 1. Import Data
-    bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/combinedBatDataClean.csv', parse_dates=['date', 'dob'])
+    bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombinedClean.csv', parse_dates=['date', 'dob'])
     n2h_factors = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batN2HFactors.csv')
-    tier_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/tierData.csv')
+    tier_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batTierData.csv')
 
 
 

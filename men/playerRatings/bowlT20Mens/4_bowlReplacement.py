@@ -109,8 +109,8 @@ for x in np.arange(0, 2, 1):
     # -------------------------
     # 1) Imports
     # -------------------------
-    bowl_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/combinedBowlDataClean.csv', parse_dates=['date', 'dob'])
-    tier_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/tierData.csv')
+    bowl_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/bowlDataCombinedClean.csv', parse_dates=['date', 'dob'])
+    tier_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlTierData.csv')
 
     if x == 0:
         ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsJungle.csv', parse_dates=['date'])

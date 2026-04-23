@@ -4,15 +4,14 @@ from sqlalchemy import text
 from urllib.parse import quote
 from db import engine
 from paths import PROJECT_ROOT
-
 connection = engine.connect()
 
 
 # Import
-player = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadJungle.csv')
-innings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadRasoi.csv')
+player = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadJungle_w.csv')
+innings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadRasoi_w.csv')
 bat_sqldata_combo = player.merge(innings, on = ('batter', 'playerid', 'host', 'external_rating', 'competition'), suffixes=('_jungle', '_rasoi'))
-ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle3.csv')
+ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle3_w.csv')
 
 # to SQl
 player.to_sql("batter_ratings_jungle_w", con=engine, schema="player_ratings", if_exists='replace', index=False)

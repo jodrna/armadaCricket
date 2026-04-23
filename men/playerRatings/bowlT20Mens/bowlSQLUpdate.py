@@ -6,15 +6,15 @@ from db import engine
 from paths import PROJECT_ROOT
 connection = engine.connect()
 
-# # run the outputs
-# runpy.run_path('2_dataClean.py')
-# runpy.run_path('3_bowlModel.py')
-# runpy.run_path('4_bowlReplacement.py')
-# runpy.run_path('5_bowlReversion.py')
+# run the outputs
+runpy.run_path('2_bowlDataClean.py')
+runpy.run_path('3_bowlModel.py')
+runpy.run_path('4_bowlReplacement.py')
+runpy.run_path('5_bowlReversion.py')
 
 
 # Import
-recencies = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/recencies.csv')
+recencies = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRecencies.csv')
 jungle = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/sqlUploadJungle.csv')
 rasoi = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/sqlUploadRasoi.csv')
 bowl_sqldata_combo = jungle.merge(rasoi, on=('bowler', 'playerid', 'host', 'external_rating', 'competition'), suffixes=('_jungle', '_rasoi'))
@@ -84,3 +84,4 @@ with engine.begin() as conn:
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic TO jakelingard;'
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic TO jordan;'
     ))
+
