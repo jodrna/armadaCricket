@@ -159,9 +159,9 @@ runsToComeYear = pd.pivot_table(trainData, values=['totalInningRunsToComeAdj', '
                                 index=['year', 'totalInningWickets', 'inningBallNumber'], aggfunc='mean').reset_index().sort_values(by=['inningBallNumber', 'totalInningWickets', 'year'],
                                                                                                                                     ascending=[True, True, True])
 
-# export
-masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/5_masterLookup.csv', index=False)
-# trainData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/5_trainData.csv', index=False)
+# # export
+masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv', index=False)
+# # trainData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/5_trainData.csv', index=False)
 
 
 
