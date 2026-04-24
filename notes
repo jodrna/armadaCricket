@@ -1,7 +1,10 @@
 1. update dataget for the match market and bbb predictions to the adjusted numbers
 2. fix the bat optimisation file for women batters
 3. womens bowlers
-
+4. duplicates in model and causing overbinning in reversion
+5. error analysis update for mens bat/bowl and womens bat
+6. check if duplicates in optimisation also
+7. basically get mens bat/bowl and womens bat up to same level as womens bowlers, they are now the cleanest coded with zero known bugs, some possible little bugs causing duplicates found when doing womens bowlers
 
 
 PROJECTS
