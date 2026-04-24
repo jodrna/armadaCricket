@@ -171,7 +171,7 @@ for _, row in masterLookup.iterrows():
     rows.append(row)
     if row['daysGroup'] == 11:
         dup = row.copy()
-        dup['daysGroup'] = 9.6
+        dup['daysGroup'] = 8.75
         rows.append(dup)
 
 # Rebuild the DataFrame
@@ -190,10 +190,11 @@ runsToComeYear = pd.pivot_table(trainData, values=['totalInningRunsToComeAdj', '
                                                                                                                                     ascending=[True, True, True])
 
 # # export
-masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv', index=False)
+# masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv', index=False)
 # # trainData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/5_trainData.csv', index=False)
 
-
+testViewMasterLookup = masterLookup[masterLookup.daysGroup == 8.75].loc[:,['totalInningWickets', 'inningBallNumber', 'totalInningRunsToComeSimBiasSplineYearAdj']]
+testViewMasterLookup = testViewMasterLookup.groupby(['totalInningWickets', 'inningBallNumber']).mean().reset_index()
 
 # only first ball of the innings
 plotData = runsToComeYear[runsToComeYear['inningBallNumber'] == 1]
