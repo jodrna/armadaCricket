@@ -44,7 +44,7 @@ trainData = trainData[(trainData.year > 2018)]
 
 ##1111111 original model
 # Features and target variable
-X = trainData[['daysGroup', 'totalInningWickets', 'inningBallNumber', 'daysGroup_inningBallNumber', 'daysGroup_totalInningWickets']]
+X = trainData[['daysGroup', 'daysGroup_inningBallNumber', 'daysGroup_totalInningWickets']] #'totalInningWickets', 'inningBallNumber',
 y = trainData['vsAdjOvr']
 y2 = trainData['vsOvr']
 
@@ -139,15 +139,24 @@ testingyear = testingyear.groupby(['year'])[['yearFactor', 'vsAdjOvr']].mean().r
 testingyear = testingyear.sort_values(by=['year'], ascending=[True])
 
 testing = trainData.copy()
-testing = testing.groupby(['totalInningWickets', 'year'])[['yearFactor', 'vsAdjOvr']].mean().reset_index()
+testing = testing.groupby(['totalInningWickets', 'year'])[['yearFactor', 'yearFactor2', 'vsAdjOvr']].mean().reset_index()
 testing = testing.sort_values(by=['year', 'totalInningWickets'], ascending=[False, True])
 
 testing2 = trainData.copy()
-testing2 = testing2.groupby(['totalInningWickets'])[['yearFactor', 'vsAdjOvr', 'vsOvr']].mean().reset_index()
+testing2 = testing2.groupby(['totalInningWickets'])[['yearFactor', 'yearFactor2', 'vsAdjOvr', 'vsOvr']].mean().reset_index()
 testing2 = testing2.sort_values(by=['totalInningWickets'], ascending=[True])
+
+testingbr = trainData.copy()
+testingbr = testingbr.groupby(['inningBallNumber'])[['yearFactor', 'yearFactor2', 'vsAdjOvr', 'vsOvr']].mean().reset_index()
+testingbr = testingbr.sort_values(by=['inningBallNumber'], ascending=[True])
+
+testingbryear = trainData.copy()
+testingbryear = testingbryear.groupby(['inningBallNumber', 'year'])[['yearFactor', 'yearFactor2', 'vsAdjOvr', 'vsOvr']].mean().reset_index()
+testingbryear = testingbryear.sort_values(by=['year', 'inningBallNumber'], ascending=[False, True])
 
 # check the training error
 print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalInningRunsToComeSimBiasSplineYearAdj']))
+print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalInningRunsToComeSimBiasSplineYear']))
 
 overall_avg_runs_test = trainData.groupby(['totalInningWickets', 'inningBallNumber'])[
     ['totalInningRunsToComeSimBiasSplineYearAdj', 'totalInningRunsToComeAdj', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningRunsToCome', 'totalInningRunsToComeSimBiasSpline']].mean().reset_index()
@@ -169,7 +178,7 @@ for _, row in masterLookup.iterrows():
 masterLookup = pd.DataFrame(rows)
 masterLookup['daysGroup_totalInningWickets'] = masterLookup['daysGroup'] * masterLookup['totalInningWickets']
 masterLookup['daysGroup_inningBallNumber'] = masterLookup['daysGroup'] * masterLookup['inningBallNumber']
-X = masterLookup[['daysGroup', 'totalInningWickets', 'inningBallNumber', 'daysGroup_inningBallNumber', 'daysGroup_totalInningWickets']]
+X = masterLookup[['daysGroup', 'daysGroup_inningBallNumber', 'daysGroup_totalInningWickets']] #'totalInningWickets', 'inningBallNumber',
 masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] = model.predict(X)
 masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] = model2.predict(X)
 masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] * masterLookup['totalInningRunsToComeSimBiasSpline']
@@ -181,7 +190,7 @@ runsToComeYear = pd.pivot_table(trainData, values=['totalInningRunsToComeAdj', '
                                                                                                                                     ascending=[True, True, True])
 
 # # export
-# masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv', index=False)
+masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv', index=False)
 # # trainData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/5_trainData.csv', index=False)
 
 
