@@ -28,7 +28,7 @@ if (last_date2 == last_date) & (run_type == 1):
     exit()
 
 with engine.connect() as conn:
-    conn.execute(text("UPDATE your_table SET date_column = :max_date"), {"max_date": last_date2})
+    conn.execute(text("UPDATE player_ratings.max_date_ratings SET date_column = :max_date"), {"max_date": last_date2})
     conn.commit()
 
 
