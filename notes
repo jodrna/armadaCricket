@@ -7,7 +7,10 @@
     fix womens bat optimisation code
     ensure consistency across all ratings code, should match womens bowlers
     --- all above won't effect ratings really, just minor coding issues---
-
+4. go through all files and folders;
+    check pathways are correct
+    check for consistency in naming conventions
+    make sure correct files are being used, eg change yearsnewpoly to 5_runsToComeYearModel if thats what we'll be using
 
 
 

@@ -19,7 +19,7 @@ if (last_date == yesterday) & (run_type == 1):
 # run data get
 runpy.run_path('1_dataGet.py')
 
-##check last date of downloaded data to check if need to run rest of the ratings:
+# check last date of downloaded data to check if need to run rest of the ratings:
 last_date2 = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombined.csv')
 max_date = last_date2['date'].max().strftime('%Y-%m-%d')
 last_date2 = last_date2['date_column'].max()
