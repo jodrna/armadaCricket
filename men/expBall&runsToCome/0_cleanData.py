@@ -5,13 +5,14 @@ import numpy as np
 from datetime import timedelta, date
 from db import engine
 from paths import PROJECT_ROOT
+import subprocess
 
+connection = engine.connect()
 
 #updating all data (1) or just daily update (2)?
 run_type = 1
 
-connection = engine.connect()
-
+subprocess.run(['git', 'pull'], check=True)
 last_date_data = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/auxileries/latest_data_clean.csv', parse_dates=['date'])
 if last_date_data['date_of_run'].max() == pd.Timestamp(date.today()):
     exit()
@@ -210,3 +211,7 @@ else:
     date['date_of_run'] = pd.Timestamp(date.today())
     date = date.loc[:,['date', 'date_of_run']]
     date.to_csv(PROJECT_ROOT / 'men/matchMarket/auxiliaries/latest_data_clean.csv', index=False)
+
+    subprocess.run(['git', 'add', str(PROJECT_ROOT / 'men/matchMarket/auxiliaries/latest_data_clean.csv')])
+    subprocess.run(['git', 'commit', '-m', 'update csv files'])
+    subprocess.run(['git', 'push'])
