@@ -5,15 +5,20 @@ from sqlalchemy import text
 import runpy
 from db import engine
 from paths import PROJECT_ROOT
+import subprocess
+from pathlib import Path
+
 connection = engine.connect()
 
-run_type = 1 # 1 will only run if new matches are present in the db since last run, 0 is push through regardless
+run_type = 1
+### 1 will only run if new matches are present in the db since last run
+### 0 will push through batter ratings only, regardless of when the last run was
 
 sql_test = pd.read_sql_query("""select max(last_date) as last_date from player_ratings.max_date_ratings""", con=connection)
 last_date = str(sql_test['last_date'].iloc[0])[:10]
 yesterday = (date.today() - timedelta(days=1)).isoformat()
 if (last_date == yesterday) & (run_type == 1):
-    print("Ratings including yesterday's games already, stopping.")
+    print(f"Ratings including yesterday's ({yesterday})  games already, stopping.")
     exit()
 
 # run data get
@@ -21,16 +26,13 @@ runpy.run_path('1_dataGet.py')
 
 # check last date of downloaded data to check if need to run rest of the ratings:
 last_date2 = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombined.csv')
-max_date = last_date2['date'].max().strftime('%Y-%m-%d')
-last_date2 = last_date2['date_column'].max()
+last_date2 = last_date2['date'].max()
 if (last_date2 == last_date) & (run_type == 1):
-    print("Max date is same as last run, stopping.")
+    print(f"Max date ({last_date2}) is same as last run, stopping.")
     exit()
 
-with engine.connect() as conn:
-    conn.execute(text("UPDATE player_ratings.max_date_ratings SET date_column = :max_date"), {"max_date": last_date2})
-    conn.commit()
-
+with engine.begin() as conn:
+    conn.execute(text("UPDATE player_ratings.max_date_ratings SET last_date = :max_date"), {"max_date": last_date2})
 
 # run the other outputs
 runpy.run_path('2_batDataClean.py')
@@ -110,3 +112,10 @@ with engine.begin() as conn:
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic TO jordan;'
     ))
 
+print(f"{last_date2} is now the latest game in the batter ratings. Beginning bowler ratings...")
+
+if run_type == 1:
+    script_path = Path(__file__).parent.parent / 'bowlT20Mens' / 'bowlSQLUpdate.py'
+    subprocess.run(['python', str(script_path)])
+
+    print(f"{last_date2} is now the latest game in the bowler ratings.")
