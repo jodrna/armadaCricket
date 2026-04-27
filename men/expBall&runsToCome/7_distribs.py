@@ -17,10 +17,10 @@ from paths import PROJECT_ROOT
 
 
 # import data
-trainData = pd.read_csv(PROJECT_ROOT / 'men/data/dataClean.csv', parse_dates=['date'])
-simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/ballSimsClassOrd.csv')
-masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/5_masterLookup.csv')
-matchMarket = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/1_chaseLookup.csv')
+trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
+simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/ballSimsClassOrd.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv')
+matchMarket = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookup.csv')
 trainData = trainData[trainData['inningNumber'] == 1]
 
 
@@ -203,7 +203,6 @@ row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBal
 
 # Extract the moments
 # mean = row2['mean'].values[0]
-# mean = 173.84
 mean = 173.5
 
 std = row2['std'].values[0]
