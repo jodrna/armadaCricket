@@ -10,13 +10,13 @@ from db import engine
 from paths import PROJECT_ROOT
 
 connection = engine.connect()
-raw_data_og = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3.csv', parse_dates=['date'])
+raw_data_og = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/outputs/Cleaned_t20bbb3.csv', parse_dates=['date'])
 # raw_data_og_max_date = raw_data_og['date'].max()
 raw_data_og = raw_data_og.drop_duplicates(subset=['id'])
 # # raw_data_og = raw_data_og[raw_data_og.matchid == 1233979]
 bowler_data = pd.read_sql_query("""select bowler, playerid as bowlerid, competition, host, date, run_rating as run_rating_pr_bo, wkt_rating as wkt_rating_pr_bo from player_ratings.bowler_ratings_historic""", con=connection)
 batter_data = pd.read_sql_query("""select batter as batsman, playerid as batterid, competition, host, date, run_rating as run_rating_pr_ba, wkt_rating as wkt_rating_pr_ba, balls_faced as balls_faced_pr_ba from player_ratings.batter_ratings_historic""", con=connection)
-ground_data = pd.read_sql_query("""select matchid, innperiod, reverted_runs, reverted_wkts, runsratio_ground, wktsratio_ground from player_ratings.ground_table""", con=connection)
+ground_data = pd.read_sql_query("""select matchid, venue, innperiod, reverted_runs, reverted_wkts, runsratio_ground, wktsratio_ground from player_ratings.ground_table""", con=connection)
 wktvalues = pd.read_sql_query("""select overno as over, wktslost as wickets, wktvalue from player_ratings.wkt_values""", con=connection)
 #
 # bowler_data.to_csv(fr'{user_name}\Documents\Tempdata\bowldataformatch.csv', index=False)
@@ -43,16 +43,19 @@ raw_data['ord'] = np.maximum(2, raw_data['ord'])
 raw_data['count1'] = 1
 raw_data.sort_values(by=['id'], ascending=[True], inplace=True)
 raw_data = raw_data.reset_index(drop=True)
-raw_data = raw_data.loc[:, ['matchid', 'innings', 'date', 'host', 'competition', 'id', 'nonstriker', 'battingteam', 'over', 'ballsremaining', 'wickets', 'ord', 'batsman', 'bowler', 'batterid', 'bowlerid', 'innperiod', 'realexprbat', 'realexpwbat', 'realexprbowl', 'realexpwbowl', 'ovrexpr', 'ovrexpw']]
+raw_data = raw_data.loc[:, ['matchid', 'venue', 'innings', 'date', 'host', 'competition', 'id', 'nonstriker', 'battingteam', 'over', 'ballsremaining', 'wickets', 'ord', 'batsman', 'bowler', 'batterid', 'bowlerid', 'innperiod', 'realexprbat', 'realexpwbat', 'realexprbowl', 'realexpwbowl', 'ovrexpr', 'ovrexpw']]
 # his_max_date0 = raw_data['date'].max()
 ##get recovery values as back up for the historic player ratings, in case historic values aren't available for specifc games
 recoveries_bat = batter_data.groupby(['batterid'])[['run_rating_pr_ba', 'wkt_rating_pr_ba']].mean().reset_index()
 recoveries_bat.rename(columns={'run_rating_pr_ba': 'oppo_bat_runs_old', 'wkt_rating_pr_ba': 'oppo_bat_wkts_old'}, inplace=True)
 recoveries_bowl = bowler_data.groupby(['bowlerid'])[['run_rating_pr_bo', 'wkt_rating_pr_bo']].mean().reset_index()
 recoveries_bowl.rename(columns={'run_rating_pr_bo': 'oppo_bowl_runs_old', 'wkt_rating_pr_bo': 'oppo_bowl_wkts_old'}, inplace=True)
+recoveries_ground = ground_data.groupby(['venue', 'innperiod'])[['runsratio_ground', 'wktsratio_ground']].mean().reset_index()
+recoveries_ground.rename(columns={'runsratio_ground': 'ground_runs', 'wktsratio_ground': 'ground_wkts'}, inplace=True)
 
 raw_data = raw_data.merge(recoveries_bat, on='batterid', how='left')
 raw_data = raw_data.merge(recoveries_bowl, on='bowlerid', how='left')
+raw_data = raw_data.merge(recoveries_ground, on=('venue', 'innperiod'), how='left')
 
 # his_max_date1 = raw_data['date'].max()
 ##merge in the bowler batter and ground ratings
@@ -376,7 +379,7 @@ new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_g
 
 raw_data_og = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'RA_sum']], on='id', how='left')
 
-raw_data_og.to_csv(PROJECT_ROOT / f'men/matchMarket/outputs/Cleaned_t20bbb3_adjusted_runs_to_come.csv', index=False)
+raw_data_og.to_csv(PROJECT_ROOT / 'men/matchMarket/outputs/Cleaned_t20bbb3_adjusted_runs_to_come.csv', index=False)
 
 # ##testing:
 # raw_data_og = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_adjusted_runs_to_come_{for_match}.csv')
