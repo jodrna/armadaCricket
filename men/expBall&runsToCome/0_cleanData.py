@@ -10,10 +10,10 @@ import subprocess
 connection = engine.connect()
 
 #updating all data (1) or just daily update (2)?
-run_type = 1
+run_type = 2
 
 subprocess.run(['git', 'pull'], check=True)
-last_date_data = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/auxileries/latest_data_clean.csv', parse_dates=['date'])
+last_date_data = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/auxiliaries/latest_data_clean.csv', parse_dates=['date'])
 if last_date_data['date_of_run'].max() == pd.Timestamp(date.today()):
     exit()
 
@@ -62,7 +62,7 @@ raw_data = raw_data.drop(labels=['target_x'], axis=1)
 
 
 # take out big bash after 2019 season because of the power surge
-raw_data = raw_data[(raw_data['competition'] != 'Big Bash League') | (raw_data['date'] < '2020-06-06')]
+raw_data = raw_data[(raw_data['competition'] != 'Big Bash League') | (raw_data['date'] < date(2020, 6, 6))]
 # take out the 100
 raw_data = raw_data[(raw_data['competition'] != 'The Hundred (Men\'s Comp)')]
 # for t20i only include the major nations
