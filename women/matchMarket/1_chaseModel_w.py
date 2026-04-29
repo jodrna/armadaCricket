@@ -14,10 +14,10 @@ from paths import PROJECT_ROOT
 
 
 # import
-trainData = pd.read_csv(PROJECT_ROOT / 'women/data/dataClean.csv', parse_dates=['date'])
-masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/5_masterLookup.csv')
-chaseSituations = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/chaseSituationBuilder.csv')
-chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/1_chaseLookupLive.csv')
+trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
+masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup.csv')
+chaseSituations = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/auxiliaries/chaseSituationBuilder.csv')
+chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookupLive.csv')
 
 
 
@@ -253,11 +253,5 @@ chaseLookup = chaseLookup.merge(years, how='left', on=['totalInningWickets', 'ru
 # chaseLookup = chaseLookup.merge(m_chaseWinWeighted, how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], suffixes=('', 'Year'))
 
 # exports
-# chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/1_chaseLookup.csv', index=False)
+chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup.csv', index=False)
 
-
-
-# now
-years2 = pd.pivot_table(trainData, values=['chaseWin'], index='year', aggfunc=['mean', 'count']).reset_index()
-
-rasums = pd.pivot_table(trainData, values=['RA_Sum'], index=['inningBallNumber', 'totalInningWickets'], aggfunc=['mean']).reset_index()

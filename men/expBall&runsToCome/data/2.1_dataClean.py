@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 from paths import PROJECT_ROOT
 
+
 # import
-trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_3.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_plus_eff_target_inns1.csv', parse_dates=['date'])
+trainData = trainData.rename(columns={'eff_target': 'effTarget'})
 
 # rename columns
 trainData = trainData.rename(columns={'innings': 'inningNumber', 'wickets': 'totalInningWickets', 'bowlerwicket': 'isWicketBowler', 'noball': 'noballRuns', 'over': 'overNumber',
@@ -32,8 +34,8 @@ trainData['sample'] = 1
 trainData['totalInningWicketsToCome'] = trainData['totalInningWicketsEnd'] - trainData['totalInningWickets']
 trainData['batsmanRuns'] = trainData['totalRuns'] - trainData['noballRuns'] - trainData['wideRuns'] - trainData['byeRuns']
 trainData['isWicketRunOut'] = np.where(trainData['isWicket'] > trainData['isWicketBowler'], 1, 0)
-trainData['chaseWin'] = np.where(trainData['totalInningRunsEnd'] >= trainData['target'], 1, 0)
-trainData['runsRequired'] = trainData['target'] - trainData['totalInningRuns']
+trainData['chaseWin'] = np.where(trainData['totalInningRunsEnd'] >= trainData['effTarget'], 1, 0)
+trainData['effRunsRequired'] = trainData['effTarget'] - trainData['totalInningRuns']
 
 # take out big bash power surge and 10 wickets down, keep only matches after 1st Jan 2015
 trainData = trainData[(trainData['competition'] != 'Big Bash League') | (trainData['date'] < '06-06-2020')]
@@ -44,23 +46,23 @@ trainData = trainData[trainData['date'] >= '01-01-2015']
 
 # isolate the exact columns we need and give them correct names
 trainData = trainData.loc[:, ['matchid', 'id', 'tier', 'date', 'year', 'competition', 'venue', 'host', 'home', 'away', 'battingteam', 'inningNumber', 'totalRuns', 'totalInningRuns',
-                              'totalInningRunsEnd', 'isWicket', 'totalInningWickets', 'totalInningWicketsEnd', 'inningBallsRemaining', 'target', 'noballRuns', 'wideRuns', 'ord', 'byeRuns', 'legbyes',
+                              'totalInningRunsEnd', 'isWicket', 'totalInningWickets', 'totalInningWicketsEnd', 'inningBallsRemaining', 'effTarget', 'noballRuns', 'wideRuns', 'ord', 'byeRuns', 'legbyes',
                               'innperiod', 'isWicketBowler', 'realexprbat', 'realexpwbat', 'rating_sample_size', 'major_nation', 'batsmanballs', 'ovrexpr', 'ovrexpw', 'batsman', 'nonstriker', 'extra',
                               'true_score', 'comp', 'required', 'totalInningRunsToCome', 'result', 'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'isPowerplay', 'isValid',
-                              'isWide', 'isNoball', 'sample', 'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired', 'RA_sum']]
+                              'isWide', 'isNoball', 'sample', 'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'effRunsRequired', 'RA_sum']]
 trainData.columns = ['matchID', 'ID', 'tier', 'date', 'year', 'competition', 'venue', 'host', 'home', 'away', 'battingTeam', 'inningNumber', 'totalRuns',
-                     'totalInningRuns', 'totalInningRunsEnd', 'isWicket', 'totalInningWickets', 'totalInningWicketsEnd', 'inningBallsRemaining', 'target', 'noballRuns', 'wideRuns',
+                     'totalInningRuns', 'totalInningRunsEnd', 'isWicket', 'totalInningWickets', 'totalInningWicketsEnd', 'inningBallsRemaining', 'effTarget', 'noballRuns', 'wideRuns',
                      'ord', 'byeRuns', 'legbyeRuns', 'inningPhase', 'isWicketBowler', 'realexprbat', 'realexpwbat', 'rating_sample_size', 'major_nation', 'batsmanBallsFaced',
                      'ovrexpr', 'ovrexpw', 'batsmanName', 'nonstrikerName', 'extra', 'true_score', 'comp', 'required', 'totalInningRunsToCome', 'result',
                      'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'isPowerplay', 'isValid', 'isWide', 'isNoball', 'sample',
-                     'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired', 'RA_Sum']
+                     'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'effRunsRequired', 'RA_Sum']
 
 # adjusted runs, used for the match market and year adjustment
-trainData['runsRequiredAdj'] = trainData['runsRequired'] - trainData['RA_Sum']
-trainData['totalInningRunsToComeAdj'] = trainData['totalInningRunsToCome'] - trainData['RA_Sum']
+# trainData['runsRequiredAdj'] = trainData['runsRequired'] - trainData['RA_Sum']
+# trainData['totalInningRunsToComeAdj'] = trainData['totalInningRunsToCome'] - trainData['RA_Sum']
 
 
 # export the cleaned data
-trainData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', index=False)
+trainData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean1st.csv', index=False)
 
 

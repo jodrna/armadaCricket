@@ -14,10 +14,10 @@ from paths import PROJECT_ROOT
 
 
 # import
-trainData = pd.read_csv(PROJECT_ROOT / 'men/data/dataClean.csv', parse_dates=['date'])
-masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/5_masterLookup.csv')
-chaseSituations = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/chaseSituationBuilder.csv')
-chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/1_chaseLookupLive.csv')
+trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
+masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv')
+chaseSituations = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/auxiliaries/chaseSituationBuilder.csv')
+chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookupLive.csv')
 
 # drop nans from adj
 trainData = trainData.dropna(axis=0, subset=['runsRequiredAdj'])
@@ -223,10 +223,6 @@ chaseLookup['state_id'] = (
 
 
 # exports
-chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/1_chaseLookup.csv', index=False)
+chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookup.csv', index=False)
 
-
-
-# now
-years2 = pd.pivot_table(trainData, values=['chaseWin'], index='year', aggfunc=['mean', 'count']).reset_index()
 

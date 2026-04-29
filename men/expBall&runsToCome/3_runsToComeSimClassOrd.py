@@ -4,9 +4,9 @@ import time
 from paths import PROJECT_ROOT
 
 # import files
-masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/2_masterLookup.csv')
-rateTrajectoryAdjustments = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/rateTrajectoryAdjustments.csv')
-fxbXslw = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/fxbXslw.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/2_masterLookup.csv')
+rateTrajectoryAdjustments = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/rateTrajectoryAdjustments.csv')
+fxbXslw = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/fxbXslw.csv')
 
 # the master lookup has values for ord and year, we don't want those for the sim, so drop them
 masterLookup = masterLookup.drop_duplicates(subset=['totalInningWickets', 'inningBallNumber']).reset_index(drop=True)
@@ -184,7 +184,7 @@ for index, row in toSim.iterrows():
 
 
 # export the ball simulations
-allSimBalls.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/ballSimsClassOrd.csv', index=False)
+allSimBalls.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/ballSimsClassOrd.csv', index=False)
 
 
 

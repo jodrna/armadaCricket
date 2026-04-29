@@ -12,10 +12,10 @@ from scipy.stats import kurtosis
 from paths import PROJECT_ROOT
 
 # import necessary data
-trainData = pd.read_csv(PROJECT_ROOT / 'women/data/dataClean.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
-simData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/ballSimsClassRateAdjusted.csv')
-masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/2_masterLookup.csv')
+simData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/2_masterLookup.csv')
 
 #
 totalInningValidBallsFaced = pd.pivot_table(simData, index=['simID'], values=['inningBallNumber'], aggfunc='max').reset_index()
@@ -155,5 +155,5 @@ print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalIn
 
 
 # export
-masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/4_masterLookup.csv', index=False)
+masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/4_masterLookup.csv', index=False)
 

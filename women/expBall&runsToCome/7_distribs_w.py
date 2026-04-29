@@ -14,10 +14,8 @@ from paths import PROJECT_ROOT
 
 
 # import data
-trainData = pd.read_csv(PROJECT_ROOT / 'women/data/dataClean.csv', parse_dates=['date'])
-# simsClass = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/ballSimsClass.csv')
-simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/ballSimsClassRateAdjusted.csv')
-# oldSTD = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/old_SD.csv')
+trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
+simsClassOrd = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
 
 # filter out the 2nd innings which we don't use in this instance
 trainData = trainData[trainData['inningNumber'] == 1]
@@ -53,7 +51,7 @@ trainData = trainData[trainData['inningNumber'] == 1]
 # pivot stats
 stdsReal = trainData.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'].agg(count='count', mean='mean', std='std', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)).reset_index()
 # stdsClass = simsClass.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'].agg(count='count', mean='mean', std='std', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)).reset_index()
-stdsClassAdjusted = simClassAdjusted.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'].agg(count='count', mean='mean', min='min', max='max', std='std', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)).reset_index()
+stdsClassAdjusted = simsClassOrd.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'].agg(count='count', mean='mean', min='min', max='max', std='std', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)).reset_index()
 
 # plot mean, std, skew for each wicket value and model
 fig, axes = plt.subplots(10, 4, figsize=(18, 30), sharex=True)
@@ -140,9 +138,9 @@ plt.show()
 #     (trainData['inningBallNumber'] == inningBallNumber) &
 #     (trainData['totalInningWickets'] == totalInningWickets)
 # ]
-# # simClassAdjusted_filtered = simClassAdjusted[
-# #     (simClassAdjusted['inningBallNumber'] == inningBallNumber) &
-# #     (simClassAdjusted['totalInningWickets'] == totalInningWickets)
+# # simsClassOrd_filtered = simsClassOrd[
+# #     (simsClassOrd['inningBallNumber'] == inningBallNumber) &
+# #     (simsClassOrd['totalInningWickets'] == totalInningWickets)
 # # ]
 # # simsClass_filtered = simsClass[
 # #     (simsClass['inningBallNumber'] == inningBallNumber) &

@@ -11,8 +11,9 @@
     check pathways are correct
     check for consistency in naming conventions
     make sure correct files are being used, eg change yearsnewpoly to 5_runsToComeYearModel if thats what we'll be using
-
-
+5. first innings match market, balls remaining, wickets lost, 1st innings projected score, 2nd innings projected score
+6. fix data get and clean process, first of all clean sql (script 1), then download sql (script 2), then clean that and adjust (Script 3), currently its 4 scripts, with duplication
+7. clean up the code used in years innings runs 'men/expBall&runsToCome/5_runsToComeYearModel.py'
 
 Other projects
 # ipl pitch data continues

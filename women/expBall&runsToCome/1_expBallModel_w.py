@@ -11,16 +11,16 @@ from sklearn.neural_network import MLPClassifier
 from paths import PROJECT_ROOT
 
 # import and filter to 1st innings only
-trainData = pd.read_csv(PROJECT_ROOT / 'women/data/dataClean.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
-trainDataMen = pd.read_csv(PROJECT_ROOT / 'men/data/dataClean.csv', parse_dates=['date'])
+trainDataMen = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
 trainDataMen = trainDataMen[trainDataMen['inningNumber'] == 1]
 trainDataMen = trainDataMen[(trainDataMen['noballRuns'] == 0) & (trainDataMen['wideRuns'] == 0)]
 
 
 
 # mens master lookup, for merging into women's data and getting the difference
-masterLookupMen = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/1_masterLookup.csv')
+masterLookupMen = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/1_masterLookup.csv')
 
 # extras averages, must be done here at the start before we remove these for modelling ball by ball
 extras = pd.pivot_table(trainData, values=['wideRuns', 'noballRuns', 'isWide', 'isNoball', 'byeRuns'], index=['overNumber'], aggfunc=['sum', 'mean']).reset_index()
@@ -216,4 +216,4 @@ classBias = pd.pivot_table(masterLookup, values=['sumProdClassRuns', 'm_batsmanR
 
 
 # export
-masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/1_masterLookup.csv', index=False)
+masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/1_masterLookup.csv', index=False)

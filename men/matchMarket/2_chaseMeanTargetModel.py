@@ -5,8 +5,8 @@ import sklearn.utils
 from paths import PROJECT_ROOT
 
 # import dataframes
-trainData = pd.read_csv(PROJECT_ROOT / 'men/data/dataClean.csv', parse_dates=['date'])
-chaseLookup = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/1_chaseLookup.csv')
+trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
+chaseLookup = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookup.csv')
 
 # only look at second innings data
 trainData = trainData[trainData['inningNumber'] == 2]
@@ -31,4 +31,4 @@ chaseLookup = chaseLookup.drop(labels=['inningBallNumber'], axis=1)    # remove 
 
 
 # export
-chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/2_chaseLookup.csv', index=False)
+chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/outputs/2_chaseLookup.csv', index=False)

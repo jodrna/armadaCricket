@@ -5,7 +5,6 @@ from urllib.parse import quote
 import os
 from db import engine
 from paths import PROJECT_ROOT
-
 connection = engine.connect()
 
 # format_date_new = last_date.strftime("%m/%d/%Y")
@@ -25,8 +24,8 @@ sql_data = pd.read_sql_query(sql_query, con=connection, params=(format_date,)) #
 
 
 # export then import again, simple way to get date format correct
-sql_data.to_csv(PROJECT_ROOT / 'men/data/sqldataforclean2023.csv', index=False)
-raw_data = pd.read_csv(PROJECT_ROOT / 'men/data/sqldataforclean2023.csv')
+sql_data.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/sqldataforclean2023.csv', index=False)
+raw_data = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/sqldataforclean2023.csv')
 
 raw_data = raw_data.sort_values(by=['matchid', 'innings', 'delivery2'])
 
@@ -130,8 +129,6 @@ raw_data['over'] = raw_data['over_number'] + 1
 
 
 # export data
-raw_data.to_csv(PROJECT_ROOT / 'men/data/cleanedT20BBB.csv', index=False)
-
-
+raw_data.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/cleanedT20BBB.csv', index=False)
 
 

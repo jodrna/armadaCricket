@@ -7,9 +7,9 @@ from paths import PROJECT_ROOT
 
 
 # import data and the runs to come modelled numbers
-trainData = pd.read_csv(PROJECT_ROOT / 'men/data/dataClean.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
-masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/5_masterLookup.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv')
 
 
 
@@ -102,6 +102,6 @@ masterLookup['state_id'] = (
 masterLookup['state_id'] = masterLookup['state_id'].map(lambda x: f"{x:.3f}")
 
 
-masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/6_masterLookup.csv', index=False)
+masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/6_masterLookup.csv', index=False)
 
 
