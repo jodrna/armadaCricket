@@ -1,3 +1,4 @@
+MAIN
 1. get mens bat/bowl and womens bat ratings up to same level as womens bowlers as these are now the cleanest coded with zero known bugs
     1 possible bug discovered while doing womens bowlers is causing duplicates in rating files in bat_model and bowl_model
     check if this causes problems in reversion like it did in womens bowlers
@@ -8,6 +9,11 @@
 2. first innings match market, balls remaining, wickets lost, 1st innings projected score, 2nd innings projected score
 3. fix data get and clean process, first of all clean sql (script 1), then download sql (script 2), then clean that and adjust (Script 3), currently its 4 scripts, with duplication
 4. clean up the code used in years innings runs 'men/expBall&runsToCome/5_runsToComeYearModel.py'
+
+
+
+
+
 
 Other projects
 # ipl pitch data continues
