@@ -18,51 +18,56 @@ trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean1st
 masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv')
 chaseSituations = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/auxiliaries/chaseSituationBuilder.csv')
 
-# drop nans from adj
-trainData = trainData.dropna(axis=0, subset=['runsRequiredAdj'])
-# now when running for adj simply change std runs required to adj
-trainData['runsRequiredStd'] = trainData['runsRequired']
-# take out the below 2 lines when running standard runs model
-trainData['runsRequired'] = trainData['runsRequiredAdj']
-# round to nearest int
-trainData['runsRequired'] = trainData['runsRequired'].round()
+# set runs required to efftarget
+trainData['runsRequired'] = trainData['effTarget']
+trainData = trainData.dropna(axis=0, subset=['runsRequired', 'totalInningWickets', 'inningBallsRemaining'])
 
 
+# we only want innings 1 for the training and shuffle the data
+trainData = trainData[trainData['inningNumber'] == 1]
 
-# Create a new dataframe with expanded rows from the max runs required defined in chase situation builder
+runs_required_spread = trainData.groupby(['inningBallsRemaining', 'totalInningWickets'], as_index=False).agg(
+    minRunsRequired=('runsRequired', 'min'),
+    maxRunsRequired=('runsRequired', 'max')
+)
+
+runs_required_spread['minRunsRequired'] = np.floor(runs_required_spread['minRunsRequired']).astype(int)
+runs_required_spread['maxRunsRequired'] = np.ceil(runs_required_spread['maxRunsRequired']).astype(int)
+runs_required_spread['inningBallsRemaining'] = runs_required_spread['inningBallsRemaining'].astype(int)
+runs_required_spread['totalInningWickets'] = runs_required_spread['totalInningWickets'].astype(int)
+
 chaseSituationsRows = []
-for _, row in chaseSituations.iterrows():
-    for runs in range(1, row['maxRunsRequired'] + 1):
+
+for _, row in runs_required_spread.iterrows():
+    for runs in range(int(row['minRunsRequired']), int(row['maxRunsRequired']) + 1):
         chaseSituationsRows.append({
-            'inningBallNumber': row['inningBallNumber'],
-            'inningBallsRemaining': row['inningBallsRemaining'],
-            'totalInningWickets': row['totalInningWickets'],
+            'inningBallsRemaining': int(row['inningBallsRemaining']),
+            'inningBallNumber': int(121 - row['inningBallsRemaining']),
+            'totalInningWickets': int(row['totalInningWickets']),
             'runsRequired': runs
         })
-# Create the new dataframe with the expanded out rows
+
 chaseSituations = pd.DataFrame(chaseSituationsRows)
 chaseSituations = chaseSituations.sort_values(by=['inningBallsRemaining', 'runsRequired', 'totalInningWickets']).reset_index(drop=True)
-
-
-
-
-# we only want innings 2 for the chase predictions, and shuffle the data
-trainData = trainData[trainData['inningNumber'] == 2]
 trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
-# we need to remove duplicates in runs to come so just select batting order 1
+
+
+# we only want innings 1 for the training and shuffle the data
+trainData = trainData[trainData['inningNumber'] == 1]
+trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
+# we need to remove duplicates in runs to come so just select batting order 1 and daysgroup 11
 masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 11)]
 
-
+# merge in predicted runs to come
 trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSpline', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 
-trainData['ratioRequired'] = trainData['runsRequired'] / trainData['totalInningRunsToComeSimBiasSpline']
-trainData = trainData.dropna(axis=0, subset=['ratioRequired'])
+
 
 
 # create an empty dataframe
-chaseLookup = pd.pivot_table(trainData, values=['sample', 'chaseWin', 'totalInningRunsToCome', 'totalInningWicketsToCome', 'runsRequiredStd'],
+chaseLookup = pd.pivot_table(trainData, values=['sample', 'chaseWin', 'totalInningRunsToCome', 'totalInningWicketsToCome'],
                             index=['totalInningWickets', 'inningBallNumber', 'runsRequired'],
-                            aggfunc={'sample': 'sum', 'chaseWin': 'sum', 'totalInningRunsToCome': 'mean', 'totalInningWicketsToCome': 'mean', 'runsRequiredStd': 'mean'}).reset_index()
+                            aggfunc={'sample': 'sum', 'chaseWin': 'sum', 'totalInningRunsToCome': 'mean', 'totalInningWicketsToCome': 'mean'}).reset_index()
 chaseLookup['chaseWin%'] = chaseLookup['chaseWin'] / chaseLookup['sample']
 chaseLookup = chaseSituations.merge(chaseLookup, how='left', on=['totalInningWickets', 'inningBallNumber', 'runsRequired'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
@@ -72,22 +77,15 @@ chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
 chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSpline']
 chaseLookup['daysGroup'] = 11
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSpline']).reset_index(drop=True)
-chaseLookup['in'] = 1
 
 
 
-# remove chases which are effectively lost
-trainData = trainData.merge(chaseLookup.loc[:, ['in', 'totalInningWickets', 'runsRequired', 'inningBallNumber']], how='left', on=['totalInningWickets', 'runsRequired', 'inningBallNumber'])
-trainData = trainData[trainData['in'] == 1]
-
-
-# over 1-19 model, train on all data but keep only over 1-19
+# model, train on all data
 trainDataMain = trainData.copy()
-trainDataMain = trainDataMain[(trainDataMain['inningBallsRemaining'] > 1)]
 
 # prepare the data
 y = trainDataMain['chaseWin']
-X_std = trainDataMain[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup']]
+X_std = trainDataMain[['runsRequired', 'totalInningWickets', 'inningBallsRemaining', 'daysGroup']]
 scaler = StandardScaler()
 scaler.fit(X_std)
 X_std = scaler.transform(X_std)
@@ -99,11 +97,9 @@ trainDataMain['m_chaseWin%'] = model.predict_proba(X_std)[:, 1]
 
 # now predict the chase situations outside of training
 chaseLookupMain = chaseLookup.copy()
-chaseLookupMain = chaseLookupMain[(chaseLookupMain['inningBallsRemaining'] > 6)]
-X = chaseLookupMain[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup']]
+X = chaseLookupMain[['runsRequired', 'totalInningWickets', 'inningBallsRemaining', 'daysGroup']]
 X = scaler.transform(X)
 chaseLookupMain['m_chaseWin%'] = model.predict_proba(X)[:, 1]
-trainDataMain = trainDataMain[(trainDataMain['inningBallsRemaining'] > 6)]
 
 
 
@@ -111,114 +107,8 @@ trainDataMain = trainDataMain[(trainDataMain['inningBallsRemaining'] > 6)]
 
 
 
-
-# last over model
-trainDataLastOver = trainData.copy()
-trainDataLastOver = trainDataLastOver[(trainDataLastOver['inningBallsRemaining'] < 7)]
-
-# prepare the data
-y = trainDataLastOver['chaseWin']
-X_std = trainDataLastOver[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining']]
-scaler = StandardScaler()
-scaler.fit(X_std)
-X_std = scaler.transform(X_std)
-
-# build the model
-model = MLPClassifier(hidden_layer_sizes=(8, 4), random_state=42, activation='logistic', batch_size='auto', learning_rate='constant', max_iter=5000, early_stopping=False, learning_rate_init=0.001)
-model.fit(X_std, y)
-trainDataLastOver['m_chaseWin%'] = model.predict_proba(X_std)[:, 1]
-
-# now predict the chase situations outside of training
-chaseLookupLastOver = chaseLookup.copy()
-chaseLookupLastOver = chaseLookupLastOver[(chaseLookupLastOver['inningBallsRemaining'] < 7)]
-X = chaseLookupLastOver[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining']]
-X = scaler.transform(X)
-chaseLookupLastOver['m_chaseWin%'] = model.predict_proba(X)[:, 1]
-
-# Scaling to range [0.0001, 0.9999]
-min_val, max_val = 0.0001, 0.9999
-chaseLookupLastOver['m_chaseWin%'] = min_val + (chaseLookupLastOver['m_chaseWin%'] - chaseLookupLastOver['m_chaseWin%'].min()) * (max_val - min_val) / (chaseLookupLastOver['m_chaseWin%'].max() - chaseLookupLastOver['m_chaseWin%'].min())
-
-
-
-
-# combine the 2 models
-chaseLookup = pd.concat([chaseLookupLastOver, chaseLookupMain], axis=0).reset_index(drop=True)
-trainData = pd.concat([trainDataLastOver, trainDataMain], axis=0).reset_index(drop=True)
-
-
-# order correctly for illogical situations
-cols = chaseLookup.loc[:, ['totalInningWickets', 'runsRequired', 'inningBallsRemaining', 'm_chaseWin%']]
-colsWrong = cols.sort_values(by=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], axis=0).reset_index(drop=True)
-colsRight = cols.sort_values(by=['totalInningWickets', 'runsRequired', 'm_chaseWin%'], axis=0).reset_index(drop=True)
-colsWrong['m_chaseWin%'] = colsRight['m_chaseWin%']
-colsWrong = colsWrong.sort_values(by=['inningBallsRemaining', 'runsRequired', 'totalInningWickets'], axis=0).reset_index(drop=True)
-chaseLookup['m_chaseWin%'] = colsWrong['m_chaseWin%']
-
-
-# bias check
-bias = pd.pivot_table(trainData, values=['m_chaseWin%', 'chaseWin', 'sample'], aggfunc='sum', index=['totalInningWickets']).reset_index()
-bias['bias'] = bias['m_chaseWin%'] / bias['chaseWin']
-bias['win%'] = bias['chaseWin'] / bias['sample']
-
-
-
-# chase win % year
-years = pd.pivot_table(trainData, index=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], values=['m_chaseWin%'], aggfunc='mean').reset_index()
-chaseLookup = chaseLookup.merge(years, how='left', on=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], suffixes=('', 'Year'))
-
-
-
-# # graph of predictions
-# fig, axes = plt.subplots(10, 4, figsize=(20, 40))           # create a figure of dimension 10 (Wickets) by 5 (number of graphs for each wicket)
-# for x in np.arange(0, 10, 1):                               # loop 0-10 for wickets
-#     graph_data = chaseLookup.copy()
-#     graph_data = graph_data[graph_data['totalInningWickets'] == x]       # filter the dataframe for the wicket in question
-#     # graph_data['chase_adj%'] = graph_data['blendr_win%'] - graph_data['X_win%']
-#     # create tables of the numbers to be plotted
-#     actual = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='chaseWin%', aggfunc='mean')
-#     old = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_chaseWin%', aggfunc='mean')
-#     new = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_chaseWin%', aggfunc='mean')
-#     diff = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_diff', aggfunc='mean')
-#     # plot in a heatmap
-#     sns.heatmap(ax=axes[x, 0], data=actual, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
-#     sns.heatmap(ax=axes[x, 1], data=old, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
-#     sns.heatmap(ax=axes[x, 2], data=new, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
-#     sns.heatmap(ax=axes[x, 3], data=diff, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=-0.2, vmax=0.2, center=0, xticklabels=10, yticklabels=10)
-#
-#     # set titles for each graph
-#     title1 = f"actual_win% - {x} wickets lost"
-#     axes[x, 0].set_title(title1)
-#     title2 = f"old - {x} wickets lost"
-#     axes[x, 1].set_title(title2)
-#     title3 = f"new {x} wickets lost"
-#     axes[x, 2].set_title(title3)
-#     title4 = f"diff - {x} wickets lost"
-#     axes[x, 3].set_title(title4)
-#     # title5 = f"blendr_win%_ - {x} wickets lost"
-#     # axes[x, 4].set_title(title4)
-# plt.tight_layout()
-# plt.show()
-
-
-
-# # some year analysis
-# trainData = trainData[trainData['inningBallsRemaining'] == 120]
-# chasewins = pd.pivot_table(trainData, values=['chaseWin', 'target'], index=['competition'], aggfunc='mean').reset_index()
-#
-#
-# m_chaseWinWeighted = pd.pivot_table(trainData, values=['m_chaseWin%'], index=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], aggfunc='mean').reset_index()
-# chaseLookup = chaseLookup.merge(m_chaseWinWeighted, how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], suffixes=('', 'Year'))
-
-chaseLookup['state_id'] = (
-    chaseLookup['totalInningWickets']
-    + (chaseLookup['inningBallsRemaining'] / 1000)
-    + (chaseLookup['runsRequired'] / 1_000_000)
-).round(6)
-
-
-# exports
-chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/1_chaseLookup1st.csv', index=False)
+# # exports
+# chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/1_chaseLookup1st.csv', index=False)
 
 
 
