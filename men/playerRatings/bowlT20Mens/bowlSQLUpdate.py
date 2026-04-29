@@ -6,7 +6,7 @@ from datetime import date
 from db import engine
 from paths import PROJECT_ROOT
 
-lastRatingsUpdate = PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/lastRatingsUpdate.txt'
+lastRatingsUpdate = PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/lastRatingsUpdate.txt'
 today = date.today().isoformat()
 
 if lastRatingsUpdate.exists():
