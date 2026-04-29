@@ -171,7 +171,7 @@ for _, row in masterLookup.iterrows():
     rows.append(row)
     if row['daysGroup'] == 11:
         dup = row.copy()
-        dup['daysGroup'] = 8.75
+        dup['daysGroup'] = 9.4
         rows.append(dup)
 
 # Rebuild the DataFrame
@@ -190,7 +190,7 @@ runsToComeYear = pd.pivot_table(trainData, values=['totalInningRunsToComeAdj', '
                                                                                                                                     ascending=[True, True, True])
 
 
-testViewMasterLookup = masterLookup[masterLookup.daysGroup == 8.75].loc[:,['totalInningWickets', 'inningBallNumber', 'totalInningRunsToComeSimBiasSplineYearAdj']]
+testViewMasterLookup = masterLookup[masterLookup.daysGroup == 9.4].loc[:,['totalInningWickets', 'inningBallNumber', 'totalInningRunsToComeSimBiasSplineYearAdj']]
 testViewMasterLookup = testViewMasterLookup.groupby(['totalInningWickets', 'inningBallNumber']).mean().reset_index()
 
 # only first ball of the innings
