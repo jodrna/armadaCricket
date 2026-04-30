@@ -66,6 +66,9 @@ def build_features(df, transformers, is_training=True, target_type='run'):
     poly = preprocessing.PolynomialFeatures(degree=2)
 
     # firstly age
+    # print(len(df))
+    print('NaNs in age:', df['age'].isna().sum())
+
     df_age = pd.DataFrame(poly.fit_transform(df[['age']]), columns=['age_constant', 'age_x', 'age_x^2'])
 
     # Now order, if it finds ord_r then it is obviously predicting run outputs and thus uses ord_r, same for ord_w, if it finds neither then must be on just bat data and uses just ord
@@ -207,6 +210,7 @@ for x in np.arange(0, 2, 1):
 
     # 6. Apply Predictions to Ratings (Validation/Usage)
     # Build features using the transformers fitted on bat_data
+    ratings['age'] = ratings['age'].fillna(bat_data['age'].median())
     X3, _ = build_features(ratings, transformers, is_training=False, target_type='run')
     ratings.insert(ratings.columns.get_loc("run_rating_2") + 1, 'rep_run_ratio', rep_run_ratio_model.predict(X3))
 

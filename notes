@@ -6,7 +6,7 @@ MAIN
     fix womens bat optimisation code
     ensure consistency across all ratings code, should match womens bowlers
     --- all above won't effect ratings really, just minor coding issues---
-2. first innings match market, balls remaining, wickets lost, 1st innings projected score, 2nd innings projected score
+2. first innings match market, balls remaining, wickets lost, eff target
 3. fix data get and clean process, first of all clean sql (script 1), then download sql (script 2), then clean that and adjust (Script 3), currently its 4 scripts, with duplication
 4. clean up the code used in years innings runs 'men/expBall&runsToCome/5_runsToComeYearModel.py'
 

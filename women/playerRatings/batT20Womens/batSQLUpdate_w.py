@@ -1,51 +1,104 @@
 import pandas as pd
 import sqlalchemy
 from sqlalchemy import text
-from urllib.parse import quote
+import runpy
+from datetime import date
 from db import engine
 from paths import PROJECT_ROOT
-connection = engine.connect()
+
+lastRatingsUpdate = PROJECT_ROOT / 'women/playerRatings/batT20Womens/batLastRatingsUpdate_w.txt'
+today = date.today().isoformat()
+
+if lastRatingsUpdate.exists():
+    last_run_date = lastRatingsUpdate.read_text().strip()
+else:
+    last_run_date = None
+
+if last_run_date == today:
+    print(f'Ratings already updated today: {today}')
+
+else:
+    connection = engine.connect()
+
+    # run the files
+    runpy.run_path('1_dataGet_w.py')
+    runpy.run_path('2_batDataClean_w.py')
+    runpy.run_path('3_batModel_w.py')
+    runpy.run_path('4_batReplacement_w.py')
+    runpy.run_path('5_batReversion_w.py')
+
+    # Import
+    recencies = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRecencies_w.csv')
+    jungle = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadJungle_w.csv')
+    rasoi = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadRasoi_w.csv')
+    bat_sqldata_combo = jungle.merge(rasoi, on=('batter', 'playerid', 'host', 'external_rating', 'competition'), suffixes=('_jungle', '_rasoi'))
+    ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle3_w.csv')
+    player_info = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/playerInfo_w.csv', parse_dates=['dob'])
+
+    # # merge in cricinfo player id
+    # bat_sqldata_combo = bat_sqldata_combo.merge(player_info.loc[:, ['playerid', 'cricinfo_id', 'name']], on='playerid', how='left')
+    # bat_sqldata_combo['batter'] = bat_sqldata_combo['name']
+    # bat_sqldata_combo = bat_sqldata_combo.drop(columns=['name'])
 
 
-# Import
-player = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadJungle_w.csv')
-innings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadRasoi_w.csv')
-bat_sqldata_combo = player.merge(innings, on = ('batter', 'playerid', 'host', 'external_rating', 'competition'), suffixes=('_jungle', '_rasoi'))
-ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle3_w.csv')
+    def truncate_and_upload(df, table_name, dtype=None):
+        with engine.begin() as conn:
+            conn.execute(text(f'TRUNCATE TABLE player_ratings.{table_name}'))
 
-# to SQl
-player.to_sql("batter_ratings_jungle_w", con=engine, schema="player_ratings", if_exists='replace', index=False)
-innings.to_sql("batter_ratings_rasoi_w", con=engine, schema="player_ratings", if_exists='replace', index=False)
-bat_sqldata_combo.to_sql("batter_ratings_combo_odi_w", con=engine, schema="player_ratings", if_exists='replace', index=False)
-
-# Use a connection from the engine to execute GRANT statements
-with engine.connect() as conn:
-    conn.execute(text("GRANT SELECT ON TABLE player_ratings.batter_ratings_jungle_w TO tableau;"
-                       "GRANT SELECT ON TABLE player_ratings.batter_ratings_jungle_w TO willhowie;"
-                      "GRANT SELECT ON TABLE player_ratings.batter_ratings_rasoi_w TO tableau;"
-                      "GRANT SELECT ON TABLE player_ratings.batter_ratings_rasoi_w TO willhowie;"
-                      "GRANT SELECT ON TABLE player_ratings.batter_ratings_combo_odi_w TO tableau;"
-                     "GRANT SELECT ON TABLE player_ratings.batter_ratings_combo_odi_w TO willhowie;"
-                      ))
-    conn.commit()
+        df.to_sql(
+            table_name,
+            con=engine,
+            schema='player_ratings',
+            if_exists='append',
+            index=False,
+            dtype=dtype
+        )
 
 
+    # to SQL
+    truncate_and_upload(jungle, 'batter_ratings_jungle_w')
+    truncate_and_upload(rasoi, 'batter_ratings_rasoi_w')
+    truncate_and_upload(bat_sqldata_combo, 'batter_ratings_combo_odi_w')
+    truncate_and_upload(recencies, 'bat_recency_weightings_wh_w')
+
+    with engine.begin() as conn:
+        conn.execute(text(
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_jungle_w TO tableau;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_jungle_w TO willhowie;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_jungle_w TO jordan;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_rasoi_w TO tableau;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_rasoi_w TO willhowie;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_rasoi_w TO jordan;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_combo_odi_w TO tableau;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_combo_odi_w TO willhowie;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_combo_odi_w TO jordan;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.bat_recency_weightings_wh_w TO tableau;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.bat_recency_weightings_wh_w TO willhowie;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.bat_recency_weightings_wh_w TO jordan;'
+        ))
+
+    # upload historic outputs
+    sql_upload_2 = ratings.copy()
+    sql_upload_2 = sql_upload_2[sql_upload_2.matchid > 0]
+    sql_upload_2 = sql_upload_2.loc[:, ['batter', 'playerid', 'competition', 'host', 'run_rating_3', 'wkt_rating_3', 'balls_faced_r', 'date', 'matchid']]
+    sql_upload_2.columns = ['batter', 'playerid', 'competition', 'host', 'run_rating', 'wkt_rating', 'balls_faced', 'date', 'matchid']
+
+    truncate_and_upload(
+        sql_upload_2,
+        'batter_ratings_historic_w',
+        dtype={'date': sqlalchemy.types.Date()}
+    )
+
+    with engine.begin() as conn:
+        conn.execute(text(
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic_w TO willhowie;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic_w TO jakelingard;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic_w TO jordan;'
+        ))
+
+    lastRatingsUpdate.write_text(today)
+    print(f'Ratings updated and last run date saved: {today}')
 
 
-# upload historic outputs
-sql_upload_2 = ratings.copy()
-sql_upload_2 = sql_upload_2[sql_upload_2.matchid > 0]
-sql_upload_2 = sql_upload_2.loc[:, ['batsman', 'playerid', 'competition', 'host', 'run_rating_3', 'wkt_rating_3', 'balls_faced_r', 'date', 'matchid']]
-sql_upload_2.columns = ['batter', 'playerid', 'competition', 'host', 'run_rating', 'wkt_rating', 'balls_faced', 'date', 'matchid']
-
-
-sql_upload_2.to_sql("batter_ratings_historic_w", con=engine, schema="player_ratings", if_exists='replace', index=False, dtype={'date': sqlalchemy.types.Date()})
-# Use a connection from the engine to execute GRANT statements
-with engine.connect() as conn:
-    conn.execute(text(
-                      "GRANT SELECT ON TABLE player_ratings.batter_ratings_historic_w TO willhowie;"
-                      "GRANT SELECT ON TABLE player_ratings.batter_ratings_historic_w TO jakelingard;"
-    ))
-    conn.commit()
 
 
