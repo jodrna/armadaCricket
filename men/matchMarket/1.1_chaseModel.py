@@ -96,10 +96,9 @@ model.fit(X_std, y)
 trainDataMain['m_chaseWin%'] = model.predict_proba(X_std)[:, 1]
 
 # now predict the chase situations outside of training
-chaseLookupMain = chaseLookup.copy()
-X = chaseLookupMain[['runsRequired', 'totalInningWickets', 'inningBallsRemaining', 'daysGroup']]
+X = chaseLookup[['runsRequired', 'totalInningWickets', 'inningBallsRemaining', 'daysGroup']]
 X = scaler.transform(X)
-chaseLookupMain['m_chaseWin%'] = model.predict_proba(X)[:, 1]
+chaseLookup['m_chaseWin%'] = model.predict_proba(X)[:, 1]
 
 
 
