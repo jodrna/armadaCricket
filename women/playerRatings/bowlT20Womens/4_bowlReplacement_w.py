@@ -260,7 +260,7 @@ for x in np.arange(0, 2, 1):
     bowl_data['age_round'] = np.where(bowl_data['age_round'] == 16, 18, np.where(bowl_data['age_round'] > 40, 42, bowl_data['age_round']))
     bowl_data['overseas_pct_round'] = bowl_data['overseas_pct'].apply(lambda z: 0.4 * round(float(z) / 0.4))
 
-    actuals = pd.pivot_table(bowl_data, values=['balls_bowled', 'realexprbowl', 'rep_runs', 'runs', 'realexpwbowl', 'rep_wkt', 'wkt', 'rep_wkt_ratio', 'rep_run_ratio', 'age', 'balls_bowled_career', 'run_sqe', 'wkt_sqe', 'run_err', 'wkt_err'], index=['competition'], aggfunc={'balls_bowled': 'count', 'balls_bowled_career': 'mean', 'age': 'mean', 'realexprbowl': 'sum', 'rep_runs': 'sum', 'runs': 'sum', 'realexpwbowl': 'sum', 'rep_wkt': 'sum', 'wkt': 'sum', 'rep_run_ratio': 'mean', 'rep_wkt_ratio': 'mean', 'run_sqe': 'mean', 'wkt_sqe': 'mean', 'run_err': 'sum', 'wkt_err': 'sum'}).reset_index()
+    actuals = pd.pivot_table(bowl_data, values=['balls_bowled', 'realexprbowl', 'rep_runs', 'runs', 'realexpwbowl', 'rep_wkt', 'wkt', 'rep_wkt_ratio', 'rep_run_ratio', 'age', 'balls_bowled_career', 'run_sqe', 'wkt_sqe', 'run_err', 'wkt_err'], index=['innings'], aggfunc={'balls_bowled': 'count', 'balls_bowled_career': 'mean', 'age': 'mean', 'realexprbowl': 'sum', 'rep_runs': 'sum', 'runs': 'sum', 'realexpwbowl': 'sum', 'rep_wkt': 'sum', 'wkt': 'sum', 'rep_run_ratio': 'mean', 'rep_wkt_ratio': 'mean', 'run_sqe': 'mean', 'wkt_sqe': 'mean', 'run_err': 'sum', 'wkt_err': 'sum'}).reset_index()
     actuals['run_ratio'] = actuals['runs'] / actuals['realexprbowl']
     actuals['wkt_ratio'] = actuals['wkt'] / actuals['realexpwbowl']
 
