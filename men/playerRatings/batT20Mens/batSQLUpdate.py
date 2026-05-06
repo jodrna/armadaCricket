@@ -113,9 +113,10 @@ with engine.begin() as conn:
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic TO decimalwebsite;'
     ))
 
-print(f"{last_date2} is now the latest game in the batter ratings. Beginning bowler ratings...")
+print(f"{last_date2} is now the latest game in the batter ratings.")
 
 if run_type == 1:
+    print("Beginning bowler ratings...")
     script_path = Path(__file__).parent.parent / 'bowlT20Mens' / 'bowlSQLUpdate.py'
     subprocess.run(['python', str(script_path)])
 
