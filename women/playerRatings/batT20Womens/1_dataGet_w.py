@@ -36,7 +36,7 @@ t20BatData['format'] = 't20'
 bowlColumns = ['matchid','date','competition','host','ball','innings','innperiod','home','away','battingteam','batterid','batsman','ord','bowlerball','bowlerid','bowler','byes','legbyes','noball','wide','extras','runs','bowlerwicket','realexprbowl','realexpwbowl','ballsremaining']
 t20BowlData = (
     allData.assign(competition=allData['competition'],
-              runs=allData['runs'],
+              runs=allData['runs_raw'],
               bowlerwicket=lambda x: x['wkt'])
       [bowlColumns]
       .sort_values(['date','matchid'], ascending=[True, False])
