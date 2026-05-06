@@ -23,10 +23,10 @@ else:
     connection = engine.connect()
 
     # run the files
-    runpy.run_path('1_dataGet_w.py')
-    runpy.run_path('2_batDataClean_w.py')
-    runpy.run_path('3_batModel_w.py')
-    runpy.run_path('4_batReplacement_w.py')
+    # runpy.run_path('1_dataGet_w.py')
+    # runpy.run_path('2_batDataClean_w.py')
+    # runpy.run_path('3_batModel_w.py')
+    # runpy.run_path('4_batReplacement_w.py')
     runpy.run_path('5_batReversion_w.py')
 
     # Import
@@ -38,7 +38,7 @@ else:
     player_info = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/playerInfo_w.csv', parse_dates=['dob'])
 
     # # merge in cricinfo player id
-    # bat_sqldata_combo = bat_sqldata_combo.merge(player_info.loc[:, ['playerid', 'cricinfo_id', 'name']], on='playerid', how='left')
+    # # bat_sqldata_combo = bat_sqldata_combo.merge(player_info.loc[:, ['playerid', 'cricinfo_id', 'name']], on='playerid', how='left')
     # bat_sqldata_combo['batter'] = bat_sqldata_combo['name']
     # bat_sqldata_combo = bat_sqldata_combo.drop(columns=['name'])
 
@@ -82,7 +82,7 @@ else:
     # upload historic outputs
     sql_upload_2 = ratings.copy()
     sql_upload_2 = sql_upload_2[sql_upload_2.matchid > 0]
-    sql_upload_2 = sql_upload_2.loc[:, ['batter', 'playerid', 'competition', 'host', 'run_rating_3', 'wkt_rating_3', 'balls_faced_r', 'date', 'matchid']]
+    sql_upload_2 = sql_upload_2.loc[:, ['batsman', 'playerid', 'competition', 'host', 'run_rating_3', 'wkt_rating_3', 'balls_faced_r', 'date', 'matchid']]
     sql_upload_2.columns = ['batter', 'playerid', 'competition', 'host', 'run_rating', 'wkt_rating', 'balls_faced', 'date', 'matchid']
 
     truncate_and_upload(
