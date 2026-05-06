@@ -23,10 +23,10 @@ else:
     connection = engine.connect()
 
     # run the files
-    # runpy.run_path('1_dataGet_w.py')
-    # runpy.run_path('2_batDataClean_w.py')
-    # runpy.run_path('3_batModel_w.py')
-    # runpy.run_path('4_batReplacement_w.py')
+    runpy.run_path('1_dataGet_w.py')
+    runpy.run_path('2_batDataClean_w.py')
+    runpy.run_path('3_batModel_w.py')
+    runpy.run_path('4_batReplacement_w.py')
     runpy.run_path('5_batReversion_w.py')
 
     # Import
