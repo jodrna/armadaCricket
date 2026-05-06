@@ -15,7 +15,7 @@ allData =  pd.read_sql_query('''select id, matchid, date,
                                 end)
                                 end as competition,
                                 venue, host, innings, innperiod, home, away, battingteam, batterid, batsman, ord, batsmanballs balls_faced_innings, ball,
-                                bowlerid, bowler, byes, legbyes, noball, wide, extras, runs - noball - byes runs, bowlerwicket wkt, realexprbat, realexpwbat, realexpwbowl, realexprbowl, ballsremaining, bowlerball
+                                bowlerid, bowler, byes, legbyes, noball, wide, extras, runs, runs - noball - byes runs_raw, bowlerwicket wkt, realexprbat, realexpwbat, realexpwbowl, realexprbowl, ballsremaining, bowlerball
                                 from match_data.w_t20_bbb
                                 where year > 2014
                                 and tier<3
