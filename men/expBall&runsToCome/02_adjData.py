@@ -9,6 +9,8 @@ user_name = Path.home()
 from db import engine
 from paths import PROJECT_ROOT
 
+########ned to run lieups_filler befor running this!!!!!!!!!!!
+
 connection = engine.connect()
 raw_data_og = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/outputs/Cleaned_t20bbb3.csv', parse_dates=['date'])
 # raw_data_og_max_date = raw_data_og['date'].max()
