@@ -5,6 +5,8 @@ import runpy
 from datetime import date
 from db import engine
 from paths import PROJECT_ROOT
+import subprocess
+from pathlib import Path
 
 lastRatingsUpdate = PROJECT_ROOT / 'women/playerRatings/batT20Womens/batLastRatingsUpdate_w.txt'
 today = date.today().isoformat()
@@ -94,10 +96,16 @@ else:
             'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic_w TO willhowie;'
             'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic_w TO jakelingard;'
             'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic_w TO jordan;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic_w TO decimalwebsite;'
         ))
 
     lastRatingsUpdate.write_text(today)
-    print(f'Ratings updated and last run date saved: {today}')
+    print(f'Bat ratings updated and last run date saved: {today}')
+
+    script_path = Path(__file__).parent.parent / 'bowlT20Womens' / 'bowlSQLUpdate_w.py'
+    subprocess.run(['python', str(script_path)])
+
+    print(f"Bowler ratings updated.")
 
 
 

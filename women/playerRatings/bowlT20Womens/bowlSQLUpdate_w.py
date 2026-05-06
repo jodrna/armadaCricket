@@ -93,6 +93,7 @@ else:
             'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic_w TO willhowie;'
             'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic_w TO jakelingard;'
             'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic_w TO jordan;'
+            'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic_w TO decimalwebsite;'
         ))
 
     lastRatingsUpdate.write_text(today)
