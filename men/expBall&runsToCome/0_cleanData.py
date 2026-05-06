@@ -157,10 +157,21 @@ if run_type == 1:
         trans = connection.begin()
 
         connection.execute("""UPDATE match_data.t20_bbb a
-        SET ballsremaining = COALESCE(t.ballsremaining_clean_a, a.ballsremaining), score = COALESCE(t.score_clean_a, a.score), target = COALESCE(t.target_clean_a, a.target), ord = COALESCE(t.ord_clean_a, a.ord), id_clean_a = t.id_clean_a, ball2_clean_a = t.ball2_clean_a, score_clean_a = t.score_clean_a, ballsremaining_clean_a = t.ballsremaining_clean_a, wickets_clean_a = t.wickets_clean_a, target_clean_a = t.target_clean_a, ord_clean_a = t.ord_clean_a, required_clean_a = t.required_clean_a
+        SET ballsremaining         = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
+            score                  = COALESCE(t.score_clean_a, a.score),
+            target                 = COALESCE(t.target_clean_a, a.target),
+            ord                    = COALESCE(t.ord_clean_a, a.ord),
+            id_clean_a             = t.id_clean_a,
+            ball2_clean_a          = t.ball2_clean_a,
+            score_clean_a          = t.score_clean_a,
+            ballsremaining_clean_a = t.ballsremaining_clean_a,
+            wickets_clean_a        = t.wickets_clean_a,
+            target_clean_a         = t.target_clean_a,
+            ord_clean_a            = t.ord_clean_a,
+            required_clean_a       = t.required_clean_a
         FROM player_ratings.t20_bbb_clean t
-        WHERE a.id = t.id_clean_a and t.id_clean_a NOT IN (SELECT id_clean_a FROM match_data.t20_bbb);
-        """)
+        WHERE a.id = t.id_clean_a
+          AND a.id_clean_a IS NULL;""")
 
         trans.commit()
 
@@ -186,12 +197,29 @@ else:
         connection.execute("""
         INSERT INTO player_ratings.t20_bbb_clean (id_clean_a, ball2_clean_a, score_clean_a, ballsremaining_clean_a, wickets_clean_a, target_clean_a, ord_clean_a, required_clean_a, wkt_value_sum_smooth)
         SELECT *
-        FROM player_ratings.t20_bbb_clean_temp
-        WHERE id_clean_a NOT IN (SELECT id_clean_a FROM player_ratings.t20_bbb_clean);
-        UPDATE match_data.t20_bbb a
-        SET ballsremaining = COALESCE(t.ballsremaining_clean_a, a.ballsremaining), score = COALESCE(t.score_clean_a, a.score), target = COALESCE(t.target_clean_a, a.target), ord = COALESCE(t.ord_clean_a, a.ord), id_clean_a = t.id_clean_a, ball2_clean_a = t.ball2_clean_a, score_clean_a = t.score_clean_a, ballsremaining_clean_a = t.ballsremaining_clean_a, wickets_clean_a = t.wickets_clean_a, target_clean_a = t.target_clean_a, ord_clean_a = t.ord_clean_a, required_clean_a = t.required_clean_a
         FROM player_ratings.t20_bbb_clean_temp t
-        WHERE a.id = t.id_clean_a and t.id_clean_a NOT IN (SELECT id_clean_a FROM match_data.t20_bbb);
+        WHERE NOT EXISTS (
+            SELECT 1 FROM player_ratings.t20_bbb_clean c
+            WHERE c.id_clean_a = t.id_clean_a
+        );
+        
+        UPDATE match_data.t20_bbb a
+        SET ballsremaining         = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
+            score                  = COALESCE(t.score_clean_a, a.score),
+            target                 = COALESCE(t.target_clean_a, a.target),
+            ord                    = COALESCE(t.ord_clean_a, a.ord),
+            id_clean_a             = t.id_clean_a,
+            ball2_clean_a          = t.ball2_clean_a,
+            score_clean_a          = t.score_clean_a,
+            ballsremaining_clean_a = t.ballsremaining_clean_a,
+            wickets_clean_a        = t.wickets_clean_a,
+            target_clean_a         = t.target_clean_a,
+            ord_clean_a            = t.ord_clean_a,
+            required_clean_a       = t.required_clean_a
+        FROM player_ratings.t20_bbb_clean_temp t
+        WHERE a.id = t.id_clean_a
+          AND a.id_clean_a IS NULL;
+        
         DROP TABLE player_ratings.t20_bbb_clean_temp;
         """)
 
