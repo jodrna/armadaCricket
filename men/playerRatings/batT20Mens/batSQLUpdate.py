@@ -110,6 +110,7 @@ with engine.begin() as conn:
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic TO willhowie;'
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic TO jakelingard;'
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic TO jordan;'
+        'GRANT ALL PRIVILEGES ON TABLE player_ratings.batter_ratings_historic TO decimalwebsite;'
     ))
 
 print(f"{last_date2} is now the latest game in the batter ratings. Beginning bowler ratings...")
