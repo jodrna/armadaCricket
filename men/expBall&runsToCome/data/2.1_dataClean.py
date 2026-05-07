@@ -7,6 +7,9 @@ from paths import PROJECT_ROOT
 trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_plus_eff_target_inns1.csv', parse_dates=['date'])
 trainData = trainData.rename(columns={'eff_target': 'effTarget'})
 
+# fix result column
+trainData['result'] = trainData['result_2']
+
 # rename columns
 trainData = trainData.rename(columns={'innings': 'inningNumber', 'wickets': 'totalInningWickets', 'bowlerwicket': 'isWicketBowler', 'noball': 'noballRuns', 'over': 'overNumber',
                                       'score': 'totalInningRuns', 't_runs': 'totalInningRunsEnd', 'runs_to_come': 'totalInningRunsToCome', 'wicket': 'isWicket',
@@ -22,6 +25,7 @@ def parse_mixed_date(series):
 trainData['date'] = parse_mixed_date(trainData['date'])
 trainData['year'] = trainData['date'].dt.year
 trainData['daysGroup'] = (trainData['date'] - (trainData['date'].min())).dt.days / 365
+
 
 # create some columns
 trainData['overBallNumber'] = (trainData['ball'] + 1 - trainData['overNumber']) * 100
