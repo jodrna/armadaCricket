@@ -11,9 +11,10 @@ MAIN
 4. clean up the code used in years innings runs 'men/expBall&runsToCome/5_runsToComeYearModel.py'
 
 
-
-
-
+from Will:
+1. adjusted second inns match market for women, same as you did for men (data on the way)
+2. adjusted first inns match market for women, the thing you're currently doing for men
+3. the by year adjust for inruns we did for men in 5_runsToComeYearModel_w.py (which handled br and wickets lost better) needs doing for women as well
 
 Other projects
 # ipl pitch data continues
