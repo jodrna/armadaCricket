@@ -5,7 +5,7 @@ connection = engine.connect()
 
 
 # sql query to get data from database
-allData =  pd.read_sql_query('''select id, matchid, date,
+allData = pd.read_sql_query('''select id, matchid, date,
                                 case when competition = 'WT20I' then
                                 (case when major_nation = 2 then
                                 (case when (battingteam  = 'Australia Women' or battingteam = 'England Women' or battingteam = 'India Women' or battingteam = 'New Zealand Women' or battingteam = 'South Africa Women') then 'WT20I' else 'tier_2' end)
@@ -21,8 +21,6 @@ allData =  pd.read_sql_query('''select id, matchid, date,
                                 and tier<3
                                 and major_nation > 0
                                 and reduced is not true
-                                and realexprbat > -1
-                                and realexpwbat > -1
                                 order by date, matchid desc''', con=connection)
 
 
