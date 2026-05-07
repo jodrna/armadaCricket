@@ -65,10 +65,10 @@ trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSp
 
 
 # create an empty dataframe
-chaseLookup = pd.pivot_table(trainData, values=['sample', 'chaseWin', 'totalInningRunsToCome', 'totalInningWicketsToCome'],
+chaseLookup = pd.pivot_table(trainData, values=['sample', 'result', 'totalInningRunsToCome', 'totalInningWicketsToCome'],
                             index=['totalInningWickets', 'inningBallNumber', 'runsRequired'],
-                            aggfunc={'sample': 'sum', 'chaseWin': 'sum', 'totalInningRunsToCome': 'mean', 'totalInningWicketsToCome': 'mean'}).reset_index()
-chaseLookup['chaseWin%'] = chaseLookup['chaseWin'] / chaseLookup['sample']
+                            aggfunc={'sample': 'sum', 'result': 'sum', 'totalInningRunsToCome': 'mean', 'totalInningWicketsToCome': 'mean'}).reset_index()
+chaseLookup['result%'] = chaseLookup['result'] / chaseLookup['sample']
 chaseLookup = chaseSituations.merge(chaseLookup, how='left', on=['totalInningWickets', 'inningBallNumber', 'runsRequired'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
 chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inningBallNumber', 'sample', 'totalInningRunsToComeSimBiasSpline', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
@@ -84,7 +84,7 @@ chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSp
 trainDataMain = trainData.copy()
 
 # prepare the data
-y = trainDataMain['chaseWin']
+y = trainDataMain['result']
 X_std = trainDataMain[['runsRequired', 'totalInningWickets', 'inningBallsRemaining', 'daysGroup']]
 scaler = StandardScaler()
 scaler.fit(X_std)
@@ -93,12 +93,12 @@ X_std = scaler.transform(X_std)
 # build the model
 model = MLPClassifier(hidden_layer_sizes=(8, 4), random_state=42, activation='logistic', batch_size='auto', learning_rate='constant', max_iter=5000, early_stopping=False, learning_rate_init=0.001)
 model.fit(X_std, y)
-trainDataMain['m_chaseWin%'] = model.predict_proba(X_std)[:, 1]
+trainDataMain['m_result%'] = model.predict_proba(X_std)[:, 1]
 
 # now predict the chase situations outside of training
 X = chaseLookup[['runsRequired', 'totalInningWickets', 'inningBallsRemaining', 'daysGroup']]
 X = scaler.transform(X)
-chaseLookup['m_chaseWin%'] = model.predict_proba(X)[:, 1]
+chaseLookup['m_result%'] = model.predict_proba(X)[:, 1]
 
 
 
@@ -107,7 +107,7 @@ chaseLookup['m_chaseWin%'] = model.predict_proba(X)[:, 1]
 
 
 # # exports
-# chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/1_chaseLookup1st.csv', index=False)
+chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookup1st.csv', index=False)
 
 
 
