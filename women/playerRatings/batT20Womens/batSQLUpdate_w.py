@@ -25,7 +25,7 @@ if (last_date == yesterday) & (run_type == 1):
 runpy.run_path('1_dataGet_w.py')
 
 # check last date of downloaded data to check if need to run rest of the ratings:
-last_date2 = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Womens/data/batDataCombined_w.csv')
+last_date2 = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/batDataCombined_w.csv')
 last_date2 = last_date2['date'].max()
 if (last_date2 == last_date) & (run_type == 1):
     print(f"Max date ({last_date2}) is same as last run, stopping.")
