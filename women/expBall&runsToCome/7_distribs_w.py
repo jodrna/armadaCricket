@@ -5,75 +5,95 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.neural_network import MLPClassifier
+from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.metrics import mean_absolute_error
 from scipy.interpolate import UnivariateSpline
 from scipy.stats import skew, kurtosis, pearson3, johnsonsu, norm, gaussian_kde
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import SplineTransformer
+from sklearn.metrics import r2_score
 from paths import PROJECT_ROOT
 
 
 
 # import data
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
-simsClassOrd = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
-
-# filter out the 2nd innings which we don't use in this instance
+simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
+matchMarket = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w.csv')
 trainData = trainData[trainData['inningNumber'] == 1]
 
 
 
-# # melt the old STD
-# oldSTD = oldSTD.melt(id_vars='inningBallNumber',
-#                    value_vars=[str(i) for i in range(6)],
-#                    var_name='totalInningWickets',
-#                    value_name='std')
-# # Convert totalInningWickets to int (optional but likely preferred)
-# oldSTD['totalInningWickets'] = oldSTD['totalInningWickets'].astype(int)
+
+# --- global axis ranges ---
+masterLookup = masterLookup[masterLookup['daysGroup'] == 16]
+x_line_min = masterLookup['inningBallNumber'].min()
+x_line_max = masterLookup['inningBallNumber'].max()
+y_line_min = masterLookup[['totalInningRunsToComeSimBiasSpline',
+                           'totalInningRunsToComeSimBiasSplineYear']].min().min()
+y_line_max = masterLookup[['totalInningRunsToComeSimBiasSpline',
+                           'totalInningRunsToComeSimBiasSplineYear']].max().max()
+
+x_scatter_min = masterLookup['totalInningRunsToComeSimBiasSpline'].min()
+x_scatter_max = masterLookup['totalInningRunsToComeSimBiasSpline'].max()
+y_scatter_min = masterLookup['totalInningRunsToComeSimSTD'].min()
+y_scatter_max = masterLookup['totalInningRunsToComeSimSTD'].max()
+
+fig, axes = plt.subplots(nrows=10, ncols=2, figsize=(16, 32), sharex=False, sharey=False)
+
+for wk in range(10):
+    ax_line = axes[wk, 0]
+    ax_scatter = axes[wk, 1]
+
+    # line plots
+    d_line = masterLookup.loc[masterLookup['totalInningWickets'] == wk,
+                              ['inningBallNumber',
+                               'totalInningRunsToComeSimBiasSpline',
+                               'totalInningRunsToComeSimBiasSplineYear']].sort_values('inningBallNumber')
+    ax_line.plot(d_line['inningBallNumber'], d_line['totalInningRunsToComeSimBiasSpline'])
+    ax_line.plot(d_line['inningBallNumber'], d_line['totalInningRunsToComeSimBiasSplineYear'])
+    ax_line.set_xlim(x_line_min, x_line_max)
+    ax_line.set_ylim(y_line_min, y_line_max)
+
+    # scatter plots
+    d_scatter = masterLookup.loc[masterLookup['totalInningWickets'] == wk,
+                                 ['totalInningRunsToComeSimBiasSpline', 'totalInningRunsToComeSimSTD']]
+    ax_scatter.scatter(d_scatter['totalInningRunsToComeSimBiasSpline'],
+                       d_scatter['totalInningRunsToComeSimSTD'],
+                       s=10, alpha=0.7)
+    ax_scatter.set_xlim(x_scatter_min, x_scatter_max)
+    ax_scatter.set_ylim(y_scatter_min, y_scatter_max)
+
+plt.tight_layout()
+plt.show()
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# the below prints, mean, std, skew, kurt, std vs mean for real and sim, so 2 lines on each chart, 5 charts per row, 10 rows for wickets, x value is balls remaining, y is runs
 # pivot stats
 stdsReal = trainData.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'].agg(count='count', mean='mean', std='std', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)).reset_index()
-# stdsClass = simsClass.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'].agg(count='count', mean='mean', std='std', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)).reset_index()
-stdsClassAdjusted = simsClassOrd.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'].agg(count='count', mean='mean', min='min', max='max', std='std', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)).reset_index()
+stdsClassAdjusted = simClassAdjusted.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'].agg(count='count', mean='mean', std='std', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)).reset_index()
 
-# plot mean, std, skew for each wicket value and model
-fig, axes = plt.subplots(10, 4, figsize=(18, 30), sharex=True)
+# plot mean, std, skew for each wicket value and model + 5th column scatter (std vs mean)
+fig, axes = plt.subplots(10, 5, figsize=(22, 30), sharex=False)
 metrics = ['mean', 'std', 'skew', 'kurtosis']
-titles = ['Mean', 'Standard Deviation', 'Skewness', 'Kurtosis']
+titles  = ['Mean', 'Standard Deviation', 'Skewness', 'Kurtosis', 'STD vs Mean']
 
 for i in range(10):  # totalInningWickets from 0 to 9
+    # Filter by count (do once per row)
+    real_filtered = stdsReal[(stdsReal['totalInningWickets'] == i) & (stdsReal['count'] >= 100)]
+    classAdjusted_filtered = stdsClassAdjusted[(stdsClassAdjusted['totalInningWickets'] == i) & (stdsClassAdjusted['count'] >= 1000)]
+
+    # First 4 columns: original line plots
     for j, metric in enumerate(metrics):
         ax = axes[i, j]
-
-        # Filter by count
-        real_filtered = stdsReal[(stdsReal['totalInningWickets'] == i) & (stdsReal['count'] >= 100)]
-        classAdjusted_filtered = stdsClassAdjusted[(stdsClassAdjusted['totalInningWickets'] == i) & (stdsClassAdjusted['count'] >= 1000)]
 
         # Plot Real and Adjusted
         ax.plot(real_filtered['inningBallNumber'], real_filtered[metric], label='Real', color='green')
         ax.plot(classAdjusted_filtered['inningBallNumber'], classAdjusted_filtered[metric], label='Class Adjusted', color='orange')
-
-        # # Add oldSTD line only for std and for wickets 0–5
-        # if metric == 'std' and i in oldSTD['totalInningWickets'].unique():
-        #     old_filtered = oldSTD[oldSTD['totalInningWickets'] == i]
-        #     ax.plot(old_filtered['inningBallNumber'], old_filtered['std'], label='Old STD', color='blue', linestyle='dashed')
 
         # Titles and labels
         if i == 0:
@@ -83,43 +103,29 @@ for i in range(10):  # totalInningWickets from 0 to 9
         if i == 9 and j == 2:
             ax.legend(loc='lower right')
 
+    # 5th column: scatter of std vs mean
+    ax_scatter = axes[i, 4]
+    # Plot only if there is data after dropna
+    rf = real_filtered[['mean', 'std']].dropna()
+    cf = classAdjusted_filtered[['mean', 'std']].dropna()
+
+    if not rf.empty:
+        ax_scatter.scatter(rf['mean'], rf['std'], label='Real', alpha=0.6, color='green')
+    if not cf.empty:
+        ax_scatter.scatter(cf['mean'], cf['std'], label='Class Adjusted', alpha=0.6, color='orange')
+    if rf.empty and cf.empty:
+        ax_scatter.text(0.5, 0.5, 'No data', ha='center', va='center', transform=ax_scatter.transAxes)
+
+    if i == 0:
+        ax_scatter.set_title(titles[4])
+    # Optional: only one legend for the scatter, bottom row
+    if i == 9:
+        ax_scatter.legend(loc='lower right')
+
 plt.tight_layout()
 plt.show()
 
 
-
-
-
-
-# # Plot mean, std, skew, kurtosis for each wicket value and model
-# fig, axes = plt.subplots(10, 4, figsize=(18, 30), sharex=True)
-# metrics = ['mean', 'std', 'skew', 'kurtosis']
-# titles = ['Mean', 'Standard Deviation', 'Skewness', 'Kurtosis']
-#
-# for i in range(10):  # totalInningWickets from 0 to 9
-#     for j, metric in enumerate(metrics):
-#         ax = axes[i, j]
-#
-#         # Filter by wicket
-#         real = stdsReal[stdsReal['totalInningWickets'] == i]
-#         model = stdsClass[stdsClass['totalInningWickets'] == i]
-#
-#         # Use only inningBallNumbers where real has count >= 100
-#         valid_balls = real[real['count'] >= 100]['inningBallNumber']
-#         real_filtered = real[real['inningBallNumber'].isin(valid_balls)]
-#         model_filtered = model[model['inningBallNumber'].isin(valid_balls)]
-#
-#         if not real_filtered.empty:
-#             ax.plot(real_filtered['inningBallNumber'], real_filtered[metric], label='Real', color='green')
-#             if not model_filtered.empty:
-#                 ax.plot(model_filtered['inningBallNumber'], model_filtered[metric], label='Old', color='blue')
-#
-#         if i == 0: ax.set_title(titles[j])
-#         if j == 0: ax.set_ylabel(f'Wickets: {i}')
-#         if i == 9 and j == 2: ax.legend(loc='lower right')
-#
-# plt.tight_layout()
-# plt.show()
 
 
 
@@ -138,9 +144,9 @@ plt.show()
 #     (trainData['inningBallNumber'] == inningBallNumber) &
 #     (trainData['totalInningWickets'] == totalInningWickets)
 # ]
-# # simsClassOrd_filtered = simsClassOrd[
-# #     (simsClassOrd['inningBallNumber'] == inningBallNumber) &
-# #     (simsClassOrd['totalInningWickets'] == totalInningWickets)
+# # simClassAdjusted_filtered = simClassAdjusted[
+# #     (simClassAdjusted['inningBallNumber'] == inningBallNumber) &
+# #     (simClassAdjusted['totalInningWickets'] == totalInningWickets)
 # # ]
 # # simsClass_filtered = simsClass[
 # #     (simsClass['inningBallNumber'] == inningBallNumber) &
@@ -183,10 +189,10 @@ plt.show()
 
 
 
-# this will plot a real world distribution and then a distribution based off the 4 moments, mean, std, skew and kurt, define game state for the real world distribution
+# this will plot a real world distribution and then a distribution based off the 4 moments, mean, std, skew and kurt
 # Set game state
-inningBallNumber = 114
-totalInningWickets = 3
+inningBallNumber = 1
+totalInningWickets = 0
 
 # Filter data and moments
 trainData_filtered = trainData[(trainData['inningBallNumber'] == inningBallNumber) & (trainData['totalInningWickets'] == totalInningWickets)]
@@ -194,7 +200,9 @@ row = stdsReal.loc[(stdsReal['inningBallNumber'] == inningBallNumber) & (stdsRea
 row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBallNumber) & (stdsClassAdjusted['totalInningWickets'] == totalInningWickets)]
 
 # Extract the moments
-mean = row['mean'].values[0]
+# mean = row2['mean'].values[0]
+mean = 153.30
+
 std = row2['std'].values[0]
 skew_val = row2['skew'].values[0]
 kurt_val = row2['kurtosis'].values[0]
@@ -219,6 +227,48 @@ plt.title(f'Inning Ball {inningBallNumber}, Wickets {totalInningWickets}')
 plt.legend()
 plt.grid(True)
 plt.show()
+
+
+
+
+
+
+
+# this finds the mean which gives the match market win % we want at the start of the 2nd innings, set the mean first, try different means to get the % you want
+# YOU MUST CHANGE THE MEAN ABOVE FIRST
+runs_range = np.arange(0, 301)
+
+probabilities = []
+for r in runs_range:
+
+    lower = r - 0.5
+    upper = r + 0.5
+
+    mask = (x >= lower) & (x <= upper)
+
+    if mask.sum() > 1:
+        prob = np.trapz(gc_pdf[mask], x[mask])
+    else:
+        prob = 0
+
+    probabilities.append(prob)
+
+prob_df = pd.DataFrame({
+    'runs': runs_range,
+    'probability': probabilities
+})
+
+# Normalise in case of small numerical drift
+prob_df['probability'] = prob_df['probability'] / prob_df['probability'].sum()
+
+
+# Optional: cumulative probability
+prob_df['cum_probability'] = prob_df['probability'].cumsum()
+
+matchMarket = matchMarket[(matchMarket['inningBallNumber'] == 1) & (matchMarket['totalInningWickets'] == 0)]
+prob_df = prob_df.merge(matchMarket.loc[:, ['runsRequired', 'm_chaseWin%']], how='left', left_on='runs', right_on='runsRequired')
+prob_df['probs'] = prob_df['m_chaseWin%'] * prob_df['probability']
+print(np.sum(prob_df['probs']))
 
 
 
