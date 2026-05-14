@@ -56,7 +56,7 @@ trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
 trainData = trainData[trainData['inningNumber'] == 1]
 trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
 # we need to remove duplicates in runs to come so just select batting order 1 and daysgroup 11
-masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 11)]
+masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 16.38)]
 
 # merge in predicted runs to come
 trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSpline', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
@@ -75,7 +75,7 @@ chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inni
 chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
 
 chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSpline']
-chaseLookup['daysGroup'] = 11
+chaseLookup['daysGroup'] = 16.38
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSpline']).reset_index(drop=True)
 
 
@@ -107,7 +107,7 @@ chaseLookup['m_result%'] = model.predict_proba(X)[:, 1]
 
 
 # exports
-chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup1st.csv', index=False)
+# chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup1st.csv', index=False)
 
 
 

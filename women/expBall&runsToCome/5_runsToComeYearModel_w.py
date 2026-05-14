@@ -97,10 +97,16 @@ masterLookup['daysGroup'] = masterLookup['year'] - 2015
 # duplicate the latest year and relabel as 9.4
 # this is used as a manually adjusted future-year estimate
 extraRows = masterLookup.loc[masterLookup['daysGroup'] == 10].copy()
-extraRows['daysGroup'] = 16.38
-
+extraRows['daysGroup'] = 13
 # append future-year rows back onto master lookup
 masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
+# this is used as a manually adjusted future-year estimate
+extraRows = masterLookup.loc[masterLookup['daysGroup'] == 13].copy()
+extraRows['daysGroup'] = 15.87
+# append future-year rows back onto master lookup
+masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
+
+
 
 # recreate interaction features for prediction
 masterLookup['daysGroup_totalInningWickets'] = masterLookup['daysGroup'] * masterLookup['totalInningWickets']

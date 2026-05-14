@@ -201,7 +201,7 @@ row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBal
 
 # Extract the moments
 # mean = row2['mean'].values[0]
-mean = 153.30
+mean = 152.5
 
 std = row2['std'].values[0]
 skew_val = row2['skew'].values[0]
