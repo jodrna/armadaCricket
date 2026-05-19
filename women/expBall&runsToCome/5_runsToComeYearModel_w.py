@@ -102,7 +102,7 @@ extraRows['daysGroup'] = 13
 masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
 # this is used as a manually adjusted future-year estimate
 extraRows = masterLookup.loc[masterLookup['daysGroup'] == 13].copy()
-extraRows['daysGroup'] = 15.87
+extraRows['daysGroup'] = 16.2
 # append future-year rows back onto master lookup
 masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
 

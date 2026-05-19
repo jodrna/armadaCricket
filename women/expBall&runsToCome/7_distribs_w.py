@@ -27,7 +27,7 @@ trainData = trainData[trainData['inningNumber'] == 1]
 
 
 # --- global axis ranges ---
-masterLookup = masterLookup[masterLookup['daysGroup'] == 16]
+masterLookup = masterLookup[masterLookup['daysGroup'] == 10]
 x_line_min = masterLookup['inningBallNumber'].min()
 x_line_max = masterLookup['inningBallNumber'].max()
 y_line_min = masterLookup[['totalInningRunsToComeSimBiasSpline',
@@ -201,7 +201,7 @@ row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBal
 
 # Extract the moments
 # mean = row2['mean'].values[0]
-mean = 152.5
+mean = 153
 
 std = row2['std'].values[0]
 skew_val = row2['skew'].values[0]

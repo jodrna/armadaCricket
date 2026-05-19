@@ -6,19 +6,6 @@ from datetime import date
 from db import engine
 from paths import PROJECT_ROOT
 from pathlib import Path
-
-# lastRatingsUpdate = PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/bowlLastRatingsUpdate_w.txt'
-# today = date.today().isoformat()
-#
-# if lastRatingsUpdate.exists():
-#     last_run_date = lastRatingsUpdate.read_text().strip()
-# else:
-#     last_run_date = None
-#
-# if last_run_date == today:
-#     print(f'Ratings already updated today: {today}')
-#
-# else:
 connection = engine.connect()
 
 script_dir = Path(__file__).parent

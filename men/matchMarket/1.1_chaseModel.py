@@ -39,7 +39,8 @@ runs_required_spread['totalInningWickets'] = runs_required_spread['totalInningWi
 chaseSituationsRows = []
 
 for _, row in runs_required_spread.iterrows():
-    for runs in range(int(row['minRunsRequired']), int(row['maxRunsRequired']) + 1):
+    # for runs in range(int(row['minRunsRequired']), int(row['maxRunsRequired']) + 1):
+    for runs in range(100, 300):
         chaseSituationsRows.append({
             'inningBallsRemaining': int(row['inningBallsRemaining']),
             'inningBallNumber': int(121 - row['inningBallsRemaining']),
@@ -67,9 +68,9 @@ trainData = trainData.dropna(axis=0, subset=['ratioRequired'])
 
 
 # create an empty dataframe
-chaseLookup = pd.pivot_table(trainData, values=['sample', 'result', 'totalInningRunsToCome', 'totalInningWicketsToCome'],
+chaseLookup = pd.pivot_table(trainData, values=['sample', 'result', 'totalInningRunsToCome', 'totalInningWicketsToCome', 'totalInningRuns'],
                             index=['totalInningWickets', 'inningBallNumber', 'runsRequired'],
-                            aggfunc={'sample': 'sum', 'result': 'sum', 'totalInningRunsToCome': 'mean', 'totalInningWicketsToCome': 'mean'}).reset_index()
+                            aggfunc={'sample': 'sum', 'result': 'sum', 'totalInningRunsToCome': 'mean', 'totalInningWicketsToCome': 'mean', 'totalInningRuns': 'mean'}).reset_index()
 chaseLookup['result%'] = chaseLookup['result'] / chaseLookup['sample']
 chaseLookup = chaseSituations.merge(chaseLookup, how='left', on=['totalInningWickets', 'inningBallNumber', 'runsRequired'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
@@ -87,18 +88,18 @@ trainDataMain = trainData.copy()
 
 # prepare the data
 y = trainDataMain['result']
-X_std = trainDataMain[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup']]
+X_std = trainDataMain[['runsRequired', 'inningBallsRemaining', 'daysGroup', 'totalInningWickets']]
 scaler = StandardScaler()
 scaler.fit(X_std)
 X_std = scaler.transform(X_std)
 
 # build the model
-model = MLPClassifier(hidden_layer_sizes=(8, 4), random_state=42, activation='logistic', batch_size='auto', learning_rate='constant', max_iter=5000, early_stopping=False, learning_rate_init=0.001)
+model = MLPClassifier(hidden_layer_sizes=(4, 2), random_state=42, activation='logistic', batch_size='auto', learning_rate='constant', max_iter=5000, early_stopping=False, learning_rate_init=0.001)
 model.fit(X_std, y)
 trainDataMain['m_result%'] = model.predict_proba(X_std)[:, 1]
 
 # now predict the chase situations outside of training
-X = chaseLookup[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup']]
+X = chaseLookup[['runsRequired', 'inningBallsRemaining', 'daysGroup', 'totalInningWickets']]
 X = scaler.transform(X)
 chaseLookup['m_result%'] = model.predict_proba(X)[:, 1]
 
@@ -106,12 +107,49 @@ chaseLookup['m_result%'] = model.predict_proba(X)[:, 1]
 
 
 
-
+# trainData = trainData[trainData['inningBallsRemaining'] == 1]
 
 # exports
-# chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookup1st.csv', index=False)
+chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookup1st.csv', index=False)
+
+# chaseLookup = chaseLookup[chaseLookup['chaseSample'] > 62]
 
 
+
+
+
+
+
+# graph of predictions
+fig, axes = plt.subplots(10, 4, figsize=(20, 40))           # create a figure of dimension 10 (Wickets) by 5 (number of graphs for each wicket)
+for x in np.arange(0, 10, 1):                               # loop 0-10 for wickets
+    graph_data = chaseLookup.copy()
+    graph_data = graph_data[graph_data['totalInningWickets'] == x]       # filter the dataframe for the wicket in question
+    # graph_data['chase_adj%'] = graph_data['blendr_win%'] - graph_data['X_win%']
+    # create tables of the numbers to be plotted
+    actual = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_result%', aggfunc='mean')
+    old = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='chaseSample', aggfunc='mean')
+    new = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='totalInningRuns', aggfunc='mean')
+    # diff = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_diff', aggfunc='mean')
+    # plot in a heatmap
+    sns.heatmap(ax=axes[x, 0], data=actual, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
+    sns.heatmap(ax=axes[x, 1], data=old, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=180, center=60, xticklabels=10, yticklabels=10)
+    sns.heatmap(ax=axes[x, 2], data=new, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=280, center=160, xticklabels=10, yticklabels=10)
+    # sns.heatmap(ax=axes[x, 3], data=diff, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=-0.2, vmax=0.2, center=0, xticklabels=10, yticklabels=10)
+
+    # set titles for each graph
+    title1 = f"actual_win% - {x} wickets lost"
+    axes[x, 0].set_title(title1)
+    # title2 = f"old - {x} wickets lost"
+    # axes[x, 1].set_title(title2)
+    # title3 = f"new {x} wickets lost"
+    # axes[x, 2].set_title(title3)
+    # title4 = f"diff - {x} wickets lost"
+    # axes[x, 3].set_title(title4)
+    # title5 = f"blendr_win%_ - {x} wickets lost"
+    # axes[x, 4].set_title(title4)
+plt.tight_layout()
+plt.show()
 
 
 

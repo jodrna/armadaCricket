@@ -1,6 +1,15 @@
 import pandas as pd
-from sklearn.neural_network import MLPClassifier
+import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.ensemble import HistGradientBoostingRegressor, HistGradientBoostingClassifier
+from sklearn.neural_network import MLPRegressor, MLPClassifier
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_predict, KFold
+from sklearn.metrics import log_loss
 from paths import PROJECT_ROOT
 
 
@@ -172,36 +181,36 @@ chaseLookup = chaseLookup.merge(years, how='left', on=['totalInningWickets', 'ru
 
 
 
-# # graph of predictions
-# fig, axes = plt.subplots(10, 4, figsize=(20, 40))           # create a figure of dimension 10 (Wickets) by 5 (number of graphs for each wicket)
-# for x in np.arange(0, 10, 1):                               # loop 0-10 for wickets
-#     graph_data = chaseLookup.copy()
-#     graph_data = graph_data[graph_data['totalInningWickets'] == x]       # filter the dataframe for the wicket in question
-#     # graph_data['chase_adj%'] = graph_data['blendr_win%'] - graph_data['X_win%']
-#     # create tables of the numbers to be plotted
-#     actual = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='chaseWin%', aggfunc='mean')
-#     old = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_chaseWin%', aggfunc='mean')
-#     new = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_chaseWin%', aggfunc='mean')
-#     diff = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_diff', aggfunc='mean')
-#     # plot in a heatmap
-#     sns.heatmap(ax=axes[x, 0], data=actual, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
-#     sns.heatmap(ax=axes[x, 1], data=old, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
-#     sns.heatmap(ax=axes[x, 2], data=new, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
-#     sns.heatmap(ax=axes[x, 3], data=diff, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=-0.2, vmax=0.2, center=0, xticklabels=10, yticklabels=10)
-#
-#     # set titles for each graph
-#     title1 = f"actual_win% - {x} wickets lost"
-#     axes[x, 0].set_title(title1)
-#     title2 = f"old - {x} wickets lost"
-#     axes[x, 1].set_title(title2)
-#     title3 = f"new {x} wickets lost"
-#     axes[x, 2].set_title(title3)
-#     title4 = f"diff - {x} wickets lost"
-#     axes[x, 3].set_title(title4)
-#     # title5 = f"blendr_win%_ - {x} wickets lost"
-#     # axes[x, 4].set_title(title4)
-# plt.tight_layout()
-# plt.show()
+# graph of predictions
+fig, axes = plt.subplots(10, 4, figsize=(20, 40))           # create a figure of dimension 10 (Wickets) by 5 (number of graphs for each wicket)
+for x in np.arange(0, 10, 1):                               # loop 0-10 for wickets
+    graph_data = chaseLookup.copy()
+    graph_data = graph_data[graph_data['totalInningWickets'] == x]       # filter the dataframe for the wicket in question
+    # graph_data['chase_adj%'] = graph_data['blendr_win%'] - graph_data['X_win%']
+    # create tables of the numbers to be plotted
+    actual = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='chaseWin%', aggfunc='mean')
+    old = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_chaseWin%', aggfunc='mean')
+    new = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_chaseWin%', aggfunc='mean')
+    diff = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='chaseSample', aggfunc='mean')
+    # plot in a heatmap
+    sns.heatmap(ax=axes[x, 0], data=actual, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
+    sns.heatmap(ax=axes[x, 1], data=old, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
+    sns.heatmap(ax=axes[x, 2], data=new, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
+    sns.heatmap(ax=axes[x, 3], data=diff, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=500, center=62, xticklabels=10, yticklabels=10)
+
+    # set titles for each graph
+    title1 = f"actual_win% - {x} wickets lost"
+    axes[x, 0].set_title(title1)
+    title2 = f"old - {x} wickets lost"
+    axes[x, 1].set_title(title2)
+    title3 = f"new {x} wickets lost"
+    axes[x, 2].set_title(title3)
+    title4 = f"diff - {x} wickets lost"
+    axes[x, 3].set_title(title4)
+    # title5 = f"blendr_win%_ - {x} wickets lost"
+    # axes[x, 4].set_title(title4)
+plt.tight_layout()
+plt.show()
 
 
 
