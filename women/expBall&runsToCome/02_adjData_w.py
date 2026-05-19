@@ -12,14 +12,14 @@ from paths import PROJECT_ROOT
 ########ned to run lieups_filler befor running this!!!!!!!!!!!
 
 connection = engine.connect()
-raw_data_og = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', parse_dates=['date'])
+raw_data_og = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', parse_dates=['date'])
 # raw_data_og_max_date = raw_data_og['date'].max()
 raw_data_og = raw_data_og.drop_duplicates(subset=['id'])
 # # raw_data_og = raw_data_og[raw_data_og.matchid == 1233979]
-bowler_data = pd.read_sql_query("""select bowler, playerid as bowlerid, competition, host, date, run_rating as run_rating_pr_bo, wkt_rating as wkt_rating_pr_bo from player_ratings.bowler_ratings_historic""", con=connection)
-batter_data = pd.read_sql_query("""select batter as batsman, playerid as batterid, competition, host, date, run_rating as run_rating_pr_ba, wkt_rating as wkt_rating_pr_ba, balls_faced as balls_faced_pr_ba from player_ratings.batter_ratings_historic""", con=connection)
-ground_data = pd.read_sql_query("""select matchid, venue, innperiod, reverted_runs, reverted_wkts, runsratio_ground, wktsratio_ground from player_ratings.ground_table""", con=connection)
-wktvalues = pd.read_sql_query("""select overno as over, wktslost as wickets, wktvalue from player_ratings.wkt_values""", con=connection)
+bowler_data = pd.read_sql_query("""select bowler, playerid as bowlerid, competition, host, date, run_rating as run_rating_pr_bo, wkt_rating as wkt_rating_pr_bo from player_ratings.bowler_ratings_historic_w""", con=connection)
+batter_data = pd.read_sql_query("""select batter as batsman, playerid as batterid, competition, host, date, run_rating as run_rating_pr_ba, wkt_rating as wkt_rating_pr_ba, balls_faced as balls_faced_pr_ba from player_ratings.batter_ratings_historic_w""", con=connection)
+ground_data = pd.read_sql_query("""select matchid, venue, innperiod, reverted_runs, reverted_wkts, runsratio_ground, wktsratio_ground from player_ratings.ground_table_w""", con=connection)
+wktvalues = pd.read_sql_query("""select overno as over, wktslost as wickets, wktvalue from player_ratings.wkt_values_w""", con=connection)
 #
 # bowler_data.to_csv(fr'{user_name}\Documents\Tempdata\bowldataformatch.csv', index=False)
 # batter_data.to_csv(fr'{user_name}\Documents\Tempdata\batdataformatch.csv', index=False)
@@ -121,13 +121,13 @@ raw_data['ew_tc_ground'] = ew_tc_ground['ground_exp_wktvalue']
 raw_data['rar_bowl_sum'] = rar_bowl['rar_bowl']
 raw_data['raw_bowl_sum'] = raw_bowl['raw_bowl']
 
-# raw_data.to_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra.csv', index=False)
-# raw_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra.csv')
-#
-#
-#
-# # ##################need from here to mkae his ########################################################
-# raw_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra.csv')
+# raw_data.to_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra_w.csv', index=False)
+# raw_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra_w.csv')
+
+
+
+# ##################need from here to mkae his ########################################################
+# raw_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra_w.csv')
 
 ###EXPECTED RUNS TO COME SMOOTHED, just for current batters
 er_tc_avg_now = pd.pivot_table(raw_data, values=['er_tc', 'ew_tc'], index=['ballsremaining', 'wickets', 'ord'], aggfunc={'er_tc': ['mean', 'count'], 'ew_tc': ['count', 'mean']}).reset_index()
@@ -221,8 +221,8 @@ expr_pred['er_tc_smooth'] = model.predict(X)
 expr_pred['er_tc_smooth'] = np.maximum(expr_pred['er_tc_smooth'], 0)
 expr_pred['ew_tc_smooth'] = model2.predict(X)
 expr_pred['ew_tc_smooth'] = np.maximum(expr_pred['ew_tc_smooth'], 0)
-# expr_pred.to_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\MatchMarket\er_tc_smooth.csv', index=False)
-# ### calc for balls faced per ord per situation ground:
+# expr_pred.to_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\MatchMarket\er_tc_smooth_w.csv', index=False)
+### calc for balls faced per ord per situation ground:
 
 max2 = raw_data_inns1.groupby(['matchid', 'innings'])['innperiod'].max().reset_index()
 
@@ -312,18 +312,21 @@ raw_data['ew_tc_3'] = np.maximum(raw_data['ew_tc_3'], 0)
 raw_data['rar_ground_sum'] = ((raw_data['ground_runs_1'] - 1) * raw_data['er_tc_1']) + ((raw_data['ground_runs_2'] - 1) * raw_data['er_tc_2']) + ((raw_data['ground_runs_3'] - 1) * raw_data['er_tc_3'])
 raw_data['raw_ground_sum'] = -((raw_data['ground_wkts_1'] - 1) * raw_data['er_tc_1']) + ((raw_data['ground_wkts_2'] - 1) * raw_data['ew_tc_2']) + ((raw_data['ground_wkts_3'] - 1) * raw_data['ew_tc_3'])
 
-# raw_data.to_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra2.csv', index=False)
+# raw_data.to_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra2_w.csv', index=False)
 
-lineups = pd.read_sql_query("""select matchid, player as batter, playerid as batterid, team as battingteam, carded from player_ratings.t20_lineups_updated""", con=connection)
+lineups = pd.read_sql_query("""select matchid, player as batter, playerid as batterid, team as battingteam, carded from player_ratings.t20_lineups_updated_w""", con=connection)
 lineups = lineups.drop_duplicates(subset=['matchid', 'batterid'])
-# lineups.to_csv(fr'{user_name}\Documents\Tempdata\lineups.csv', index=False)
+lineups.to_csv(fr'{user_name}\Documents\Tempdata\lineups_w.csv', index=False)
 
 
 
-# expr_pred = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\MatchMarket\er_tc_smooth.csv')
-# raw_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra2.csv')
-# lineups = pd.read_csv(fr'{user_name}\Documents\Tempdata\lineups.csv')
+# expr_pred = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\MatchMarket\er_tc_smooth_w.csv')
+# raw_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra2_w.csv')
 
+# test = raw_data.groupby(['innings'])[['oppo_bowl_runs', 'run_rating_pr_bo', 'oppo_bowl_runs_old']].mean().reset_index()
+
+# lineups = pd.read_csv(fr'{user_name}\Documents\Tempdata\lineups_w.csv')
+# lineups = lineups[lineups.matchid == 1000161787]
 ####### applying to the data (both innings):
 his = raw_data.copy()
 # his_max_date = his['date'].max()
@@ -381,7 +384,7 @@ new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_g
 
 raw_data_og = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'RA_sum']], on='id', how='left')
 
-raw_data_og.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/Data/Cleaned_t20bbb3_adjusted_runs_to_come.csv', index=False)
+raw_data_og.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', index=False)
 
 # ##testing:
 # raw_data_og = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_adjusted_runs_to_come_{for_match}.csv')
