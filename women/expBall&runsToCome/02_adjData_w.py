@@ -12,7 +12,7 @@ from paths import PROJECT_ROOT
 ########ned to run lieups_filler befor running this!!!!!!!!!!!
 
 connection = engine.connect()
-raw_data_og = pd.read_csv(PROJECT_ROOT / 'Women/matchMarket/outputs/Cleaned_t20bbb3_w.csv', parse_dates=['date'])
+raw_data_og = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', parse_dates=['date'])
 # raw_data_og_max_date = raw_data_og['date'].max()
 raw_data_og = raw_data_og.drop_duplicates(subset=['id'])
 # # raw_data_og = raw_data_og[raw_data_og.matchid == 1233979]
@@ -384,7 +384,7 @@ new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_g
 
 raw_data_og = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'RA_sum']], on='id', how='left')
 
-raw_data_og.to_csv(PROJECT_ROOT / 'Women/matchMarket/outputs/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', index=False)
+raw_data_og.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', index=False)
 
 # ##testing:
 # raw_data_og = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_adjusted_runs_to_come_{for_match}.csv')

@@ -13,7 +13,7 @@ connection = engine.connect()
 run_type = 2
 
 subprocess.run(['git', 'pull'], check=True)
-last_date_data = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/auxiliaries/latest_data_clean.csv', parse_dates=['date'])
+last_date_data = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/latest_data_clean.csv', parse_dates=['date'])
 if last_date_data['date_of_run'].max() == pd.Timestamp(date.today()):
     exit()
 
@@ -140,13 +140,13 @@ raw_data = raw_data[raw_data['ballsremaining'] > 0]
 raw_data = raw_data[raw_data['score'] > -1]
 raw_data['over'] = raw_data['over_number'] + 1
 
-wkt_value_sum = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/auxiliaries/wkt_sum_mean.csv')
+wkt_value_sum = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/wkt_sum_mean.csv')
 raw_data = raw_data.merge(wkt_value_sum, how='left')
 raw_data = raw_data.drop_duplicates(subset=['id'])
 
 ## export
 if run_type == 1:
-    raw_data.to_csv(PROJECT_ROOT / 'men/matchMarket/outputs/Cleaned_t20bbb3.csv', index=False)
+    raw_data.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/Data/Cleaned_t20bbb3.csv', index=False)
     sqlupload = raw_data.loc[:,['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required', 'wkt_value_sum_smooth']]
     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a', 'wkt_value_sum_smooth']
 
@@ -238,8 +238,8 @@ else:
     date = raw_data.head(1)
     date['date_of_run'] = pd.Timestamp(date.today())
     date = date.loc[:,['date', 'date_of_run']]
-    date.to_csv(PROJECT_ROOT / 'men/matchMarket/auxiliaries/latest_data_clean.csv', index=False)
+    date.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/latest_data_clean.csv', index=False)
 
-    subprocess.run(['git', 'add', str(PROJECT_ROOT / 'men/matchMarket/auxiliaries/latest_data_clean.csv')])
+    subprocess.run(['git', 'add', str(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/latest_data_clean.csv')])
     subprocess.run(['git', 'commit', '-m', 'update csv files'])
     subprocess.run(['git', 'push'])

@@ -12,7 +12,7 @@ connection = engine.connect()
 #updating all data (1) or just daily update (2)?
 run_type = 2
 
-last_date_data = pd.read_csv(PROJECT_ROOT / 'Women/matchMarket/auxiliaries/latest_data_clean_w.csv', parse_dates=['date'])
+last_date_data = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv', parse_dates=['date'])
 if last_date_data['date_of_run'].max() == pd.Timestamp(date.today()):
     exit()
 
@@ -64,7 +64,7 @@ raw_data['target'] = raw_data['target_x']
 raw_data = raw_data.drop(labels=['target_x'], axis=1)
 
 # take out big bash after 2019 season because of the power surge
-raw_data = raw_data[(raw_data['competition'] != 'Women\'s Big Bash League') | (raw_data['date'] < '2020-06-06')]
+raw_data = raw_data[(raw_data['competition'] != 'Women\'s Big Bash League') | (raw_data['date'] < date(2020, 6, 6))]
 # take out the 100
 raw_data = raw_data[(raw_data['competition'] != 'The Hundred (Women\'s Comp)')]
 # # for t20i only include the major nations
@@ -142,7 +142,7 @@ raw_data = raw_data[raw_data['ballsremaining'] > 0]
 raw_data = raw_data[raw_data['score'] > -1]
 raw_data['over'] = raw_data['over_number'] + 1
 
-wkt_value_sum = pd.read_csv(PROJECT_ROOT / 'Women/matchMarket/auxiliaries/wkt_sum_mean_w.csv')
+wkt_value_sum = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/wkt_sum_mean_w.csv')
 raw_data = raw_data.merge(wkt_value_sum, how='left')
 raw_data = raw_data.drop_duplicates(subset=['id'])
 
@@ -150,7 +150,7 @@ print("5")
 
 ## export
 if run_type == 1:
-    raw_data.to_csv(PROJECT_ROOT / 'Women/matchMarket/outputs/Cleaned_t20bbb3_w.csv', index=False)
+    raw_data.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
     # raw_data = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_w.csv')
     sqlupload = raw_data.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]
     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a']
@@ -246,8 +246,8 @@ else:
     date = raw_data.head(1)
     date['date_of_run'] = pd.Timestamp(date.today())
     date = date.loc[:,['date', 'date_of_run']]
-    date.to_csv(PROJECT_ROOT / 'Women/matchMarket/auxiliaries/latest_data_clean_w.csv', index=False)
+    date.to_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv', index=False)
 
-    subprocess.run(['git', 'add', str(PROJECT_ROOT / 'Women/matchMarket/auxiliaries/latest_data_clean_w.csv')])
+    subprocess.run(['git', 'add', str(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv')])
     subprocess.run(['git', 'commit', '-m', 'update csv files'])
     subprocess.run(['git', 'push'])
