@@ -1,15 +1,6 @@
 import pandas as pd
-import numpy as np
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.ensemble import HistGradientBoostingRegressor, HistGradientBoostingClassifier
-from sklearn.neural_network import MLPRegressor, MLPClassifier
-import seaborn as sns
-import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
+from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import cross_val_predict, KFold
-from sklearn.metrics import log_loss
 from paths import PROJECT_ROOT
 
 
@@ -45,17 +36,14 @@ chaseSituations = pd.DataFrame(chaseSituationsRows)
 chaseSituations = chaseSituations.sort_values(by=['inningBallsRemaining', 'runsRequired', 'totalInningWickets']).reset_index(drop=True)
 
 
-
-
 # we only want innings 2 for the chase predictions, and shuffle the data
 trainData = trainData[trainData['inningNumber'] == 2]
 trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
 # we need to remove duplicates in runs to come so just select batting order 1
 masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 11)]
-
-
+# merge in runs to come
 trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSpline', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
-
+# create a ratio of runs to come to be used as a predictor, drop any nans
 trainData['ratioRequired'] = trainData['runsRequired'] / trainData['totalInningRunsToComeSimBiasSpline']
 trainData = trainData.dropna(axis=0, subset=['ratioRequired'])
 
@@ -75,11 +63,10 @@ chaseLookup['daysGroup'] = 11
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSpline']).reset_index(drop=True)
 chaseLookup['in'] = 1
 
-
-
 # remove chases which are effectively lost
 trainData = trainData.merge(chaseLookup.loc[:, ['in', 'totalInningWickets', 'runsRequired', 'inningBallNumber']], how='left', on=['totalInningWickets', 'runsRequired', 'inningBallNumber'])
 trainData = trainData[trainData['in'] == 1]
+
 
 
 # over 1-19 model, train on all data but keep only over 1-19
@@ -136,11 +123,13 @@ X = chaseLookupLastOver[['runsRequired', 'ratioRequired', 'totalInningWickets', 
 X = scaler.transform(X)
 chaseLookupLastOver['m_chaseWin%'] = model.predict_proba(X)[:, 1]
 
+
+
+
+
 # Scaling to range [0.0001, 0.9999]
 min_val, max_val = 0.0001, 0.9999
 chaseLookupLastOver['m_chaseWin%'] = min_val + (chaseLookupLastOver['m_chaseWin%'] - chaseLookupLastOver['m_chaseWin%'].min()) * (max_val - min_val) / (chaseLookupLastOver['m_chaseWin%'].max() - chaseLookupLastOver['m_chaseWin%'].min())
-
-
 
 
 # combine the 2 models
@@ -156,7 +145,16 @@ colsWrong['m_chaseWin%'] = colsRight['m_chaseWin%']
 colsWrong = colsWrong.sort_values(by=['inningBallsRemaining', 'runsRequired', 'totalInningWickets'], axis=0).reset_index(drop=True)
 chaseLookup['m_chaseWin%'] = colsWrong['m_chaseWin%']
 
+# add in an identifier/lookup column
+chaseLookup['state_id'] = (
+    chaseLookup['totalInningWickets']
+    + (chaseLookup['inningBallsRemaining'] / 1000)
+    + (chaseLookup['runsRequired'] / 1_000_000)
+).round(6)
 
+
+
+# some checks, the below doesn't affect the model
 # bias check
 bias = pd.pivot_table(trainData, values=['m_chaseWin%', 'chaseWin', 'sample'], aggfunc='sum', index=['totalInningWickets']).reset_index()
 bias['bias'] = bias['m_chaseWin%'] / bias['chaseWin']
@@ -205,21 +203,6 @@ chaseLookup = chaseLookup.merge(years, how='left', on=['totalInningWickets', 'ru
 # plt.tight_layout()
 # plt.show()
 
-
-
-# # some year analysis
-# trainData = trainData[trainData['inningBallsRemaining'] == 120]
-# chasewins = pd.pivot_table(trainData, values=['chaseWin', 'target'], index=['competition'], aggfunc='mean').reset_index()
-#
-#
-# m_chaseWinWeighted = pd.pivot_table(trainData, values=['m_chaseWin%'], index=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], aggfunc='mean').reset_index()
-# chaseLookup = chaseLookup.merge(m_chaseWinWeighted, how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], suffixes=('', 'Year'))
-
-chaseLookup['state_id'] = (
-    chaseLookup['totalInningWickets']
-    + (chaseLookup['inningBallsRemaining'] / 1000)
-    + (chaseLookup['runsRequired'] / 1_000_000)
-).round(6)
 
 
 # exports

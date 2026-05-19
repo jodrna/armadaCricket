@@ -265,7 +265,7 @@ prob_df['probability'] = prob_df['probability'] / prob_df['probability'].sum()
 # Optional: cumulative probability
 prob_df['cum_probability'] = prob_df['probability'].cumsum()
 
-matchMarket = matchMarket[matchMarket['inningBallNumber'] == 1]
+matchMarket = matchMarket[(matchMarket['inningBallNumber'] == 1) & (matchMarket['totalInningWickets'] == 0)]
 prob_df = prob_df.merge(matchMarket.loc[:, ['runsRequired', 'm_chaseWin%']], how='left', left_on='runs', right_on='runsRequired')
 prob_df['probs'] = prob_df['m_chaseWin%'] * prob_df['probability']
 print(np.sum(prob_df['probs']))

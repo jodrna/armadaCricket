@@ -14,9 +14,9 @@ from paths import PROJECT_ROOT
 
 
 # import
-trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean1st.csv', parse_dates=['date'])
-masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv')
-chaseSituations = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/auxiliaries/chaseSituationBuilder.csv')
+trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean1st_w.csv', parse_dates=['date'])
+masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
+chaseSituations = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/auxiliaries/chaseSituationBuilder_w.csv')
 
 # set runs required to efftarget
 trainData['runsRequired'] = trainData['effTarget'].round(0)
@@ -56,13 +56,11 @@ trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
 trainData = trainData[trainData['inningNumber'] == 1]
 trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
 # we need to remove duplicates in runs to come so just select batting order 1 and daysgroup 11
-masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 11)]
+masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 16.38)]
 
 # merge in predicted runs to come
 trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSpline', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
-# create a ratio of runs to come to be used as a predictor, drop any nans
-trainData['ratioRequired'] = trainData['runsRequired'] / trainData['totalInningRunsToComeSimBiasSpline']
-trainData = trainData.dropna(axis=0, subset=['ratioRequired'])
+
 
 
 
@@ -77,7 +75,7 @@ chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inni
 chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
 
 chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSpline']
-chaseLookup['daysGroup'] = 11
+chaseLookup['daysGroup'] = 16.38
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSpline']).reset_index(drop=True)
 
 
@@ -87,7 +85,7 @@ trainDataMain = trainData.copy()
 
 # prepare the data
 y = trainDataMain['result']
-X_std = trainDataMain[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup']]
+X_std = trainDataMain[['runsRequired', 'totalInningWickets', 'inningBallsRemaining', 'daysGroup']]
 scaler = StandardScaler()
 scaler.fit(X_std)
 X_std = scaler.transform(X_std)
@@ -98,7 +96,7 @@ model.fit(X_std, y)
 trainDataMain['m_result%'] = model.predict_proba(X_std)[:, 1]
 
 # now predict the chase situations outside of training
-X = chaseLookup[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup']]
+X = chaseLookup[['runsRequired', 'totalInningWickets', 'inningBallsRemaining', 'daysGroup']]
 X = scaler.transform(X)
 chaseLookup['m_result%'] = model.predict_proba(X)[:, 1]
 
@@ -109,7 +107,8 @@ chaseLookup['m_result%'] = model.predict_proba(X)[:, 1]
 
 
 # exports
-# chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookup1st.csv', index=False)
+# chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup1st.csv', index=False)
+
 
 
 

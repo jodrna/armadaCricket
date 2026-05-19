@@ -1,23 +1,14 @@
 import pandas as pd
-import numpy as np
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.ensemble import HistGradientBoostingRegressor, HistGradientBoostingClassifier
-from sklearn.neural_network import MLPRegressor, MLPClassifier
-import seaborn as sns
-import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
+from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import cross_val_predict, KFold
-from sklearn.metrics import log_loss
 from paths import PROJECT_ROOT
 
 
 # import
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
-masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup.csv')
-chaseSituations = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/auxiliaries/chaseSituationBuilder.csv')
-chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookupLive.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
+chaseSituations = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/auxiliaries/chaseSituationBuilder_w.csv')
+chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookupLive_w.csv')
 
 
 
@@ -53,33 +44,12 @@ chaseSituations = chaseSituations.sort_values(by=['inningBallsRemaining', 'runsR
 trainData = trainData[trainData['inningNumber'] == 2]
 trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
 # we need to remove duplicates in runs to come so just select batting order 1
-masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 16)]
-
-
+masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 10)]
+# merge in runs to come
 trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSpline', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
-
+# create a ratio of runs to come to be used as a predictor, drop any nans
 trainData['ratioRequired'] = trainData['runsRequired'] / trainData['totalInningRunsToComeSimBiasSpline']
 trainData = trainData.dropna(axis=0, subset=['ratioRequired'])
-
-
-
-# # create an empty dataframe
-# chaseLookup = pd.pivot_table(trainData, values=['sample', 'chaseWin', 'totalInningRunsToCome', 'totalInningWicketsToCome'],
-#                             index=['totalInningWickets', 'inningBallNumber', 'runsRequired'],
-#                             aggfunc={'sample': 'sum', 'chaseWin': 'sum', 'totalInningRunsToCome': 'mean', 'totalInningWicketsToCome': 'mean'}).reset_index()
-# chaseLookup['chaseWin%'] = chaseLookup['chaseWin'] / chaseLookup['sample']
-# chaseLookup = chaseSituations.merge(chaseLookup, how='left', on=['totalInningWickets', 'inningBallNumber', 'runsRequired'])
-# chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
-# chaseLookup['daysGroup'] = 16
-# chaseLookup['year'] = 2025
-#
-# chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inningBallNumber', 'sample', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningValidBallsFacedToCome', 'bowledOut', 'daysGroup']], how='left', on=['totalInningWickets', 'inningBallNumber', 'daysGroup'])
-# chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
-# chaseLookup['daysGroup'] = 16
-#
-# chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSplineYear']
-# chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSplineYear']).reset_index(drop=True)
-# chaseLookup['in'] = 1
 
 
 
@@ -92,9 +62,8 @@ chaseLookup = chaseSituations.merge(chaseLookup, how='left', on=['totalInningWic
 chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
 chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inningBallNumber', 'sample', 'totalInningRunsToComeSimBiasSpline', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
-
 chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSpline']
-chaseLookup['daysGroup'] = 16
+chaseLookup['daysGroup'] = 13
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSpline']).reset_index(drop=True)
 chaseLookup['in'] = 1
 
@@ -107,14 +76,13 @@ trainData = trainData[trainData['in'] == 1]
 
 
 
-
-# high wicket model
+# start of innings model
 trainDataMain = trainData.copy()
 trainDataMain = trainDataMain[(trainDataMain['inningBallsRemaining'] > 1)]
 
 # prepare the data
 y = trainDataMain['chaseWin']
-X_std = trainDataMain[['runsRequired', 'ratioRequired', 'totalInningWickets', 'inningBallsRemaining']]
+X_std = trainDataMain[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup']]
 scaler = StandardScaler()
 scaler.fit(X_std)
 X_std = scaler.transform(X_std)
@@ -124,22 +92,10 @@ model = MLPClassifier(hidden_layer_sizes=(4, 2), random_state=42, activation='lo
 model.fit(X_std, y)
 trainDataMain['m_chaseWin%'] = model.predict_proba(X_std)[:, 1]
 
-
-
 # now predict the chase situations outside of training
 chaseLookupMain = chaseLookup.copy()
 chaseLookupMain = chaseLookupMain[(chaseLookupMain['inningBallsRemaining'] > 6)]
-
-# chaseLookupMain = chaseLookupMain[(chaseLookupMain['inningBallsRemaining'] == 120) & (chaseLookupMain['totalInningWickets'] == 0) & (chaseLookupMain['runsRequired'] == 1)]
-# chaseLookupMain = pd.concat([chaseLookupMain]*12, ignore_index=True).assign(
-#     totalInningRunsToComeSimBiasSplineYear=[130.99822, 132.30136, 133.60451, 134.90765, 136.21080, 137.51395,
-#         138.81709, 140.12024, 141.42338, 142.72653, 144.02967, 145.33282],
-#     daysGroup=range(12)
-# )
-# chaseLookupMain['runsRequired'] = chaseLookupMain['totalInningRunsToComeSimBiasSplineYear']
-# chaseLookupMain['ratioRequired'] = 1
-
-X = chaseLookupMain[['runsRequired', 'ratioRequired', 'totalInningWickets', 'inningBallsRemaining']]
+X = chaseLookupMain[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup']]
 X = scaler.transform(X)
 chaseLookupMain['m_chaseWin%'] = model.predict_proba(X)[:, 1]
 trainDataMain = trainDataMain[(trainDataMain['inningBallsRemaining'] > 6)]
@@ -174,10 +130,12 @@ X = chaseLookupLastOver[['runsRequired', 'ratioRequired', 'totalInningWickets', 
 X = scaler.transform(X)
 chaseLookupLastOver['m_chaseWin%'] = model.predict_proba(X)[:, 1]
 
+
+
+
 # Scaling to range [0.0001, 0.9999]
 min_val, max_val = 0.0001, 0.9999
 chaseLookupLastOver['m_chaseWin%'] = min_val + (chaseLookupLastOver['m_chaseWin%'] - chaseLookupLastOver['m_chaseWin%'].min()) * (max_val - min_val) / (chaseLookupLastOver['m_chaseWin%'].max() - chaseLookupLastOver['m_chaseWin%'].min())
-
 
 
 # combine the 2 models
@@ -193,7 +151,16 @@ colsWrong['m_chaseWin%'] = colsRight['m_chaseWin%']
 colsWrong = colsWrong.sort_values(by=['inningBallsRemaining', 'runsRequired', 'totalInningWickets'], axis=0).reset_index(drop=True)
 chaseLookup['m_chaseWin%'] = colsWrong['m_chaseWin%']
 
+# add in an identifier/lookup column
+chaseLookup['state_id'] = (
+    chaseLookup['totalInningWickets']
+    + (chaseLookup['inningBallsRemaining'] / 1000)
+    + (chaseLookup['runsRequired'] / 1_000_000)
+).round(6)
 
+
+
+# some checks, the below doesn't affect the model
 # bias check
 bias = pd.pivot_table(trainData, values=['m_chaseWin%', 'chaseWin', 'sample'], aggfunc='sum', index=['totalInningWickets']).reset_index()
 bias['bias'] = bias['m_chaseWin%'] / bias['chaseWin']
@@ -208,6 +175,11 @@ chaseLookup['m_diff'] = chaseLookup['m_chaseWin%'] - chaseLookup['m_chaseWin%Liv
 # chase win % year
 years = pd.pivot_table(trainData, index=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], values=['m_chaseWin%'], aggfunc='mean').reset_index()
 chaseLookup = chaseLookup.merge(years, how='left', on=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], suffixes=('', 'Year'))
+
+
+
+# # use this to get the target win% in distribs, 51.30%
+# yearswins = pd.pivot_table(trainData, index=['totalInningWickets', 'inningBallsRemaining'], values=['chaseWin'], aggfunc='mean').reset_index()
 
 
 
@@ -244,14 +216,6 @@ chaseLookup = chaseLookup.merge(years, how='left', on=['totalInningWickets', 'ru
 
 
 
-# # some year analysis
-# trainData = trainData[trainData['inningBallsRemaining'] == 120]
-# chasewins = pd.pivot_table(trainData, values=['chaseWin', 'target'], index=['competition'], aggfunc='mean').reset_index()
-#
-#
-# m_chaseWinWeighted = pd.pivot_table(trainData, values=['m_chaseWin%'], index=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], aggfunc='mean').reset_index()
-# chaseLookup = chaseLookup.merge(m_chaseWinWeighted, how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], suffixes=('', 'Year'))
-
 # exports
-chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup.csv', index=False)
+chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w.csv', index=False)
 
