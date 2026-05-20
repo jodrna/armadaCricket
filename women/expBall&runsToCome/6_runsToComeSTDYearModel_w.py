@@ -97,4 +97,8 @@ plt.show()
 
 masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/6_masterLookup_w.csv', index=False)
 
-
+max_days_group = masterLookup['daysGroup'].max()
+ras_input = masterLookup[masterLookup.daysGroup == max_days_group]
+ras_input['code'] = ras_input['totalInningWickets'] + ((121 - ras_input['inningsBallNumber']) / 1000)
+ras_input = masterLookup.loc[:, ['code', 'sample', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningRunsToComeSimSTDYear', 'totalInningsRunsToComeSimMin', 'totalInningsRunsToComeSimMax', 'totalInningsRunsToComeSimSkew', 'totalInningsRunsToComeSimKurt']]
+masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ras_input_innings.csv', index=False)
