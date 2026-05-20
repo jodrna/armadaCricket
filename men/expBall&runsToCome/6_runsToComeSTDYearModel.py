@@ -104,4 +104,8 @@ masterLookup['state_id'] = masterLookup['state_id'].map(lambda x: f"{x:.3f}")
 
 masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/6_masterLookup.csv', index=False)
 
-
+max_days_group = masterLookup['daysGroup'].max()
+ras_input = masterLookup[masterLookup.daysGroup == max_days_group]
+ras_input['code'] = ras_input['totalInningWickets'] + ((121 - ras_input['inningsBallNumber']) / 1000)
+ras_input = masterLookup.loc[:, ['code', 'sample', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningRunsToComeSimSTDYear', 'totalInningsRunsToComeSimMin', 'totalInningsRunsToComeSimMax', 'totalInningsRunsToComeSimSkew', 'totalInningsRunsToComeSimKurt']]
+masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/ras_input_innings.csv', index=False)
