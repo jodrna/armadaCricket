@@ -117,7 +117,12 @@ masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] = masterLookup['totalI
 masterLookup['totalInningRunsToComeSimBiasSplineYear'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] * masterLookup['totalInningRunsToComeSimBiasSpline']
 masterLookup = masterLookup.sort_values(by=['totalInningWickets', 'inningBallNumber', 'ord', 'daysGroup']).reset_index(drop=True)
 
-# export final lookup table
-# masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv', index=False)
+#export final lookup table
+masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv', index=False)
 
+testing_year = trainData[trainData.inningBallNumber == 1].groupby(['year'])[['totalInningRunsToComeAdj', 'totalInningRunsToCome', 'totalInningRunsToComeSimBiasSplineYearAdj', 'totalInningRunsToComeSimBiasSplineYear', 'yearFactor', 'yearFactor2']].mean().reset_index()
 
+testing_wl_year = masterLookup[masterLookup['sample'] > 62].groupby(['totalInningWickets', 'year'])[['totalInningRunsToComeSimBiasSplineYearRateAdj', 'totalInningRunsToComeSimBiasSplineYearRate']].mean().reset_index() #[masterLookup['daysGroup'] == 16.19]
+testing_br_year = masterLookup[masterLookup['sample'] > 62].groupby(['inningBallNumber', 'year'])[['totalInningRunsToComeSimBiasSplineYearRateAdj', 'totalInningRunsToComeSimBiasSplineYearRate']].mean().reset_index() #[masterLookup['daysGroup'] == 16.19]
+
+testing_wl_br = masterLookup.groupby(['totalInningWickets', 'inningBallNumber'])[['totalInningRunsToComeSimBiasSplineYearRateAdj', 'totalInningRunsToComeSimBiasSplineYearRate']].mean().reset_index() #[masterLookup['daysGroup'] == 16.19]

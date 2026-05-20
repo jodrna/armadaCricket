@@ -46,7 +46,7 @@ trainData['vsOvr'] = trainData['totalInningRunsToCome'] / trainData['totalInning
 trainData = trainData.dropna(subset=['vsAdjOvr', 'vsOvr'])
 
 # only train on 2018+ data
-trainData = trainData.loc[trainData['year'] > 2018].copy()
+trainData = trainData.loc[trainData['year'] > 2014].copy()
 
 # create interaction terms between year trend and game state
 trainData['daysGroup_totalInningWickets'] = trainData['daysGroup'] * trainData['totalInningWickets']
@@ -102,7 +102,7 @@ extraRows['daysGroup'] = 13
 masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
 # this is used as a manually adjusted future-year estimate
 extraRows = masterLookup.loc[masterLookup['daysGroup'] == 13].copy()
-extraRows['daysGroup'] = 16.2
+extraRows['daysGroup'] = 16.19
 # append future-year rows back onto master lookup
 masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
 
@@ -127,5 +127,9 @@ masterLookup = masterLookup.sort_values(by=['totalInningWickets', 'inningBallNum
 # export final lookup table
 masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv', index=False)
 
+testing_year = trainData[trainData.inningBallNumber == 1].groupby(['year'])[['totalInningRunsToComeAdj', 'totalInningRunsToCome', 'totalInningRunsToComeSimBiasSplineYearAdj', 'totalInningRunsToComeSimBiasSplineYear', 'yearFactor', 'yearFactor2']].mean().reset_index()
 
+testing_wl_year = masterLookup[masterLookup['sample'] > 62].groupby(['totalInningWickets', 'year'])[['totalInningRunsToComeSimBiasSplineYearRateAdj', 'totalInningRunsToComeSimBiasSplineYearRate']].mean().reset_index() #[masterLookup['daysGroup'] == 16.19]
+testing_br_year = masterLookup[masterLookup['sample'] > 62].groupby(['inningBallNumber', 'year'])[['totalInningRunsToComeSimBiasSplineYearRateAdj', 'totalInningRunsToComeSimBiasSplineYearRate']].mean().reset_index() #[masterLookup['daysGroup'] == 16.19]
 
+testing_wl_br = masterLookup.groupby(['totalInningWickets', 'inningBallNumber'])[['totalInningRunsToComeSimBiasSplineYearRateAdj', 'totalInningRunsToComeSimBiasSplineYearRate']].mean().reset_index() #[masterLookup['daysGroup'] == 16.19]
