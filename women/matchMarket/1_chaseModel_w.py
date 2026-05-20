@@ -177,8 +177,8 @@ years = pd.pivot_table(trainData, index=['totalInningWickets', 'runsRequired', '
 chaseLookup = chaseLookup.merge(years, how='left', on=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], suffixes=('', 'Year'))
 
 #insert lookup column for inserting into RAS
-col_position = chaseLookup.columns.get_loc('m_chaseWin%')  # gets index of 'B'
-chaseLookup.insert(col_position, 'lookup', (chaseLookup['totalInningWickets'] + (chaseLookup['runsRequired'] / 1000) + (chaseLookup['inningBallsRemaining'] / 1000000)).round(6))
+col_position = chaseLookup.columns.get_loc('m_chaseWin%')
+chaseLookup.insert(col_position, 'lookup', (chaseLookup['totalInningWickets'] + (chaseLookup['inningBallsRemaining'] / 1000) + (chaseLookup['runsRequired'] / 1000000)).round(6))
 
 # # use this to get the target win% in distribs, 51.30%
 # yearswins = pd.pivot_table(trainData, index=['totalInningWickets', 'inningBallsRemaining'], values=['chaseWin'], aggfunc='mean').reset_index()

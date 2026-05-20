@@ -316,7 +316,7 @@ raw_data['raw_ground_sum'] = -((raw_data['ground_wkts_1'] - 1) * raw_data['er_tc
 
 lineups = pd.read_sql_query("""select matchid, player as batter, playerid as batterid, team as battingteam, carded from player_ratings.t20_lineups_updated_w""", con=connection)
 lineups = lineups.drop_duplicates(subset=['matchid', 'batterid'])
-lineups.to_csv(fr'{user_name}\Documents\Tempdata\lineups_w.csv', index=False)
+# lineups.to_csv(fr'{user_name}\Documents\Tempdata\lineups_w.csv', index=False)
 
 
 
