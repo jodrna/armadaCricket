@@ -172,7 +172,7 @@ chaseLookup = chaseLookup.merge(years, how='left', on=['totalInningWickets', 'ru
 
 #insert lookup column for inserting into RAS
 col_position = chaseLookup.columns.get_loc('m_chaseWin%')  # gets index of 'B'
-chaseLookup.insert(col_position, 'lookup', (chaseLookup['totalInningWickets'] + (chaseLookup['runsRequired'] / 1000) + (chaseLookup['inningBallsRemaining'] / 1000000)).round(6))
+chaseLookup.insert(col_position, 'lookup', (chaseLookup['totalInningWickets'] + (chaseLookup['inningBallsRemaining'] / 1000) + (chaseLookup['runsRequired'] / 1000000)).round(6))
 
 # # graph of predictions
 # fig, axes = plt.subplots(10, 4, figsize=(20, 40))           # create a figure of dimension 10 (Wickets) by 5 (number of graphs for each wicket)
