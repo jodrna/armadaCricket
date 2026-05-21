@@ -187,10 +187,3 @@ lookupForInruns['totalInningRunsToComeSimBiasSplineYear'] = lookupForInruns['tot
 lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj'] = (lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']) - lookupForInruns['predicted_RA_Sum']
 
 lookupForInruns = lookupForInruns.loc[:, ['daysGroup', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningRunsToComeSimBiasSplineYearAdj']]
-
-# testing_wl_year = masterLookup[masterLookup['sample'] > 62].groupby(['totalInningWickets', 'year'])[['totalInningRunsToComeSimBiasSplineYearRateAdj', 'totalInningRunsToComeSimBiasSplineYearRate']].mean().reset_index() #[masterLookup['daysGroup'] == 16.19]
-# testing_br_year = masterLookup[masterLookup['sample'] > 62].groupby(['inningBallNumber', 'year'])[['totalInningRunsToComeSimBiasSplineYearRateAdj', 'totalInningRunsToComeSimBiasSplineYearRate']].mean().reset_index() #[masterLookup['daysGroup'] == 16.19]
-# testing_wl = masterLookup[masterLookup['sample'] > 62].groupby(['totalInningWickets'])[['totalInningRunsToComeSimBiasSplineYearRateAdj', 'totalInningRunsToComeSimBiasSplineYearRate']].mean().reset_index() #[masterLookup['daysGroup'] == 16.19]
-# testing_wl_br = masterLookup.groupby(['totalInningWickets', 'inningBallNumber'])[['totalInningRunsToComeSimBiasSplineYearRateAdj', 'totalInningRunsToComeSimBiasSplineYearRate']].mean().reset_index() #[masterLookup['daysGroup'] == 16.19]
-
-
