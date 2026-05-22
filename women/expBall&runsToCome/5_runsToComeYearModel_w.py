@@ -90,6 +90,14 @@ if log_method == 1:
     trainData['yearFactor'] = np.expm1(trainData['yearFactor']) + vsAdjOvrMin
     trainData['yearFactor2'] = np.expm1(trainData['yearFactor2']) + vsOvrMin
 
+###getting remaining trends from model data:
+testing_wl = trainData.groupby(['totalInningWickets'])[['yearFactor', 'yearFactor2']].mean().reset_index()
+
+trainData = trainData.merge(testing_wl, on='totalInningWickets', how='left', suffixes=('_old', '_wl'))
+
+trainData['yearFactor'] = trainData['yearFactor_old'] / trainData['yearFactor_wl']
+trainData['yearFactor2'] = trainData['yearFactor2_old'] / trainData['yearFactor2_wl']
+
 # apply year adjustments back onto baseline spline predictions
 trainData['totalInningRunsToComeSimBiasSplineYearAdj'] = trainData['totalInningRunsToComeSimBiasSpline'] * trainData['yearFactor']
 trainData['totalInningRunsToComeSimBiasSplineYear'] = trainData['totalInningRunsToComeSimBiasSpline'] * trainData['yearFactor2']
@@ -101,37 +109,35 @@ trainData = trainData.dropna(subset=['totalInningRunsToComeSimBiasSplineYearAdj'
 print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalInningRunsToComeSimBiasSplineYearAdj']))
 print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalInningRunsToComeSimBiasSplineYear']))
 
-###getting remaining trends from training data:
-testing_wl = trainData.groupby(['totalInningWickets'])[['yearFactor', 'yearFactor2']].mean().reset_index()
-
-trainData = trainData.merge(testing_wl, on='totalInningWickets', how='left', suffixes=('_old', '_wl'))
-
-trainData['yearFactor'] = trainData['yearFactor_old'] / trainData['yearFactor_wl']
-trainData['yearFactor2'] = trainData['yearFactor2_old'] / trainData['yearFactor2_wl']
-
 testing_wl_year = trainData.groupby(['totalInningWickets', 'year'])[['yearFactor', 'yearFactor2']].mean().reset_index()
-testing_br_year = trainData.groupby(['inningBallNumber', 'year'])[['yearFactor', 'yearFactor2']].mean().reset_index()
+testing_br_year = trainData.groupby(['inningBallNumber', 'year'])[['yearFactor', 'yearFactor2', 'totalInningRunsToComeAdj', 'totalInningRunsToCome']].mean().reset_index()
 testing_wl_2 = trainData.groupby(['totalInningWickets'])[['yearFactor', 'yearFactor2']].mean().reset_index()
 testing_wl_br = trainData.groupby(['totalInningWickets', 'inningBallNumber'])[['yearFactor', 'yearFactor2']].mean().reset_index()
+testing_br = trainData.groupby(['inningBallNumber'])[['yearFactor', 'yearFactor2']].mean().reset_index()
 testing_RA_sum_br = trainData.groupby(['inningBallNumber'])[['RA_Sum']].mean().reset_index()
 testing_RA_sum_wl = trainData.groupby(['totalInningWickets'])['RA_Sum'].mean().reset_index()
-testing_RA_sum_wl_br = trainData.groupby(['totalInningWickets', 'inningBallNumber'])['RA_Sum'].mean().reset_index()
+RA_sum_wl_br = trainData.groupby(['totalInningWickets', 'inningBallNumber'])['RA_Sum'].mean().reset_index()
 
 # model for RA_sum prediction
-testing_RA_sum_wl_br = testing_RA_sum_wl_br.dropna()
+testing_RA_sum_wl_br = RA_sum_wl_br.dropna()
 model_RA_sum = Pipeline([
     ('poly', PolynomialFeatures(degree=2, include_bias=False)),
     ('reg',  LinearRegression())
 ])
-model_RA_sum.fit(testing_RA_sum_wl_br[['totalInningWickets', 'inningBallNumber']], testing_RA_sum_wl_br['RA_Sum'])
-testing_RA_sum_wl_br['predicted_RA_Sum'] = model_RA_sum.predict(testing_RA_sum_wl_br[['totalInningWickets', 'inningBallNumber']])
+model_RA_sum.fit(RA_sum_wl_br[['totalInningWickets', 'inningBallNumber']], RA_sum_wl_br['RA_Sum'])
+RA_sum_wl_br['predicted_RA_Sum'] = model_RA_sum.predict(RA_sum_wl_br[['totalInningWickets', 'inningBallNumber']])
+trainData['predicted_RA_Sum'] = model_RA_sum.predict(trainData[['totalInningWickets', 'inningBallNumber']])
+RA_sum_factoring = trainData.groupby(['inningBallNumber'])['predicted_RA_Sum'].mean().reset_index()
+RA_sum_wl_br = RA_sum_wl_br.merge(RA_sum_factoring, on='inningBallNumber', suffixes=('', '_factoring'))
+RA_sum_wl_br['predicted_RA_Sum'] = RA_sum_wl_br['predicted_RA_Sum'] - RA_sum_wl_br['predicted_RA_Sum_factoring']
+RA_sum_wl_br = RA_sum_wl_br.loc[:, ['totalInningWickets', 'inningBallNumber', 'predicted_RA_Sum']]
 
 # create year grouping used for prediction
 masterLookup['daysGroup'] = masterLookup['year'] - 2015
 
-# duplicate the latest year and relabel as 13, this gives us the number we want to match the match market
+# duplicate the latest year and relabel as 9.4, this gives us the number we want to match the match market
 extraRows = masterLookup.loc[masterLookup['daysGroup'] == 11].copy()
-extraRows['daysGroup'] = 13
+extraRows['daysGroup'] = 10.2
 
 # append future-year rows back onto master lookup
 masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
@@ -161,7 +167,7 @@ masterLookup['totalInningRunsToComeSimBiasSplineYear'] = masterLookup['totalInni
 masterLookup = masterLookup.sort_values(by=['totalInningWickets', 'inningBallNumber', 'ord', 'daysGroup']).reset_index(drop=True)
 
 # apply predicted RA_sum as recovery work:
-masterLookup['predicted_RA_Sum'] = model_RA_sum.predict(masterLookup[['totalInningWickets', 'inningBallNumber']])
+masterLookup = masterLookup.merge(RA_sum_wl_br, on=('totalInningWickets', 'inningBallNumber'), how='left')
 masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] - masterLookup['predicted_RA_Sum']
 
 # #export final lookup table
@@ -182,7 +188,13 @@ lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] = (model_raw.predi
 if log_method == 1:
     lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] = np.expm1(lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj']) + vsAdjOvrMin
     lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] = np.expm1(lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate']) + vsOvrMin
-lookupForInruns['totalInningRunsToComeSimBiasSplineYear'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']
-lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj'] = (lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']) - lookupForInruns['predicted_RA_Sum']
+lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj2'] = (lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']) - lookupForInruns['predicted_RA_Sum']
+lookupForInruns['totalInningRunsToComeSimBiasSplineYear2'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']
+# this is to allow for overall bias in the by year adjust model, this means the overall adjust for each wicket will be 1.000
+lookupForInruns = lookupForInruns.merge(testing_wl, on='totalInningWickets', how='left')
+lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj3'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj2'] / lookupForInruns['yearFactor']
+lookupForInruns['totalInningRunsToComeSimBiasSplineYear3'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYear2'] / lookupForInruns['yearFactor2']
 
-lookupForInruns = lookupForInruns.loc[:, ['daysGroup', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningRunsToComeSimBiasSplineYearAdj']]
+lookupForInruns_final = lookupForInruns.loc[:, ['daysGroup', 'totalInningRunsToComeSimBiasSplineYear3', 'totalInningRunsToComeSimBiasSplineYearAdj3']]
+
+comparison_by_year_final = testing_br_year.copy()
