@@ -6,19 +6,6 @@ from datetime import date
 from db import engine
 from paths import PROJECT_ROOT
 from pathlib import Path
-
-# lastRatingsUpdate = PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/lastRatingsUpdate.txt'
-# today = date.today().isoformat()
-#
-# if lastRatingsUpdate.exists():
-#     last_run_date = lastRatingsUpdate.read_text().strip()
-# else:
-#     last_run_date = None
-#
-# if last_run_date == today:
-#     print(f'Ratings already updated today: {today}')
-#
-# else:
 connection = engine.connect()
 
 # run the files
@@ -97,8 +84,5 @@ with engine.begin() as conn:
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic TO jordan;'
         'GRANT ALL PRIVILEGES ON TABLE player_ratings.bowler_ratings_historic TO decimalwebsite;'
     ))
-
-# lastRatingsUpdate.write_text(today)
-print(f'Ratings updated') #and last run date saved: {today}
 
 

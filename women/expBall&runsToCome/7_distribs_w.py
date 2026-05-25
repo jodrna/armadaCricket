@@ -13,21 +13,72 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import SplineTransformer
 from sklearn.metrics import r2_score
 from paths import PROJECT_ROOT
+from db import engine
+from sqlalchemy import text
+connection = engine.connect()
 
 
 
 # import data
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
-simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
+# simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
-matchMarket = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w.csv')
+matchMarket = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w1.csv')
 trainData = trainData[trainData['inningNumber'] == 1]
 
 
+# # keep only columns needed
+# simClassAdjusted = simClassAdjusted.loc[:, [
+#     'totalInningWickets',
+#     'inningBallNumber',
+#     'totalInningRunsToCome'
+# ]]
+#
+#
+# def truncate_and_upload(df, table_name, dtype=None):
+#     exists_sql = text("""
+#         SELECT EXISTS (
+#             SELECT 1
+#             FROM information_schema.tables
+#             WHERE table_schema = 'player_ratings'
+#             AND table_name = :table_name
+#         )
+#     """)
+#
+#     with engine.begin() as conn:
+#         table_exists = conn.execute(exists_sql, {'table_name': table_name}).scalar()
+#
+#         if table_exists:
+#             conn.execute(text(f'TRUNCATE TABLE player_ratings.{table_name}'))
+#
+#     df.to_sql(
+#         table_name,
+#         con=engine,
+#         schema='player_ratings',
+#         if_exists='append',
+#         index=False,
+#         dtype=dtype
+#     )
+#
+#
+# # to SQL
+# truncate_and_upload(simClassAdjusted, 'sim_class_adjusted')
+#
+# with engine.begin() as conn:
+#     conn.execute(text(
+#         'GRANT ALL PRIVILEGES ON TABLE player_ratings.sim_class_adjusted TO tableau;'
+#         'GRANT ALL PRIVILEGES ON TABLE player_ratings.sim_class_adjusted TO willhowie;'
+#         'GRANT ALL PRIVILEGES ON TABLE player_ratings.sim_class_adjusted TO jordan;'
+#     ))
 
+
+
+# to download sim data
+sql_query = '''select  * from player_ratings.sim_class_adjusted'''
+simClassAdjusted = pd.read_sql_query(sql_query, con=connection)
 
 # --- global axis ranges ---
-masterLookup = masterLookup[masterLookup['daysGroup'] == 16]
+masterLookup = masterLookup[masterLookup['daysGroup'] == 10]
 x_line_min = masterLookup['inningBallNumber'].min()
 x_line_max = masterLookup['inningBallNumber'].max()
 y_line_min = masterLookup[['totalInningRunsToComeSimBiasSpline',
@@ -201,7 +252,7 @@ row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBal
 
 # Extract the moments
 # mean = row2['mean'].values[0]
-mean = 152.5
+mean = 152.67
 
 std = row2['std'].values[0]
 skew_val = row2['skew'].values[0]
