@@ -310,13 +310,13 @@ raw_data['ew_tc_3'] = model22.predict(X_predict24)
 raw_data['ew_tc_3'] = np.maximum(raw_data['ew_tc_3'], 0)
 
 raw_data['rar_ground_sum'] = ((raw_data['ground_runs_1'] - 1) * raw_data['er_tc_1']) + ((raw_data['ground_runs_2'] - 1) * raw_data['er_tc_2']) + ((raw_data['ground_runs_3'] - 1) * raw_data['er_tc_3'])
-raw_data['raw_ground_sum'] = -((raw_data['ground_wkts_1'] - 1) * raw_data['er_tc_1']) + ((raw_data['ground_wkts_2'] - 1) * raw_data['ew_tc_2']) + ((raw_data['ground_wkts_3'] - 1) * raw_data['ew_tc_3'])
+raw_data['raw_ground_sum'] = -(((raw_data['ground_wkts_1'] - 1) * raw_data['er_tc_1']) + ((raw_data['ground_wkts_2'] - 1) * raw_data['ew_tc_2']) + ((raw_data['ground_wkts_3'] - 1) * raw_data['ew_tc_3']))
 
 # raw_data.to_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra2_w.csv', index=False)
 
 lineups = pd.read_sql_query("""select matchid, player as batter, playerid as batterid, team as battingteam, carded from player_ratings.t20_lineups_updated_w""", con=connection)
 lineups = lineups.drop_duplicates(subset=['matchid', 'batterid'])
-lineups.to_csv(fr'{user_name}\Documents\Tempdata\lineups_w.csv', index=False)
+# lineups.to_csv(fr'{user_name}\Documents\Tempdata\lineups_w.csv', index=False)
 
 
 

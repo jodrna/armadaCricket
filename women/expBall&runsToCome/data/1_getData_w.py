@@ -10,7 +10,7 @@ import subprocess
 connection = engine.connect()
 
 #updating all data (1) or just daily update (2)?
-run_type = 2
+run_type = 1
 
 last_date_data = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv', parse_dates=['date'])
 if last_date_data['date_of_run'].max() == pd.Timestamp(date.today()):

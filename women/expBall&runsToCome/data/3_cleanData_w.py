@@ -5,7 +5,6 @@ from paths import PROJECT_ROOT
 # import
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', parse_dates=['date'])
 
-
 trainData = trainData.rename(columns={'innings': 'inningNumber', 'wickets': 'totalInningWickets', 'bowlerwicket': 'isWicketBowler', 'noball': 'noballRuns', 'over': 'overNumber',
                                       'score': 'totalInningRuns', 't_runs': 'totalInningRunsEnd', 'runs_to_come': 'totalInningRunsToCome', 'wicket': 'isWicket',
                                       't_wickets': 'totalInningWicketsEnd', 'runs': 'totalRuns', 'wide': 'wideRuns', 'ballsremaining': 'inningBallsRemaining', 'byes': 'byeRuns'})
