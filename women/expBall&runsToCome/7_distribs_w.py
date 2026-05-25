@@ -20,7 +20,7 @@ from paths import PROJECT_ROOT
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
 simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
-matchMarket = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w.csv')
+matchMarket = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w1.csv')
 trainData = trainData[trainData['inningNumber'] == 1]
 
 
@@ -201,7 +201,7 @@ row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBal
 
 # Extract the moments
 # mean = row2['mean'].values[0]
-mean = 153
+mean = 152.67
 
 std = row2['std'].values[0]
 skew_val = row2['skew'].values[0]
