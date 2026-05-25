@@ -136,8 +136,8 @@ RA_sum_wl_br = RA_sum_wl_br.loc[:, ['totalInningWickets', 'inningBallNumber', 'p
 masterLookup['daysGroup'] = masterLookup['year'] - 2015
 
 # duplicate the latest year and relabel as 9.4, this gives us the number we want to match the match market
-extraRows = masterLookup.loc[masterLookup['daysGroup'] == 11].copy()
-extraRows['daysGroup'] = 10.2
+extraRows = masterLookup.loc[masterLookup['daysGroup'] == masterLookup['daysGroup'].max()].copy()
+extraRows['daysGroup'] = 10.8
 
 # append future-year rows back onto master lookup
 masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
