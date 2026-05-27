@@ -111,7 +111,7 @@ lookbacks_player['adj_realexpwbowl'] = lookbacks_player['realexpwbowl_2'] / (loo
 
 
 # -------------------------
-# Build outputs twice
+# Build outputs for jungle and rasoi
 # -------------------------
 for x in np.arange(0, 2, 1):
 
@@ -273,7 +273,9 @@ for x in np.arange(0, 2, 1):
     ratings['run_rating'] = ratings['run_rating'].fillna(1)
     ratings['wkt_rating'] = ratings['wkt_rating'].fillna(1)
 
-
+    # -------------------------
+    # Recencies + export
+    # -------------------------
     if x == 0:
         recencies_r = lookbacks_player_r[((lookbacks_player_r['competition'] == 'WT20I') | (lookbacks_player_r['competition'] == 'tier_2')) & (lookbacks_player_r['host'] == 'West Indies') & (lookbacks_player_r['date'] == lookbacks_player_r['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_bowled_2']]
         recencies_r['recency_weight_match_sum'] = recencies_r['recency_weight'] * recencies_r['balls_bowled_2']

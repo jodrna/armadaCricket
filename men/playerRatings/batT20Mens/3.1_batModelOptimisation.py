@@ -181,8 +181,6 @@ def optimise_params(param, lookbacks_player, build_fn, rating_col, exp_col, actu
 #             'k': 0.0005218027196937207
 #         }
 
-
-
 # params optimised for runs using innings grouping
 param0_dict = {
             't': 19.999999999996337,

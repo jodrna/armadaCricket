@@ -588,20 +588,22 @@ def buildRunRatingsMapPriority(param, lookbacks_player):
 
     # Apply weights for rating
     lookbacks_player_r['weight_runs'] = lookbacks_player_r['weight'] * lookbacks_player_r['runs_2']
-    lookbacks_player_r['weight_exprbat'] = lookbacks_player_r['weight'] * lookbacks_player_r['realexprbat_2']
+    lookbacks_player_r['weight_exprbat'] = lookbacks_player_r['weight'] * lookbacks_player_r['adj_realexprbat']
+    lookbacks_player_r['weight_exprbat_unadjusted'] = lookbacks_player_r['weight'] * lookbacks_player_r['realexprbat_2']
     lookbacks_player_r['weight_ord_r'] = lookbacks_player_r['weight'] * lookbacks_player_r['ord_2']
     lookbacks_player_r['weight_balls_r'] = lookbacks_player_r['weight'] * lookbacks_player_r['balls_faced_2']
 
     ratings = pd.pivot_table(
         lookbacks_player_r,
-        values=['weight', 'weight_runs', 'weight_exprbat', 'weight_ord_r',
+        values=['weight', 'weight_runs', 'weight_exprbat', 'weight_exprbat_unadjusted', 'weight_ord_r',
                 'balls_faced_2', 'runs_2', 'realexprbat_2', 'weight_balls_r'],
         index=['date', 'matchid', 'playerid', 'batsman', 'host', 'competition'],
-        aggfunc={'weight': 'sum', 'weight_runs': 'sum', 'weight_exprbat': 'sum',
+        aggfunc={'weight': 'sum', 'weight_runs': 'sum', 'weight_exprbat': 'sum', 'weight_exprbat_unadjusted': 'sum',
                  'balls_faced_2': 'sum', 'weight_ord_r': 'sum', 'runs_2': 'sum',
                  'realexprbat_2': 'sum', 'weight_balls_r': 'sum'}
     ).reset_index()
 
+    ratings['run_rating_0'] = ratings['weight_runs'] / ratings['weight_exprbat_unadjusted']
     ratings['run_rating'] = ratings['weight_runs'] / ratings['weight_exprbat']
     ratings['z_run_ratio'] = ratings['runs_2'] / ratings['realexprbat_2']
     ratings['ord_2_r'] = ratings['weight_ord_r'] / ratings['weight']
@@ -685,20 +687,22 @@ def buildWktRatingsMapPriority(param, lookbacks_player):
 
     # Apply weights for rating
     lookbacks_player_w['weight_wkt'] = lookbacks_player_w['weight'] * lookbacks_player_w['wkt_2']
-    lookbacks_player_w['weight_expwbat'] = lookbacks_player_w['weight'] * lookbacks_player_w['realexpwbat_2']
+    lookbacks_player_w['weight_expwbat'] = lookbacks_player_w['weight'] * lookbacks_player_w['adj_realexpwbat']
+    lookbacks_player_w['weight_expwbat_unadjusted'] = lookbacks_player_w['weight'] * lookbacks_player_w['realexpwbat_2']
     lookbacks_player_w['weight_ord_w'] = lookbacks_player_w['weight'] * lookbacks_player_w['ord_2']
     lookbacks_player_w['weight_balls_w'] = lookbacks_player_w['weight'] * lookbacks_player_w['balls_faced_2']
 
     ratings = pd.pivot_table(
         lookbacks_player_w,
-        values=['weight', 'weight_wkt', 'weight_expwbat', 'weight_ord_w',
+        values=['weight', 'weight_wkt', 'weight_expwbat', 'weight_expwbat_unadjusted', 'weight_ord_w',
                 'balls_faced_2', 'wkt_2', 'realexpwbat_2', 'weight_balls_w'],
         index=['date', 'matchid', 'playerid', 'batsman', 'host', 'competition'],
-        aggfunc={'weight': 'sum', 'weight_wkt': 'sum', 'weight_expwbat': 'sum',
+        aggfunc={'weight': 'sum', 'weight_wkt': 'sum', 'weight_expwbat': 'sum', 'weight_expwbat_unadjusted': 'sum',
                  'balls_faced_2': 'sum', 'weight_ord_w': 'sum', 'wkt_2': 'sum',
                  'realexpwbat_2': 'sum', 'weight_balls_w': 'sum'}
     ).reset_index()
 
+    ratings['wkt_rating_0'] = ratings['weight_wkt'] / ratings['weight_expwbat_unadjusted']
     ratings['wkt_rating'] = ratings['weight_wkt'] / ratings['weight_expwbat']
     ratings['z_wkt_ratio'] = ratings['wkt_2'] / ratings['realexpwbat_2']
     ratings['ord_2_w'] = ratings['weight_ord_w'] / ratings['weight']
