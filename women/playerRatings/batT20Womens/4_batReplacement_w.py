@@ -5,10 +5,15 @@ import statsmodels.api as sm
 from paths import PROJECT_ROOT
 
 
-def make_ohe(values, cats, prefix):
-    encoder = preprocessing.OneHotEncoder(sparse_output=False, categories=[cats], drop='first', handle_unknown='ignore')
+def make_ohe(values, cats, prefix, drop_first=True):
+    drop = 'first' if drop_first else None
+    encoder = preprocessing.OneHotEncoder(sparse_output=False, categories=[cats], drop=drop, handle_unknown='ignore')
     encoded = encoder.fit_transform(values)
-    columns = [f'{prefix}__{cat}' for cat in cats[1:]]
+
+    if drop_first:
+        columns = [f'{prefix}__{cat}' for cat in cats[1:]]
+    else:
+        columns = [f'{prefix}__{cat}' for cat in cats]
 
     return pd.DataFrame(encoded, columns=columns)
 
@@ -27,18 +32,18 @@ def rep_weight(faced, rating, rep_ratio, mode='run'):
 
 
 def build_training_features_bat(bat_data, transformers):
-    # Competition encodings
+    # Competition encodings, explicit WT20I baseline
     is_global_comp = bat_data['competition'].isin(['WT20I', 'tier_2'])
     competition = np.where(is_global_comp, bat_data['competition'], bat_data['competition'] + ' ' + bat_data['H/A_competition']).reshape(-1, 1)
     competition_cats = sorted(np.unique(competition).tolist())
     transformers['competition_cats'] = competition_cats
-    competition_encodings = make_ohe(competition, competition_cats, 'competition')
+    competition_encodings = make_ohe(competition, competition_cats, 'competition', drop_first=False)
+    competition_encodings = competition_encodings.drop(columns=['competition__WT20I'], errors='ignore')
 
-    # Nationality encodings
-    nationality = np.array(bat_data['battingteam']).reshape(-1, 1)
-    nationality_cats = ['England', 'India', 'Australia', 'New Zealand', 'South Africa']
-    transformers['nationality_cats'] = nationality_cats
-    nationality_encodings = make_ohe(nationality, nationality_cats, 'nationality')
+    # WT20I nationality encodings
+    wt20i_nat = np.array(np.where(bat_data['competition'] == 'WT20I', bat_data['nationality'], 'nil')).reshape(-1, 1)
+    wt20i_nat_cats = ['nil', 'England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']
+    wt20i_nat_encodings = make_ohe(wt20i_nat, wt20i_nat_cats, 'wt20i_nat')
 
     # Age poly
     age = pd.DataFrame(bat_data.loc[:, ['age']])
@@ -70,21 +75,27 @@ def build_training_features_bat(bat_data, transformers):
     oppo_wkt = pd.DataFrame(oppo_wkt).reset_index(drop=True)
     oppo_wkt.columns = ['oppo']
 
-    X_run = pd.concat([competition_encodings, nationality_encodings, age_poly, experience, order_poly, oppo_run], axis=1)
-    X_wkt = pd.concat([competition_encodings, nationality_encodings, age_poly, experience, order_poly, oppo_wkt], axis=1)
+    X_run = pd.concat([competition_encodings, wt20i_nat_encodings, age_poly, experience, order_poly, oppo_run], axis=1)
+    X_wkt = pd.concat([competition_encodings, wt20i_nat_encodings, age_poly, experience, order_poly, oppo_wkt], axis=1)
+
+    X_run = sm.add_constant(X_run, has_constant='add')
+    X_wkt = sm.add_constant(X_wkt, has_constant='add')
 
     return bat_data, X_run, X_wkt, transformers
 
 
+
 def build_ratings_features_bat(ratings, transformers):
-    # Competition encodings
+    # Competition encodings, explicit WT20I baseline. We still apply WT20I away factors manually later.
     is_global_comp = ratings['competition'].isin(['WT20I', 'tier_2'])
     competition = np.where(is_global_comp, ratings['competition'], ratings['competition'] + ' ' + ratings['H/A_competition']).reshape(-1, 1)
-    competition_encodings = make_ohe(competition, transformers['competition_cats'], 'competition')
+    competition_encodings = make_ohe(competition, transformers['competition_cats'], 'competition', drop_first=False)
+    competition_encodings = competition_encodings.drop(columns=['competition__WT20I'], errors='ignore')
 
-    # Nationality encodings
-    nationality = np.array(ratings['battingteam']).reshape(-1, 1)
-    nationality_encodings = make_ohe(nationality, transformers['nationality_cats'], 'nationality')
+    # WT20I nationality encodings
+    wt20i_nat = np.array(np.where(ratings['competition'] == 'WT20I', ratings['nationality'], 'nil')).reshape(-1, 1)
+    wt20i_nat_cats = ['nil', 'England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']
+    wt20i_nat_encodings = make_ohe(wt20i_nat, wt20i_nat_cats, 'wt20i_nat')
 
     # Age poly
     age = pd.DataFrame(ratings.loc[:, ['age']])
@@ -99,22 +110,25 @@ def build_ratings_features_bat(ratings, transformers):
     experience = pd.DataFrame(ratings.loc[:, ['balls_faced_career']])
     experience = pd.DataFrame(transformers['experience_transformer'].transform(experience), columns=['experience']).reset_index(drop=True)
 
-    # Oppo feature RUN
+    # Oppo feature RUN, we use wkts to predict runs
     oppo_run = ratings['wkt_rating_2'].copy()
     mask = ratings[ord_col] > 7
     oppo_run[mask] = (((1 - oppo_run[mask]) / 2) * np.minimum(2, abs(ratings.loc[mask, ord_col] - 7))) + oppo_run[mask]
     oppo_run = pd.DataFrame(oppo_run).reset_index(drop=True)
     oppo_run.columns = ['oppo']
 
-    # Oppo feature WKT
+    # Oppo feature WKT, we use runs to predict wkts
     oppo_wkt = ratings['run_rating_2'].copy()
     mask = ratings[ord_col] > 7
     oppo_wkt[mask] = (((1 - oppo_wkt[mask]) / 2) * np.minimum(2, abs(ratings.loc[mask, ord_col] - 7))) + oppo_wkt[mask]
     oppo_wkt = pd.DataFrame(oppo_wkt).reset_index(drop=True)
     oppo_wkt.columns = ['oppo']
 
-    X_run = pd.concat([competition_encodings, nationality_encodings, age_poly, experience, order_poly, oppo_run], axis=1)
-    X_wkt = pd.concat([competition_encodings, nationality_encodings, age_poly, experience, order_poly, oppo_wkt], axis=1)
+    X_run = pd.concat([competition_encodings, wt20i_nat_encodings, age_poly, experience, order_poly, oppo_run], axis=1)
+    X_wkt = pd.concat([competition_encodings, wt20i_nat_encodings, age_poly, experience, order_poly, oppo_wkt], axis=1)
+
+    X_run = sm.add_constant(X_run, has_constant='add')
+    X_wkt = sm.add_constant(X_wkt, has_constant='add')
 
     return ratings, X_run, X_wkt
 
@@ -132,6 +146,7 @@ for x in np.arange(0, 2, 1):
     else:
         ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi_w.csv', parse_dates=['date'], dtype={'battingteam': str})
 
+
     # -------------------------
     # 2) Filters
     # -------------------------
@@ -140,22 +155,9 @@ for x in np.arange(0, 2, 1):
     # -------------------------
     # 3) Base cleaning / merges
     # -------------------------
-    bat_data['competition'] = bat_data['competition'].str.replace(r"\\'", "'", regex=True)
-    ratings['competition'] = ratings['competition'].str.replace(r"\\'", "'", regex=True)
-    n2h_factors['host'] = n2h_factors['host'].str.replace(r"\\'", "'", regex=True)
-
     allaway_runs = n2h_factors['all_away_runs_factor'].mean()
     allaway_wkts = n2h_factors['all_away_wkts_factor'].mean()
-
-    bat_data = bat_data.merge(n2h_factors, on=('nationality', 'host'), how='left')
-    bat_data['run_factor'] = bat_data['run_factor'].fillna(allaway_runs)
-    bat_data['wkt_factor'] = bat_data['wkt_factor'].fillna(allaway_wkts)
-
     bat_data = bat_data[bat_data['balls_faced'] > 0].copy()
-
-    bat_data['balls_faced_career'] = bat_data['balls_faced_career'] + 5
-    ratings['balls_faced_career'] = ratings['balls_faced_career'] + 5
-
     bat_data = bat_data.merge(ratings[ratings['i_balls_faced'] > 0].loc[:, ['playerid', 'date', 'run_rating', 'wkt_rating']], how='left', on=['playerid', 'date'])
 
     # -------------------------
@@ -187,77 +189,81 @@ for x in np.arange(0, 2, 1):
     # -------------------------
     # 6) Predict training data
     # -------------------------
-    bat_data['rep_run_ratio'] = X_run.to_numpy() @ run_params.to_numpy()
-    bat_data['rep_run_ratio'] = np.where((bat_data['competition'].isin(['WT20I'])) & (bat_data['H/A_competition'] == 'Away'), bat_data['rep_run_ratio'] * np.minimum(1, bat_data['run_factor'] / allaway_runs), bat_data['rep_run_ratio'])
+    bat_data = bat_data.merge(n2h_factors, on=('nationality', 'host'), how='left')
+    bat_data['run_factor'] = bat_data['run_factor'].fillna(allaway_runs)
+    bat_data['wkt_factor'] = bat_data['wkt_factor'].fillna(allaway_wkts)
+
+    bat_data['rep_run_ratio'] = rep_run_ratio_model.predict(X_run)
+    bat_data['run_factor'] = np.minimum(1, bat_data['run_factor'] / allaway_runs)
+    bat_data['rep_run_ratio'] = np.where((bat_data['competition'].isin(['WT20I'])) & (bat_data['H/A_competition'] == 'Away'), bat_data['rep_run_ratio'] * bat_data['run_factor'], bat_data['rep_run_ratio'])
     bat_data['rep_runs'] = bat_data['rep_run_ratio'] * bat_data['realexprbat']
 
-    bat_data['rep_wkt_ratio'] = X_wkt.to_numpy() @ wkt_params.to_numpy()
-    bat_data['rep_wkt_ratio'] = np.where((bat_data['competition'].isin(['WT20I'])) & (bat_data['H/A_competition'] == 'Away'), bat_data['rep_wkt_ratio'] * np.maximum(1, bat_data['wkt_factor'] / allaway_wkts), bat_data['rep_wkt_ratio'])
+    bat_data['rep_wkt_ratio'] = rep_wkt_ratio_model.predict(X_wkt)
+    bat_data['wkt_factor'] = np.maximum(1, bat_data['wkt_factor'] / allaway_wkts)
+    bat_data['rep_wkt_ratio'] = np.where((bat_data['competition'].isin(['WT20I'])) & (bat_data['H/A_competition'] == 'Away'), bat_data['rep_wkt_ratio'] * bat_data['wkt_factor'], bat_data['rep_wkt_ratio'])
     bat_data['rep_wkt'] = bat_data['rep_wkt_ratio'] * bat_data['realexpwbat']
 
     # -------------------------
     # 7) Predict ratings outputs
     # -------------------------
-    ratings['age'] = ratings['age'].fillna(bat_data['age'].median())
+    ratings, X_run_r, X_wkt_r = build_ratings_features_bat(ratings, transformers)
 
     ratings = ratings.merge(n2h_factors, on=('nationality', 'host'), how='left')
     ratings['run_factor'] = ratings['run_factor'].fillna(allaway_runs)
     ratings['wkt_factor'] = ratings['wkt_factor'].fillna(allaway_wkts)
 
-    ratings, X_run_r, X_wkt_r = build_ratings_features_bat(ratings, transformers)
-
     ratings.insert(ratings.columns.get_loc('run_rating_2') + 1, 'rep_run_ratio', X_run_r.to_numpy() @ run_params.to_numpy())
-    ratings['rep_run_ratio'] = np.where((ratings['competition'].isin(['WT20I'])) & (ratings['H/A_competition'] == 'Away'), ratings['rep_run_ratio'] * np.minimum(1, ratings['run_factor'] / allaway_runs), ratings['rep_run_ratio'])
+    ratings['run_factor'] = np.minimum(1, ratings['run_factor'] / allaway_runs)
+    ratings['rep_run_ratio'] = np.where((ratings['competition'].isin(['WT20I'])) & (ratings['H/A_competition'] == 'Away'), ratings['rep_run_ratio'] * ratings['run_factor'], ratings['rep_run_ratio'])
     ratings['i_rep_runs'] = ratings['rep_run_ratio'] * ratings['i_realexprbat']
 
     ratings.insert(ratings.columns.get_loc('wkt_rating_2') + 1, 'rep_wkt_ratio', X_wkt_r.to_numpy() @ wkt_params.to_numpy())
-    ratings['rep_wkt_ratio'] = np.where((ratings['competition'].isin(['WT20I'])) & (ratings['H/A_competition'] == 'Away'), ratings['rep_wkt_ratio'] * np.maximum(1, ratings['wkt_factor'] / allaway_wkts), ratings['rep_wkt_ratio'])
+    ratings['wkt_factor'] = np.maximum(1, ratings['wkt_factor'] / allaway_wkts)
+    ratings['rep_wkt_ratio'] = np.where((ratings['competition'].isin(['WT20I'])) & (ratings['H/A_competition'] == 'Away'), ratings['rep_wkt_ratio'] * ratings['wkt_factor'], ratings['rep_wkt_ratio'])
     ratings['i_rep_wkt'] = ratings['rep_wkt_ratio'] * ratings['i_realexpwbat']
 
     # -------------------------
     # 8) One-player breakdown
     # -------------------------
-    if x == 1:
-        pass
-    else:
-        batsman = 'Izzy Gaze'
-        competition = 'Women\'s Big Bash League'
-        host = 'Australia'
-        debug_mask = (
-            (ratings['batsman'] == batsman) &
-            (ratings['competition'] == competition) &
-            (ratings['host'] == host)
-        )
+    debug_mask = (
+            (ratings['batsman'] == 'Yastika Bhatia') &
+            (ratings['competition'] == 'Women\'s Premier League') &
+            (ratings['host'] == 'India') &
+            (ratings['matchid'] == 101)
+    )
 
-        debug_rows = ratings.loc[debug_mask, :].reset_index(drop=True)
-        debug_X_run = X_run_r.loc[debug_mask, :].reset_index(drop=True)
-        debug_X_wkt = X_wkt_r.loc[debug_mask, :].reset_index(drop=True)
+    debug_rows = ratings.loc[debug_mask, :].reset_index(drop=True)
+    debug_X_run = X_run_r.loc[debug_mask, :].reset_index(drop=True)
+    debug_X_wkt = X_wkt_r.loc[debug_mask, :].reset_index(drop=True)
 
-        if len(debug_rows) > 0:
-            run_contribs = pd.DataFrame(debug_X_run.to_numpy() * run_params.to_numpy(), columns=debug_X_run.columns)
-            wkt_contribs = pd.DataFrame(debug_X_wkt.to_numpy() * wkt_params.to_numpy(), columns=debug_X_wkt.columns)
+    if len(debug_rows) > 0:
+        run_contribs = pd.DataFrame(debug_X_run.to_numpy() * run_params.to_numpy(), columns=debug_X_run.columns)
+        run_breakdown = pd.DataFrame({'feature': run_contribs.columns, 'contrib': run_contribs.iloc[0].to_numpy()})
+        run_const = run_breakdown[run_breakdown['feature'] == 'const']
+        run_breakdown = run_breakdown[(run_breakdown['feature'] != 'const') & (run_breakdown['contrib'] != 0)]
+        run_breakdown = run_breakdown.sort_values('contrib', key=lambda z: z.abs(), ascending=False)
+        run_breakdown = pd.concat([run_const, run_breakdown], axis=0)
 
-            print('\nRUN RATING BREAKDOWN')
-            print('=' * 80)
+        wkt_contribs = pd.DataFrame(debug_X_wkt.to_numpy() * wkt_params.to_numpy(), columns=debug_X_wkt.columns)
+        wkt_breakdown = pd.DataFrame({'feature': wkt_contribs.columns, 'contrib': wkt_contribs.iloc[0].to_numpy()})
+        wkt_const = wkt_breakdown[wkt_breakdown['feature'] == 'const']
+        wkt_breakdown = wkt_breakdown[(wkt_breakdown['feature'] != 'const') & (wkt_breakdown['contrib'] != 0)]
+        wkt_breakdown = wkt_breakdown.sort_values('contrib', key=lambda z: z.abs(), ascending=False)
+        wkt_breakdown = pd.concat([wkt_const, wkt_breakdown], axis=0)
 
-            for col, val in run_contribs.iloc[0].sort_values(key=lambda z: z.abs(), ascending=False).items():
-                print(f'{str(col):<65} {val:>12.6f}')
+        print('\nRUN REPLACEMENT BREAKDOWN')
 
-            print('-' * 80)
-            print(f'TOTAL RUN REPLACEMENT RATIO: {debug_rows.loc[0, "rep_run_ratio"]:.6f}')
+        for _, row in run_breakdown.iterrows():
+            print(f'{row["feature"]:<50} {row["contrib"]:.4f}')
 
-            print('\nWKT RATING BREAKDOWN')
-            print('=' * 80)
+        print(f'\nTOTAL RUN REPLACEMENT RATIO: {debug_rows.loc[0, "rep_run_ratio"]:.4f}')
 
-            for col, val in wkt_contribs.iloc[0].sort_values(key=lambda z: z.abs(), ascending=False).items():
-                print(f'{str(col):<65} {val:>12.6f}')
+        print('\nWKT REPLACEMENT BREAKDOWN')
 
-            print('-' * 80)
-            print(f'TOTAL WKT REPLACEMENT RATIO: {debug_rows.loc[0, "rep_wkt_ratio"]:.6f}')
+        for _, row in wkt_breakdown.iterrows():
+            print(f'{row["feature"]:<50} {row["contrib"]:.4f}')
 
-            print(debug_rows[['batsman', 'competition', 'H/A_competition', 'host', 'wkt_factor', 'rep_wkt_ratio']])
-            print('raw model:', (debug_X_wkt.to_numpy() @ wkt_params.to_numpy())[0])
-            print('adjustment:', np.maximum(1, debug_rows.loc[0, 'wkt_factor'] / allaway_wkts))
+        print(f'\nTOTAL WKT REPLACEMENT RATIO: {debug_rows.loc[0, "rep_wkt_ratio"]:.4f}')
 
 
     # -------------------------
@@ -293,7 +299,7 @@ for x in np.arange(0, 2, 1):
     actuals = pd.pivot_table(bat_data,
                              values=['balls_faced_innings', 'realexprbat', 'rep_runs', 'runs', 'realexpwbat', 'rep_wkt', 'wkt', 'rep_wkt_ratio', 'rep_run_ratio', 'age', 'balls_faced_career',
                                      'run_sqe', 'wkt_sqe', 'run_err', 'wkt_err'],
-                             index=['H/A_competition', 'competition'],
+                             index=['competition'],
                              aggfunc={'balls_faced_innings': 'count', 'balls_faced_career': 'mean', 'age': 'mean', 'realexprbat': 'sum', 'rep_runs': 'sum', 'runs': 'sum', 'realexpwbat': 'sum',
                                       'rep_wkt': 'sum', 'wkt': 'sum', 'rep_run_ratio': 'mean', 'rep_wkt_ratio': 'mean', 'run_sqe': 'mean', 'wkt_sqe': 'mean', 'run_err': 'sum', 'wkt_err': 'sum'}).reset_index()
 
@@ -316,6 +322,8 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi2_w.csv', index=False)
 
 
-ratings = ratings[ratings['batsman'] == 'Izzy Gaze']
-ratings = ratings.loc[:, ['batsman', 'competition', 'H/A_competition', 'host', 'wkt_factor', 'rep_wkt_ratio']]
+ratings = ratings[ratings['batsman'] == 'Yastika Bhatia']
+ratings = ratings.loc[:, ['batsman', 'competition', 'H/A_competition', 'host', 'wkt_factor', 'rep_wkt_ratio', 'run_factor', 'rep_run_ratio']]
+
+print(np.mean(bat_data['run_sqe']))
 
