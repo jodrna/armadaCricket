@@ -227,7 +227,7 @@ param0 = list(param0_dict.values())
 
 
 # -------------------------
-# Bounds (unchanged)
+# Bounds
 # -------------------------
 lower_dict = {'t': 1, 'cd': 1, 'ci': 1, 't20': 1, 'odi2': 1, 'odi1': 1, 'dh': 0, 'h': 1, 'r': 1, 'k': 0}
 upper_dict = {'t': 20, 'cd': 20, 'ci': 20, 't20': 20, 'odi2': 20, 'odi1': 20, 'dh': 1, 'h': 20, 'r': 20, 'k': 0.01}

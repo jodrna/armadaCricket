@@ -87,8 +87,8 @@ def buildRunRatingsMapOneLog(param, lookbacks_player):
 
     # Indicators
     same_comp = (lookbacks_player_r['competition'] == lookbacks_player_r['competition_2'])
-    same_comp_t20i = same_comp & (lookbacks_player_r['competition'] == 'T20I')
-    same_comp_non_t20i = same_comp & (lookbacks_player_r['competition'] != 'T20I')
+    same_comp_t20i = same_comp & (lookbacks_player_r['competition'] == 'WT20I')
+    same_comp_non_t20i = same_comp & (lookbacks_player_r['competition'] != 'WT20I')
     recent_same_tournament = same_comp_non_t20i & (lookbacks_player_r['days_ago'] < 90)
     host_same = (lookbacks_player_r['host'] == lookbacks_player_r['host_2'])
     region_same = (~host_same) & (lookbacks_player_r['host_region'] == lookbacks_player_r['host_region_2'])
@@ -189,7 +189,7 @@ def buildRunRatingsOriginal(param, lookbacks_player):
     lookbacks_player_r['tournament_boost'] = np.where(
         (lookbacks_player_r['days_ago'] < 90) &
         (lookbacks_player_r['competition'] == lookbacks_player_r['competition_2']) &
-        (lookbacks_player_r['competition'] != 'T20I'),
+        (lookbacks_player_r['competition'] != 'WT20I'),
         f,
         1
     )
@@ -197,7 +197,7 @@ def buildRunRatingsOriginal(param, lookbacks_player):
     # Competition encoder
     lookbacks_player_r['comp_enc'] = np.where(
         lookbacks_player_r['competition'] == lookbacks_player_r['competition_2'],
-        np.where(lookbacks_player_r['competition'] == 'T20I', ci, cd),
+        np.where(lookbacks_player_r['competition'] == 'WT20I', ci, cd),
         1
     )
 
@@ -278,8 +278,8 @@ def buildRunRatingsMapTwoLog(param, lookbacks_player):
 
     # Flags
     same_comp = (lookbacks_player_r['competition'] == lookbacks_player_r['competition_2'])
-    same_comp_t20i = same_comp & (lookbacks_player_r['competition'] == 'T20I')
-    same_comp_domestic = same_comp & (lookbacks_player_r['competition'] != 'T20I')
+    same_comp_t20i = same_comp & (lookbacks_player_r['competition'] == 'WT20I')
+    same_comp_domestic = same_comp & (lookbacks_player_r['competition'] != 'WT20I')
 
     # Tournament recency (only for same domestic comp)
     recent_same_tournament = same_comp_domestic & (lookbacks_player_r['days_ago'] < 90)
@@ -354,8 +354,8 @@ def buildRunRatingsMapOne(param, lookbacks_player):
 
     # Indicators
     same_comp = (lookbacks_player_r['competition'] == lookbacks_player_r['competition_2'])
-    same_comp_t20i = same_comp & (lookbacks_player_r['competition'] == 'T20I')
-    same_comp_non_t20i = same_comp & (lookbacks_player_r['competition'] != 'T20I')
+    same_comp_t20i = same_comp & (lookbacks_player_r['competition'] == 'WT20I')
+    same_comp_non_t20i = same_comp & (lookbacks_player_r['competition'] != 'WT20I')
     recent_same_tournament = same_comp_non_t20i & (lookbacks_player_r['days_ago'] < 90)
 
     host_same = (lookbacks_player_r['host'] == lookbacks_player_r['host_2'])
@@ -439,8 +439,8 @@ def buildRunRatingsMapTwo(param, lookbacks_player):
 
     # Flags
     same_comp = (lookbacks_player_r['competition'] == lookbacks_player_r['competition_2'])
-    same_comp_t20i = same_comp & (lookbacks_player_r['competition'] == 'T20I')
-    same_comp_domestic = same_comp & (lookbacks_player_r['competition'] != 'T20I')
+    same_comp_t20i = same_comp & (lookbacks_player_r['competition'] == 'WT20I')
+    same_comp_domestic = same_comp & (lookbacks_player_r['competition'] != 'WT20I')
 
     # Tournament recency (only for same domestic comp)
     recent_same_tournament = same_comp_domestic & (lookbacks_player_r['days_ago'] < 90)
@@ -514,79 +514,88 @@ def buildRunRatingsMapTwo(param, lookbacks_player):
 
 
 
+
 def buildRunRatingsMapPriority(param, lookbacks_player):
     """
-    Priority mapping (no logs/exp).
-    param (len=10) = [t, cd, ci, t20, odi2, odi1, dh, h, r, k]
-      - Primary (pick first that matches): t -> cd -> ci -> t20 -> odi2 -> odi1
-      - Host/region application:
-        * For t, cd: host weight = dh if host differs else 1; region weight = 1
-        * For ci, t20, odi2, odi1:
-            host weight = h if same host else 1
-            region weight = r if (host differs and region same) else 1
+    Priority mapping.
+    param = [t, cd, ci, t20, odi2, odi1, dh, h, r, k]
+
+    Step 1:
+      1. Same tournament < 90 days
+      2. Same tournament >= 90 days
+      3. Same competition and T20I/WT20I
+      4. Same format T20
+      5. ODI2
+      6. ODI1
+
+    Step 2:
+      - bins 1/2: same host or different host
+      - bins 3/4/5/6: same host, same region, or different host
     """
     t, cd, ci, t20, odi2, odi1, dh, h, r, k = param
 
     lookbacks_player_r = lookbacks_player.copy()
 
+    same_comp = lookbacks_player_r['competition'] == lookbacks_player_r['competition_2']
+    intl_t20 = lookbacks_player_r['competition'].isin(['T20I', 'WT20I'])
 
-    # Flags
-    same_comp = (lookbacks_player_r['competition'] == lookbacks_player_r['competition_2'])
-    same_comp_t20i = same_comp & (lookbacks_player_r['competition'] == 'T20I')
-    same_comp_domestic = same_comp & (lookbacks_player_r['competition'] != 'T20I')
-    # Only treat "same tournament" for non-T20I (prevents dh being applied for T20I)
-    recent_same_tournament = same_comp_domestic & (lookbacks_player_r['days_ago'] < 90)
-    host_same = (lookbacks_player_r['host'] == lookbacks_player_r['host_2'])
+    same_tournament = same_comp & (~intl_t20)
+    same_tournament_recent = same_tournament & (lookbacks_player_r['days_ago'] < 90)
+    same_tournament_old = same_tournament & (lookbacks_player_r['days_ago'] >= 90)
+    same_comp_t20i = same_comp & intl_t20
+
+    host_same = lookbacks_player_r['host'] == lookbacks_player_r['host_2']
     region_same = (~host_same) & (lookbacks_player_r['host_region'] == lookbacks_player_r['host_region_2'])
+
     diff_comp = ~same_comp
     prior_is_t20 = diff_comp & (~lookbacks_player_r['competition_2'].isin(['ODI1', 'ODI2']))
     prior_is_odi2 = diff_comp & (lookbacks_player_r['competition_2'] == 'ODI2')
+    prior_is_odi1 = diff_comp & (lookbacks_player_r['competition_2'] == 'ODI1')
 
-    # Primary case selection with priority (0=t, 1=cd, 2=ci, 3=t20, 4=odi2, 5=odi1)
     case_codes = np.select(
-        condlist=[recent_same_tournament, same_comp_domestic, same_comp_t20i, prior_is_t20, prior_is_odi2],
-        choicelist=[0, 1, 2, 3, 4],
+        condlist=[
+            same_tournament_recent,
+            same_tournament_old,
+            same_comp_t20i,
+            prior_is_t20,
+            prior_is_odi2,
+            prior_is_odi1
+        ],
+        choicelist=[0, 1, 2, 3, 4, 5],
         default=5
     )
 
-    # Column 1: primary weight from first 6 param
     lookbacks_player_r['w_primary'] = np.select(
-        condlist=[case_codes == 0, case_codes == 1, case_codes == 2, case_codes == 3, case_codes == 4],
-        choicelist=[t, cd, ci, t20, odi2],
+        condlist=[
+            case_codes == 0,
+            case_codes == 1,
+            case_codes == 2,
+            case_codes == 3,
+            case_codes == 4,
+            case_codes == 5
+        ],
+        choicelist=[t, cd, ci, t20, odi2, odi1],
         default=odi1
     )
 
-    # Column 2: host weight
-    # For t/cd -> dh if host differs else 1; others -> h if host same else 1
     w_host_tc = np.where(host_same, 1.0, dh)
     w_host_std = np.where(host_same, h, 1.0)
     lookbacks_player_r['w_host'] = np.where((case_codes == 0) | (case_codes == 1), w_host_tc, w_host_std)
 
-    # Column 3: region weight
-    # For t/cd -> always 1; others -> r if (host differs and region same) else 1
-    w_region_std = np.where((~host_same) & region_same, r, 1.0)
+    w_region_std = np.where(region_same, r, 1.0)
     lookbacks_player_r['w_region'] = np.where((case_codes == 0) | (case_codes == 1), 1.0, w_region_std)
 
-    # Location weight
-    lookbacks_player_r['location_weight'] = (
-        lookbacks_player_r['w_primary'] * lookbacks_player_r['w_host'] * lookbacks_player_r['w_region']
-    )
-    # recency weight, the shape of k goes from small to large as career balls goes up (found using optimiser), I cap it at the average for all balls, but in reality it should get bigger than average above 750 balls
+    lookbacks_player_r['location_weight'] = lookbacks_player_r['w_primary'] * lookbacks_player_r['w_host'] * lookbacks_player_r['w_region']
+
     lookbacks_player_r['k'] = k * np.where(
         lookbacks_player_r['balls_faced_career'] > 750,
         1,
-        0.5 + (0.5 * (lookbacks_player_r['balls_faced_career']) / 750)
+        0.5 + (0.5 * lookbacks_player_r['balls_faced_career'] / 750)
     )
+
     lookbacks_player_r['recency_weight'] = (1.0 - lookbacks_player_r['k']) ** lookbacks_player_r['days_ago']
-
-    # # these are optional
-    # lookbacks_player_r['location_weight_adjust'] = np.where(lookbacks_player_r['avg_ord'] <= 7, 1, np.where(lookbacks_player_r['avg_ord'] >= 9, 0.05 / 2.15, np.where(lookbacks_player_r['avg_ord'] >= 8, ((lookbacks_player_r['avg_ord'] - 8) * (0.05 / 2.15)) + ((1 - (lookbacks_player_r['avg_ord'] - 8)) * (0.81 / 2.15)), ((lookbacks_player_r['avg_ord'] - 7) * (0.81 / 2.15)) + ((1 - (lookbacks_player_r['avg_ord'] - 7)) * (1)))))
-    # lookbacks_player_r['location_weight'] = ((lookbacks_player_r['location_weight'] - 1) * lookbacks_player_r['location_weight_adjust']) + 1
-
-    # final weight
     lookbacks_player_r['weight'] = lookbacks_player_r['recency_weight'] * lookbacks_player_r['location_weight']
 
-    # Apply weights for rating
     lookbacks_player_r['weight_runs'] = lookbacks_player_r['weight'] * lookbacks_player_r['runs_2']
     lookbacks_player_r['weight_exprbat'] = lookbacks_player_r['weight'] * lookbacks_player_r['adj_realexprbat']
     lookbacks_player_r['weight_exprbat_unadjusted'] = lookbacks_player_r['weight'] * lookbacks_player_r['realexprbat_2']
@@ -595,12 +604,29 @@ def buildRunRatingsMapPriority(param, lookbacks_player):
 
     ratings = pd.pivot_table(
         lookbacks_player_r,
-        values=['weight', 'weight_runs', 'weight_exprbat', 'weight_exprbat_unadjusted', 'weight_ord_r',
-                'balls_faced_2', 'runs_2', 'realexprbat_2', 'weight_balls_r'],
+        values=[
+            'weight',
+            'weight_runs',
+            'weight_exprbat',
+            'weight_exprbat_unadjusted',
+            'weight_ord_r',
+            'balls_faced_2',
+            'runs_2',
+            'realexprbat_2',
+            'weight_balls_r'
+        ],
         index=['date', 'matchid', 'playerid', 'batsman', 'host', 'competition'],
-        aggfunc={'weight': 'sum', 'weight_runs': 'sum', 'weight_exprbat': 'sum', 'weight_exprbat_unadjusted': 'sum',
-                 'balls_faced_2': 'sum', 'weight_ord_r': 'sum', 'runs_2': 'sum',
-                 'realexprbat_2': 'sum', 'weight_balls_r': 'sum'}
+        aggfunc={
+            'weight': 'sum',
+            'weight_runs': 'sum',
+            'weight_exprbat': 'sum',
+            'weight_exprbat_unadjusted': 'sum',
+            'balls_faced_2': 'sum',
+            'weight_ord_r': 'sum',
+            'runs_2': 'sum',
+            'realexprbat_2': 'sum',
+            'weight_balls_r': 'sum'
+        }
     ).reset_index()
 
     ratings['run_rating_0'] = ratings['weight_runs'] / ratings['weight_exprbat_unadjusted']
@@ -615,77 +641,73 @@ def buildRunRatingsMapPriority(param, lookbacks_player):
 
 def buildWktRatingsMapPriority(param, lookbacks_player):
     """
-    Priority mapping (no logs/exp).
-    param (len=10) = [t, cd, ci, t20, odi2, odi1, dh, h, r, k]
-      - Primary (pick first that matches): t -> cd -> ci -> t20 -> odi2 -> odi1
-      - Host/region application:
-        * For t, cd: host weight = dh if host differs else 1; region weight = 1
-        * For ci, t20, odi2, odi1:
-            host weight = h if same host else 1
-            region weight = r if (host differs and region same) else 1
+    Priority mapping.
+    param = [t, cd, ci, t20, odi2, odi1, dh, h, r, k]
     """
     t, cd, ci, t20, odi2, odi1, dh, h, r, k = param
 
     lookbacks_player_w = lookbacks_player.copy()
 
-    # Flags
-    same_comp = (lookbacks_player_w['competition'] == lookbacks_player_w['competition_2'])
-    same_comp_t20i = same_comp & (lookbacks_player_w['competition'] == 'T20I')
-    same_comp_domestic = same_comp & (lookbacks_player_w['competition'] != 'T20I')
-    # Only treat "same tournament" for non-T20I (prevents dh being applied for T20I)
-    recent_same_tournament = same_comp_domestic & (lookbacks_player_w['days_ago'] < 90)
-    host_same = (lookbacks_player_w['host'] == lookbacks_player_w['host_2'])
+    same_comp = lookbacks_player_w['competition'] == lookbacks_player_w['competition_2']
+    intl_t20 = lookbacks_player_w['competition'].isin(['T20I', 'WT20I'])
+
+    same_tournament = same_comp & (~intl_t20)
+    same_tournament_recent = same_tournament & (lookbacks_player_w['days_ago'] < 90)
+    same_tournament_old = same_tournament & (lookbacks_player_w['days_ago'] >= 90)
+    same_comp_t20i = same_comp & intl_t20
+
+    host_same = lookbacks_player_w['host'] == lookbacks_player_w['host_2']
     region_same = (~host_same) & (lookbacks_player_w['host_region'] == lookbacks_player_w['host_region_2'])
+
     diff_comp = ~same_comp
     prior_is_t20 = diff_comp & (~lookbacks_player_w['competition_2'].isin(['ODI1', 'ODI2']))
     prior_is_odi2 = diff_comp & (lookbacks_player_w['competition_2'] == 'ODI2')
+    prior_is_odi1 = diff_comp & (lookbacks_player_w['competition_2'] == 'ODI1')
 
-    # Primary case selection with priority (0=t, 1=cd, 2=ci, 3=t20, 4=odi2, 5=odi1)
     case_codes = np.select(
-        condlist=[recent_same_tournament, same_comp_domestic, same_comp_t20i, prior_is_t20, prior_is_odi2],
-        choicelist=[0, 1, 2, 3, 4],
+        condlist=[
+            same_tournament_recent,
+            same_tournament_old,
+            same_comp_t20i,
+            prior_is_t20,
+            prior_is_odi2,
+            prior_is_odi1
+        ],
+        choicelist=[0, 1, 2, 3, 4, 5],
         default=5
     )
 
-    # Column 1: primary weight from first 6 param
     lookbacks_player_w['w_primary'] = np.select(
-        condlist=[case_codes == 0, case_codes == 1, case_codes == 2, case_codes == 3, case_codes == 4],
-        choicelist=[t, cd, ci, t20, odi2],
+        condlist=[
+            case_codes == 0,
+            case_codes == 1,
+            case_codes == 2,
+            case_codes == 3,
+            case_codes == 4,
+            case_codes == 5
+        ],
+        choicelist=[t, cd, ci, t20, odi2, odi1],
         default=odi1
     )
 
-    # Column 2: host weight
-    # For t/cd -> dh if host differs else 1; others -> h if host same else 1
     w_host_tc = np.where(host_same, 1.0, dh)
     w_host_std = np.where(host_same, h, 1.0)
     lookbacks_player_w['w_host'] = np.where((case_codes == 0) | (case_codes == 1), w_host_tc, w_host_std)
 
-    # Column 3: region weight
-    # For t/cd -> always 1; others -> r if (host differs and region same) else 1
-    w_region_std = np.where((~host_same) & region_same, r, 1.0)
+    w_region_std = np.where(region_same, r, 1.0)
     lookbacks_player_w['w_region'] = np.where((case_codes == 0) | (case_codes == 1), 1.0, w_region_std)
 
-    # Location and recency weights
-    lookbacks_player_w['location_weight'] = (
-        lookbacks_player_w['w_primary'] * lookbacks_player_w['w_host'] * lookbacks_player_w['w_region']
-    )
+    lookbacks_player_w['location_weight'] = lookbacks_player_w['w_primary'] * lookbacks_player_w['w_host'] * lookbacks_player_w['w_region']
 
-    # the shape of k goes from small to large as career balls goes up (found using optimiser), I cap it at the average for all balls, but in reality it should get bigger than average above 750 balls
     lookbacks_player_w['k'] = k * np.where(
         lookbacks_player_w['balls_faced_career'] > 750,
         1,
-        0.5 + (0.5 * (lookbacks_player_w['balls_faced_career']) / 750)
+        0.5 + (0.5 * lookbacks_player_w['balls_faced_career'] / 750)
     )
+
     lookbacks_player_w['recency_weight'] = (1.0 - lookbacks_player_w['k']) ** lookbacks_player_w['days_ago']
-
-    # # these are optional
-    # lookbacks_player_w['location_weight_adjust'] = np.where(lookbacks_player_w['avg_ord'] <= 7, 1, np.where(lookbacks_player_w['avg_ord'] >= 9, 0.05 / 2.15, np.where(lookbacks_player_w['avg_ord'] >= 8, ((lookbacks_player_w['avg_ord'] - 8) * (0.05 / 2.15)) + ((1 - (lookbacks_player_w['avg_ord'] - 8)) * (0.81 / 2.15)), ((lookbacks_player_w['avg_ord'] - 7) * (0.81 / 2.15)) + ((1 - (lookbacks_player_w['avg_ord'] - 7)) * (1)))))
-    # lookbacks_player_w['location_weight'] = ((lookbacks_player_w['location_weight'] - 1) * lookbacks_player_w['location_weight_adjust']) + 1
-
-    # final weight
     lookbacks_player_w['weight'] = lookbacks_player_w['recency_weight'] * lookbacks_player_w['location_weight']
 
-    # Apply weights for rating
     lookbacks_player_w['weight_wkt'] = lookbacks_player_w['weight'] * lookbacks_player_w['wkt_2']
     lookbacks_player_w['weight_expwbat'] = lookbacks_player_w['weight'] * lookbacks_player_w['adj_realexpwbat']
     lookbacks_player_w['weight_expwbat_unadjusted'] = lookbacks_player_w['weight'] * lookbacks_player_w['realexpwbat_2']
@@ -694,12 +716,29 @@ def buildWktRatingsMapPriority(param, lookbacks_player):
 
     ratings = pd.pivot_table(
         lookbacks_player_w,
-        values=['weight', 'weight_wkt', 'weight_expwbat', 'weight_expwbat_unadjusted', 'weight_ord_w',
-                'balls_faced_2', 'wkt_2', 'realexpwbat_2', 'weight_balls_w'],
+        values=[
+            'weight',
+            'weight_wkt',
+            'weight_expwbat',
+            'weight_expwbat_unadjusted',
+            'weight_ord_w',
+            'balls_faced_2',
+            'wkt_2',
+            'realexpwbat_2',
+            'weight_balls_w'
+        ],
         index=['date', 'matchid', 'playerid', 'batsman', 'host', 'competition'],
-        aggfunc={'weight': 'sum', 'weight_wkt': 'sum', 'weight_expwbat': 'sum', 'weight_expwbat_unadjusted': 'sum',
-                 'balls_faced_2': 'sum', 'weight_ord_w': 'sum', 'wkt_2': 'sum',
-                 'realexpwbat_2': 'sum', 'weight_balls_w': 'sum'}
+        aggfunc={
+            'weight': 'sum',
+            'weight_wkt': 'sum',
+            'weight_expwbat': 'sum',
+            'weight_expwbat_unadjusted': 'sum',
+            'balls_faced_2': 'sum',
+            'weight_ord_w': 'sum',
+            'wkt_2': 'sum',
+            'realexpwbat_2': 'sum',
+            'weight_balls_w': 'sum'
+        }
     ).reset_index()
 
     ratings['wkt_rating_0'] = ratings['weight_wkt'] / ratings['weight_expwbat_unadjusted']
@@ -710,59 +749,3 @@ def buildWktRatingsMapPriority(param, lookbacks_player):
     return ratings, lookbacks_player_w
 
 
-
-
-
-def buildWktRatingsOriginal(param, lookbacks_player):
-    k, ci, cd, h, r, t20, odi1, odi2, f = param[0], param[1], param[2], param[3], param[4], param[5], param[6], param[7], param[8]
-
-    lookbacks_player_w = lookbacks_player.copy()
-
-    lookbacks_player_w['k'] = k * np.where(lookbacks_player_w['balls_faced_career'] > 750, 1, 0.5 + (0.5 * (lookbacks_player_w['balls_faced_career']) / 750)) #the shape of k goes from small to large as career balls goes up (found using optimiser), I cap it at the average for all balls, but inreality it should get bigger than average above 750 balls, but I'm wary of making it even more form dependant)
-    lookbacks_player_w['recency_weight'] = ((1 - lookbacks_player_w['k']) ** lookbacks_player_w['days_ago'])
-
-    # the first weight looks at format, the 2nd at comp, if it's the same comp and it's an international it gets CI, if it's the same domestic comp it gets CD, if not the same comp just gets 1
-    lookbacks_player_w['format_enc'] = np.where(lookbacks_player_w['competition_2'] == 'ODI1', odi1,
-                                                np.where(lookbacks_player_w['competition_2'] == 'ODI2', odi2, t20))
-    # same current tournament
-    lookbacks_player_w['comp_enc'] = np.where(
-        (lookbacks_player_w['days_ago'] < 90) &
-        (lookbacks_player_w['competition'] == lookbacks_player_w['competition_2']) &
-        (lookbacks_player_w['competition'] != 'T20I'),
-        f,
-        1
-    )
-
-    lookbacks_player_w['comp_enc'] = np.where(lookbacks_player_w['competition'] == lookbacks_player_w['competition_2'], np.where(lookbacks_player_w['competition'] == 'T20I', ci, cd), 1)
-    lookbacks_player_w['host_enc'] = np.where(lookbacks_player_w['host'] == lookbacks_player_w['host_2'], h, 1)
-    # for region, if host already the same leave it to avoid double weighting, then if not same host but same region give r, else give 1
-    lookbacks_player_w['host_region_enc'] = np.where(lookbacks_player_w['host'] == lookbacks_player_w['host_2'], 1,
-                                                         np.where(lookbacks_player_w['host_region'] == lookbacks_player_w['host_region_2'], r, 1))
-
-    # multiply the weights
-    lookbacks_player_w['location_weight'] = lookbacks_player_w['comp_enc'] * lookbacks_player_w['host_enc'] * lookbacks_player_w['host_region_enc'] #* lookbacks_player_w['home_away_enc'])
-    lookbacks_player_w['location_weight_adjust'] = np.where(lookbacks_player_w['avg_ord'] <= 7, 1, np.where(lookbacks_player_w['avg_ord'] >= 9, 0.05 / 2.15, np.where(lookbacks_player_w['avg_ord'] >= 8, ((lookbacks_player_w['avg_ord'] - 8) * (0.05 / 2.15)) + ((1 - (lookbacks_player_w['avg_ord'] - 8)) * (0.81 / 2.15)), ((lookbacks_player_w['avg_ord'] - 7) * (0.81 / 2.15)) + ((1 - (lookbacks_player_w['avg_ord'] - 7)) * (1)))))
-    lookbacks_player_w['location_weight'] = ((lookbacks_player_w['location_weight'] - 1) * lookbacks_player_w['location_weight_adjust']) + 1
-    lookbacks_player_w['weight'] = lookbacks_player_w['recency_weight'] * lookbacks_player_w['location_weight']
-
-
-
-    # Apply weights to components used in rating
-    lookbacks_player_w['weight_wkt'] = lookbacks_player_w['weight'] * lookbacks_player_w['wkt_2']
-    lookbacks_player_w['weight_expwbat'] = lookbacks_player_w['weight'] * lookbacks_player_w['realexpwbat_2']
-    lookbacks_player_w['weight_ord_w'] = lookbacks_player_w['weight'] * lookbacks_player_w['ord_2']
-    lookbacks_player_w['weight_balls_w'] = lookbacks_player_w['weight'] * lookbacks_player_w['balls_faced_2']
-    # create a pivot to sum the weights then divide for the rating
-    ratings = pd.pivot_table(lookbacks_player_w,
-                                      values=['weight', 'weight_wkt', 'weight_expwbat', 'weight_ord_w',
-                                              'balls_faced_2', 'wkt_2', 'realexpwbat_2', 'weight_balls_w'],
-                                      index=['date', 'matchid', 'playerid', 'batsman', 'host', 'competition'],
-                                      aggfunc={'weight': 'sum', 'weight_wkt': 'sum', 'weight_expwbat': 'sum',
-                                               'balls_faced_2': 'sum', 'weight_ord_w': 'sum', 'wkt_2': 'sum',
-                                               'realexpwbat_2': 'sum', 'weight_balls_w': 'sum'})
-    ratings['wkt_rating'] = ratings['weight_wkt'] / ratings['weight_expwbat']
-    ratings['z_wkt_ratio'] = ratings['wkt_2'] / ratings['realexpwbat_2']  # this is the actual ratio over the period of balls the rating is based on
-    ratings['ord_2_w'] = ratings['weight_ord_w'] / ratings['weight']
-    ratings = ratings.reset_index()
-
-    return ratings, lookbacks_player_w

@@ -23,7 +23,7 @@ n2h_factors_spin = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens
 # Basic preprocessing
 # -------------------------
 bowl_data['competition'] = np.where(
-    bowl_data['competition'].str.contains('ODI', na=False),
+    bowl_data['competition'].str.contains('WODI', na=False),
     np.where(bowl_data['ballsremaining'] < 84, 'ODI2', 'ODI1'),
     bowl_data['competition']
 )

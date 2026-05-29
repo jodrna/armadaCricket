@@ -1,6 +1,10 @@
 MAIN
 1. get mens bat/bowl same level as womens ratings
     ensure consistency across all ratings code, should match womens
+    debug for women bowlers
+    rep values for men
+    bat model for men
+    error analysis for men
 2. first innings match market, balls remaining, wickets lost, eff target
 3. fix data get and clean process, first of all clean sql (script 1), then download sql (script 2), then clean that and adjust (Script 3), currently its 4 scripts, with duplication
     done I believe
