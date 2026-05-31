@@ -10,16 +10,21 @@ bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/bat
 player_info = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/playerInfo_w.csv', parse_dates=['dob'])
 ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batRatingsFor_w.csv')
 
-# anything containing odi simply becomes WODI, remove abu dhabi cup
-bat_data['competition'] = np.where(bat_data['competition'].str.contains('ODI', na=False), 'WODI', bat_data['competition'])
-bat_data = bat_data[bat_data['competition'] != 'Abu Dhabi Women\'s T20 Counties Super Cup']
-
 # -------------------------
-# Optional: filter a single batsman for speed
+# Optional: filter a single batter for speed
 # -------------------------
 # TEST_BATSMAN = 'Alana King'
 # bat_data = bat_data[bat_data['batsman'] == TEST_BATSMAN]
 # player_info = player_info[player_info['name'] == TEST_BATSMAN]
+
+
+# -------------------------
+# fix some comp names
+# -------------------------
+bat_data['competition'] = np.where(bat_data['competition'].str.contains('ODI', na=False), 'WODI', bat_data['competition'])
+bat_data = bat_data[bat_data['competition'] != 'Abu Dhabi Women\'s T20 Counties Super Cup']
+bat_data['competition'] = np.where(bat_data['competition'] == 'ICC Womens World Cup Warm-up Matches', 'WODI', bat_data['competition'])
+bat_data['competition'] = np.where(bat_data['competition'] == 'Women\'s World Cup', 'WODI', bat_data['competition'])
 
 
 # -------------------------
@@ -167,6 +172,7 @@ bat_data = bat_data.drop(labels=['overseas_pct_x', 'overseas_pct_y'], axis=1)
 mask = (bat_data['format'] == 't20')
 bat_data['uniqueMatchMarker'] = mask & ~bat_data[mask].duplicated(subset=['playerid', 'matchid'])
 bat_data['careerT20MatchNumber'] = bat_data.groupby('playerid')['uniqueMatchMarker'].cumsum()
+
 
 
 # -------------------------

@@ -2,7 +2,10 @@ import pandas as pd
 import numpy as np
 from sklearn import preprocessing
 import statsmodels.api as sm
+from batFunctions_w import build_replacement_debug_tables
 from paths import PROJECT_ROOT
+DEBUG_CONFIG = globals().get('DEBUG_CONFIG', None)
+BAT_REPLACEMENT_DEBUG_TABLES = None
 
 
 def make_ohe(values, cats, prefix, drop_first=True):
@@ -142,8 +145,10 @@ for x in np.arange(0, 2, 1):
     n2h_factors = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batN2HFactors_w.csv')
 
     if x == 0:
+        model_name = 'jungle'
         ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle_w.csv', parse_dates=['date'], dtype={'battingteam': str})
     else:
+        model_name = 'rasoi'
         ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi_w.csv', parse_dates=['date'], dtype={'battingteam': str})
 
 
@@ -223,47 +228,17 @@ for x in np.arange(0, 2, 1):
     ratings['i_rep_wkt'] = ratings['rep_wkt_ratio'] * ratings['i_realexpwbat']
 
     # -------------------------
-    # 8) One-player breakdown
+    # 8) Debug replacement breakdown
     # -------------------------
-    debug_mask = (
-            (ratings['batsman'] == 'Yastika Bhatia') &
-            (ratings['competition'] == 'Women\'s Premier League') &
-            (ratings['host'] == 'India') &
-            (ratings['matchid'] == 101)
-    )
-
-    debug_rows = ratings.loc[debug_mask, :].reset_index(drop=True)
-    debug_X_run = X_run_r.loc[debug_mask, :].reset_index(drop=True)
-    debug_X_wkt = X_wkt_r.loc[debug_mask, :].reset_index(drop=True)
-
-    if len(debug_rows) > 0:
-        run_contribs = pd.DataFrame(debug_X_run.to_numpy() * run_params.to_numpy(), columns=debug_X_run.columns)
-        run_breakdown = pd.DataFrame({'feature': run_contribs.columns, 'contrib': run_contribs.iloc[0].to_numpy()})
-        run_const = run_breakdown[run_breakdown['feature'] == 'const']
-        run_breakdown = run_breakdown[(run_breakdown['feature'] != 'const') & (run_breakdown['contrib'] != 0)]
-        run_breakdown = run_breakdown.sort_values('contrib', key=lambda z: z.abs(), ascending=False)
-        run_breakdown = pd.concat([run_const, run_breakdown], axis=0)
-
-        wkt_contribs = pd.DataFrame(debug_X_wkt.to_numpy() * wkt_params.to_numpy(), columns=debug_X_wkt.columns)
-        wkt_breakdown = pd.DataFrame({'feature': wkt_contribs.columns, 'contrib': wkt_contribs.iloc[0].to_numpy()})
-        wkt_const = wkt_breakdown[wkt_breakdown['feature'] == 'const']
-        wkt_breakdown = wkt_breakdown[(wkt_breakdown['feature'] != 'const') & (wkt_breakdown['contrib'] != 0)]
-        wkt_breakdown = wkt_breakdown.sort_values('contrib', key=lambda z: z.abs(), ascending=False)
-        wkt_breakdown = pd.concat([wkt_const, wkt_breakdown], axis=0)
-
-        print('\nRUN REPLACEMENT BREAKDOWN')
-
-        for _, row in run_breakdown.iterrows():
-            print(f'{row["feature"]:<50} {row["contrib"]:.4f}')
-
-        print(f'\nTOTAL RUN REPLACEMENT RATIO: {debug_rows.loc[0, "rep_run_ratio"]:.4f}')
-
-        print('\nWKT REPLACEMENT BREAKDOWN')
-
-        for _, row in wkt_breakdown.iterrows():
-            print(f'{row["feature"]:<50} {row["contrib"]:.4f}')
-
-        print(f'\nTOTAL WKT REPLACEMENT RATIO: {debug_rows.loc[0, "rep_wkt_ratio"]:.4f}')
+    if DEBUG_CONFIG is not None and DEBUG_CONFIG['model'] == model_name:
+        BAT_REPLACEMENT_DEBUG_TABLES = build_replacement_debug_tables(
+            DEBUG_CONFIG,
+            ratings,
+            X_run_r,
+            X_wkt_r,
+            run_params,
+            wkt_params
+        )
 
 
     # -------------------------
@@ -322,8 +297,5 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi2_w.csv', index=False)
 
 
-ratings = ratings[ratings['batsman'] == 'Yastika Bhatia']
-ratings = ratings.loc[:, ['batsman', 'competition', 'H/A_competition', 'host', 'wkt_factor', 'rep_wkt_ratio', 'run_factor', 'rep_run_ratio']]
-
-print(np.mean(bat_data['run_sqe']))
+# print(np.mean(bat_data['run_sqe']))
 

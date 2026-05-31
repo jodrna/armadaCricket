@@ -301,6 +301,5 @@ for x in np.arange(0, 2, 1):
 
 
 
-print(np.mean(bowl_data['run_sqe']))
 
 

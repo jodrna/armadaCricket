@@ -1,8 +1,16 @@
 import pandas as pd
 import numpy as np
 from scipy.optimize import least_squares
-from batFunctions_w import qualityMethodBins, newMethodBins, buildRunRatingsOriginal, buildRunRatingsMapOne, buildRunRatingsMapTwo, buildRunRatingsMapPriority, buildWktRatingsMapPriority, buildWktRatingsOriginal
+from batFunctions_w import qualityMethodBins, newMethodBins, buildRunRatings, buildWktRatings
 from paths import PROJECT_ROOT
+
+
+# -------------------------
+# Configure
+# -------------------------
+model_name = 'rasoi'     # jungle / rasoi
+target = 'wkts'           # runs / wkts
+mode = 'optimise'             # test / optimise
 
 
 # -------------------------
@@ -11,7 +19,8 @@ from paths import PROJECT_ROOT
 bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/batDataCombinedClean_w.csv', parse_dates=['date', 'dob'])
 n2h_factors = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batN2HFactors_w.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
 n2h_grad = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batN2HFactorsGradient_w.csv').rename(columns={'balls_faced_host_mean_y': 'balls_faced_host'})
-current_ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle3_w.csv')
+current_ratings_path = PROJECT_ROOT / f"women/playerRatings/batT20Womens/outputs/batRatings{model_name.capitalize()}3_w.csv"
+current_ratings = pd.read_csv(current_ratings_path)
 bat_weightings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batWeightings_w.csv')
 
 
@@ -106,7 +115,6 @@ ratingsOuter = []
 pivotOuter = []
 bat_dataOuter = []
 lookbacksOuter = []
-opt_history = pd.DataFrame(columns=['rmse', 'sse_mean', 'sse_total', 'param0', 'param1', 'param2', 'param3', 'param4', 'param5', 'param6', 'param7', 'param8', 'param9'])
 
 
 def optimise_params(param, lookbacks_player, build_fn, rating_col, exp_col, actual_col, weight_curve_col, out_pred_col, bin_col='binid'):
@@ -141,7 +149,7 @@ def optimise_params(param, lookbacks_player, build_fn, rating_col, exp_col, actu
     bat_dataOuter.clear(); bat_dataOuter.append(bat_data_i)
     lookbacksOuter.clear(); lookbacksOuter.append(lookbacks_i)
 
-    row = {'rmse': rmse, 'sse_mean': sse_mean, 'sse_total': sse_total, **{f'param{i}': float(p) for i, p in enumerate(param)}}
+    row = {'rmse': rmse, 'sse_mean': sse_mean, 'sse_total': sse_total, **{param_names[i]: float(p) for i, p in enumerate(param)}}
     opt_history.loc[len(opt_history)] = row
 
     return residual
@@ -151,79 +159,100 @@ def optimise_params(param, lookbacks_player, build_fn, rating_col, exp_col, actu
 
 
 # -------------------------
-# Params (dict -> list(values) to match the ratings script)
+# Target config
 # -------------------------
-# # params optimised for runs using quality grouping
-# param0_dict = {
-#     't': 15.17348002,
-#     'cd': 6.89753,
-#     'ci': 12.88380525,
-#     't20': 6.307514689,
-#     'odi2': 1.692501798,
-#     'odi1': 1.000755457,
-#     'dh': 0.621652589,
-#     'h': 1.241297181,
-#     'r': 1.381979717,
-#     'k': 0.000496309
-# }
-
-# # params optimised for wkts using quality grouping
-# param0_dict = {
-#     't': 1.293158205,
-#     'cd': 3.979704835,
-#     'ci': 1.80296017,
-#     't20': 2.070824639,
-#     'odi2': 1.518191934,
-#     'odi1': 1.071059076,
-#     'dh': 0.97542588,
-#     'h': 1.477165773,
-#     'r': 1,
-#     'k': 0.000499531
-# }
-
-# # params optimised for runs using innings grouping
-# param0_dict = {
-#     't': 20,
-#     'cd': 12.59457633,
-#     'ci': 17.46079646,
-#     't20': 7.338761994,
-#     'odi2': 2.72804768,
-#     'odi1': 1,
-#     'dh': 0.469010748,
-#     'h': 1,
-#     'r': 1.444896715,
-#     'k': 0.000802191
-# }
-
-# # params optimised for wkts using innings grouping
-# param0_dict = {
-#     't': 10.5339096,
-#     'cd': 20,
-#     'ci': 5.233032976,
-#     't20': 7.782822175,
-#     'odi2': 1,
-#     'odi1': 4.423330281,
-#     'dh': 0.977275005,
-#     'h': 1.589376541,
-#     'r': 1.080660285,
-#     'k': 0.000850588
-# }
-
-# standard starting params
-param0_dict = {
-    't': 1,
-    'cd': 1,
-    'ci': 1,
-    't20': 1,
-    'odi2': 1,
-    'odi1': 1,
-    'dh': 0,
-    'h': 1,
-    'r': 1,
-    'k': 0
+target_cfg = {
+    'runs': {
+        'build_fn': buildRunRatings,
+        'rating_col': 'run_rating',
+        'rating_col_3': 'run_rating_3',
+        'exp_col': 'realexprbat',
+        'actual_col': 'runs',
+        'weight_curve_col': 'runs_weight_curve',
+        'out_pred_col': 'runs_pred'
+    },
+    'wkts': {
+        'build_fn': buildWktRatings,
+        'rating_col': 'wkt_rating',
+        'rating_col_3': 'wkt_rating_3',
+        'exp_col': 'realexpwbat',
+        'actual_col': 'wkt',
+        'weight_curve_col': 'wkts_weight_curve',
+        'out_pred_col': 'wkts_pred'
+    }
 }
 
+build_fn = target_cfg[target]['build_fn']
+rating_col = target_cfg[target]['rating_col']
+rating_col_3 = target_cfg[target]['rating_col_3']
+exp_col = target_cfg[target]['exp_col']
+actual_col = target_cfg[target]['actual_col']
+weight_curve_col = target_cfg[target]['weight_curve_col']
+out_pred_col = target_cfg[target]['out_pred_col']
+
+
+# -------------------------
+# Params
+# -------------------------
+params = {
+    'jungle': {
+        'runs': {
+            't': 15.17348002,
+            'cd': 8.89753,
+            'ci': 12.88380525,
+            't20': 6.307514689,
+            'odi2': 1.692501798,
+            'odi1': 1.000755457,
+            'dh': 0.621652589,
+            'h': 1.241297181,
+            'r': 1.091979717,
+            'k': 0.000496309
+        },
+        'wkts': {
+            't': 4.293158205,
+            'cd': 3.979704835,
+            'ci': 2.20296017,
+            't20': 1.870824639,
+            'odi2': 1.518191934,
+            'odi1': 1.071059076,
+            'dh': 0.97542588,
+            'h': 1.477165773,
+            'r': 1,
+            'k': 0.000499531
+        }
+    },
+    'rasoi': {
+        'runs': {
+            't': 19.999999998,
+            'cd': 12.594571572,
+            'ci': 17.460781925,
+            't20': 7.338651890,
+            'odi2': 2.728047680,
+            'odi1': 1.000000000,
+            'dh': 0.800003439,
+            'h': 1.199992058,
+            'r': 1.050241154,
+            'k': 0.001515314,
+        },
+        'wkts': {
+            't': 13.393558084,
+            'cd': 17.022545492,
+            'ci': 10.585991537,
+            't20': 5.242233553,
+            'odi2': 2.434296227,
+            'odi1': 1,
+            'dh': 0.8,
+            'h': 1.4,
+            'r': 1.2,
+            'k': 0.000649046,
+        }
+    }
+}
+
+param0_dict = params[model_name][target]
+param_names = list(param0_dict.keys())
 param0 = list(param0_dict.values())
+opt_history = pd.DataFrame(columns=['rmse', 'sse_mean', 'sse_total'] + param_names)
 
 
 # -------------------------
@@ -231,40 +260,51 @@ param0 = list(param0_dict.values())
 # -------------------------
 lower_dict = {'t': 1, 'cd': 1, 'ci': 1, 't20': 1, 'odi2': 1, 'odi1': 1, 'dh': 0, 'h': 1, 'r': 1, 'k': 0}
 upper_dict = {'t': 20, 'cd': 20, 'ci': 20, 't20': 20, 'odi2': 20, 'odi1': 20, 'dh': 1, 'h': 20, 'r': 20, 'k': 0.01}
-lower = list(lower_dict.values()); upper = list(upper_dict.values())
+
+lower = list(lower_dict.values())
+upper = list(upper_dict.values())
 
 
 # -------------------------
-# Choose grouping method (bins)
+# Choose grouping method, jungle = new, rasoi = quality
 # -------------------------
-# bat_data = qualityMethodBins(bat_data, bin_size=40, rating_col='wkt_rating_3', out_col='binid')
-bat_data = newMethodBins(bat_data)
+if model_name == 'jungle':
+    bat_data = newMethodBins(bat_data)
+
+else:
+    bat_data = bat_data.merge(current_ratings.loc[:, ['playerid', 'matchid', 'host', 'competition', rating_col_3]], on=['playerid', 'matchid', 'host', 'competition'], how='left')
+    bat_data = bat_data[(bat_data['competition'] != 'ODI') & (bat_data['balls_faced'] > 0)].dropna(subset=[rating_col_3])
+    bat_data = qualityMethodBins(bat_data, bin_size=40, rating_col=rating_col_3, out_col='binid')
 
 
 # -------------------------
 # Optimiser config + objective
 # -------------------------
-cfg = dict(
+optimiser_cfg = dict(
     lookbacks_player=lookbacks_player,
-    build_fn=buildRunRatingsMapPriority,
-    rating_col='run_rating',
-    exp_col='realexprbat',
-    actual_col='runs',
-    weight_curve_col='runs_weight_curve',
-    out_pred_col='runs_pred',
+    build_fn=build_fn,
+    rating_col=rating_col,
+    exp_col=exp_col,
+    actual_col=actual_col,
+    weight_curve_col=weight_curve_col,
+    out_pred_col=out_pred_col,
     bin_col='binid'
 )
-obj_fn = lambda p: optimise_params(p, **cfg)
 
+obj_fn = lambda p: optimise_params(p, **optimiser_cfg)
 
-# -------------------------
-# Optimisation
-# -------------------------
-optimise = least_squares(obj_fn, param0, ftol=1e-5, bounds=(lower, upper))
 
 
 # -------------------------
-# Test evaluation of params
+# Optimisation/Testing
 # -------------------------
-# test = obj_fn(param0)
+if mode == 'optimise':
+    result = least_squares(obj_fn, param0, ftol=1e-5, bounds=(lower, upper))
+    # for pasting into the model
+    print('{')
+    for name, value in zip(param_names, result.x):
+        print(f"    '{name}': {value:.9f},")
+    print('}')
 
+else:
+    obj_fn(param0)
