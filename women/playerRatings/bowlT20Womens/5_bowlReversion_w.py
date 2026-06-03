@@ -6,6 +6,18 @@ from paths import PROJECT_ROOT
 for x in np.arange(0, 2, 1):
     # read data
     bowl_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/data/bowlDataCombinedClean_w.csv', parse_dates=['date', 'dob'])
+
+    career_ratings = pd.pivot_table(bowl_data, values=['runs', 'realexprbowl', 'wkt', 'realexpwbowl'], index=['playerid', 'batsman', 'format'], aggfunc='mean').reset_index()
+    career_ratings['run_rating'] = career_ratings['runs'] / career_ratings['realexprbowl']
+    career_ratings['wkt_rating'] = career_ratings['wkt'] / career_ratings['realexpwbowl']
+
+    career_ratings = pd.pivot_table(career_ratings, values=['run_rating', 'wkt_rating'], index=['playerid', 'batsman'], columns='format', aggfunc='mean').reset_index()
+
+    career_ratings.columns = [
+        f'career_{col[1]}_{col[0]}' if col[1] else col[0]
+        for col in career_ratings.columns]
+
+    # now only t20 going forward
     bowl_data = bowl_data[bowl_data['format'] == 't20']
 
     # read ratingsT20
@@ -62,6 +74,7 @@ for x in np.arange(0, 2, 1):
     ratings.insert(ratings.columns.get_loc("rep_run_weight") + 1, 'run_rating_3', rep_weight_r(ratings['balls_bowled_r'], ratings['run_rating'], ratings['rep_run_ratio'])[1])
     ratings.insert(ratings.columns.get_loc("rep_wkt_ratio") + 1, 'rep_wkt_weight', rep_weight_w(ratings['balls_bowled_w'], ratings['wkt_rating'], ratings['rep_wkt_ratio'])[0])
     ratings.insert(ratings.columns.get_loc("rep_wkt_weight") + 1, 'wkt_rating_3', rep_weight_w(ratings['balls_bowled_w'], ratings['wkt_rating'], ratings['rep_wkt_ratio'])[1])
+    ratings = ratings.merge(career_ratings[['playerid', 'batsman', 'career_t20_run_rating', 'career_t20_wkt_rating', 'career_odi_run_rating', 'career_odi_wkt_rating']], on=['playerid', 'batsman'], how='left')
 
     # create a table for simple sql upload
     sql_upload = ratings.loc[ratings['date'] == ratings['date'].max()].copy()

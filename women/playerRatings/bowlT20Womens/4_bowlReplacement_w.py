@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 from sklearn import preprocessing
 import statsmodels.api as sm
+from bowlFunctions_w import build_replacement_debug_tables
 from paths import PROJECT_ROOT
-
+DEBUG_CONFIG = globals().get('DEBUG_CONFIG', None)
+BOWL_REPLACEMENT_DEBUG_TABLES = None
 
 def make_ohe(values, cats, prefix, drop_first=True):
     drop = 'first' if drop_first else None
@@ -127,11 +129,12 @@ for x in np.arange(0, 2, 1):
     # 1) Imports
     # -------------------------
     bowl_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/data/bowlDataCombinedClean_w.csv', parse_dates=['date', 'dob'])
-    tier_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/auxiliaries/bowlTierData_w.csv')
 
     if x == 0:
+        model_name = 'jungle'
         ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/outputs/bowlRatingsJungle_w.csv', parse_dates=['date'])
     else:
+        model_name = 'rasoi'
         ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/outputs/bowlRatingsRasoi_w.csv', parse_dates=['date'])
 
     # -------------------------
@@ -174,7 +177,7 @@ for x in np.arange(0, 2, 1):
 
 
     # -------------------------
-    # 6) Predict training data
+    # 5) Predict training data
     # -------------------------
     bowl_data['rep_run_ratio'] = rep_run_ratio_model.predict(X_run)
     bowl_data['rep_runs'] = bowl_data['rep_run_ratio'] * bowl_data['realexprbowl']
@@ -183,7 +186,7 @@ for x in np.arange(0, 2, 1):
     bowl_data['rep_wkt'] = bowl_data['rep_wkt_ratio'] * bowl_data['realexpwbowl']
 
     # -------------------------
-    # 5) League coefficient reversion
+    # 6) League coefficient reversion
     # -------------------------
 
     league_balls['feature_name'] = 'competition__' + league_balls['index']
@@ -212,47 +215,17 @@ for x in np.arange(0, 2, 1):
     ratings['i_rep_wkt'] = ratings['rep_wkt_ratio'] * ratings['i_realexpwbowl']
 
     # -------------------------
-    # 7) One-player breakdown
+    # 7) Debug replacement breakdown
     # -------------------------
-    debug_mask = (
-            (ratings['bowler'] == 'Alexa Stonehouse') &
-            (ratings['competition'] == 'WT20I') &
-            (ratings['host'] == 'England') &
-            (ratings['matchid'] == 101)
-    )
-
-    debug_rows = ratings.loc[debug_mask, :].reset_index(drop=True)
-    debug_X_run = X_run_r.loc[debug_mask, :].reset_index(drop=True)
-    debug_X_wkt = X_wkt_r.loc[debug_mask, :].reset_index(drop=True)
-
-    if len(debug_rows) > 0:
-        run_contribs = pd.DataFrame(debug_X_run.to_numpy() * run_params.to_numpy(), columns=debug_X_run.columns)
-        run_breakdown = pd.DataFrame({'feature': run_contribs.columns, 'contrib': run_contribs.iloc[0].to_numpy()})
-        run_const = run_breakdown[run_breakdown['feature'] == 'const']
-        run_breakdown = run_breakdown[(run_breakdown['feature'] != 'const') & (run_breakdown['contrib'] != 0)]
-        run_breakdown = run_breakdown.sort_values('contrib', key=lambda z: z.abs(), ascending=False)
-        run_breakdown = pd.concat([run_const, run_breakdown], axis=0)
-
-        wkt_contribs = pd.DataFrame(debug_X_wkt.to_numpy() * wkt_params.to_numpy(), columns=debug_X_wkt.columns)
-        wkt_breakdown = pd.DataFrame({'feature': wkt_contribs.columns, 'contrib': wkt_contribs.iloc[0].to_numpy()})
-        wkt_const = wkt_breakdown[wkt_breakdown['feature'] == 'const']
-        wkt_breakdown = wkt_breakdown[(wkt_breakdown['feature'] != 'const') & (wkt_breakdown['contrib'] != 0)]
-        wkt_breakdown = wkt_breakdown.sort_values('contrib', key=lambda z: z.abs(), ascending=False)
-        wkt_breakdown = pd.concat([wkt_const, wkt_breakdown], axis=0)
-
-        print('\nRUN REPLACEMENT BREAKDOWN')
-
-        for _, row in run_breakdown.iterrows():
-            print(f'{row["feature"]:<50} {row["contrib"]:.4f}')
-
-        print(f'\nTOTAL RUN REPLACEMENT RATIO: {debug_rows.loc[0, "rep_run_ratio"]:.4f}')
-
-        print('\nWKT REPLACEMENT BREAKDOWN')
-
-        for _, row in wkt_breakdown.iterrows():
-            print(f'{row["feature"]:<50} {row["contrib"]:.4f}')
-
-        print(f'\nTOTAL WKT REPLACEMENT RATIO: {debug_rows.loc[0, "rep_wkt_ratio"]:.4f}')
+    if DEBUG_CONFIG is not None and DEBUG_CONFIG['model'] == model_name:
+        BOWL_REPLACEMENT_DEBUG_TABLES = build_replacement_debug_tables(
+            DEBUG_CONFIG,
+            ratings,
+            X_run_r,
+            X_wkt_r,
+            run_params,
+            wkt_params
+        )
 
     # -------------------------
     # 8) Checks + pivots

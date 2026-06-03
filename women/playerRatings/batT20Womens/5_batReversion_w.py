@@ -73,6 +73,19 @@ for x in np.arange(0, 2, 1):
     # Import bat data, must do within the loop because it changes depending on jungle or rasoi
     # -------------------------
     bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/batDataCombinedClean_w.csv', parse_dates=['date', 'dob'])
+
+
+    career_ratings = pd.pivot_table(bat_data, values=['runs', 'realexprbat', 'wkt', 'realexpwbat'], index=['playerid', 'batsman', 'format'], aggfunc='mean').reset_index()
+    career_ratings['run_rating'] = career_ratings['runs'] / career_ratings['realexprbat']
+    career_ratings['wkt_rating'] = career_ratings['wkt'] / career_ratings['realexpwbat']
+
+    career_ratings = pd.pivot_table(career_ratings, values=['run_rating', 'wkt_rating'], index=['playerid', 'batsman'], columns='format', aggfunc='mean').reset_index()
+
+    career_ratings.columns = [
+        f'career_{col[1]}_{col[0]}' if col[1] else col[0]
+        for col in career_ratings.columns]
+
+    # now only t20 going forward
     bat_data = bat_data[bat_data['format'] == 't20']
 
     # -------------------------
@@ -157,6 +170,7 @@ for x in np.arange(0, 2, 1):
     ratings.insert(ratings.columns.get_loc("rep_run_weight") + 1, 'run_rating_3', rep_weight(ratings['balls_for_weight_r'], ratings['run_rating'], ratings['rep_run_ratio'], param_r_dict)[1])
     ratings.insert(ratings.columns.get_loc("rep_wkt_ratio") + 1, 'rep_wkt_weight', rep_weight(ratings['balls_for_weight_w'], ratings['wkt_rating'], ratings['rep_wkt_ratio'], param_w_dict)[0])
     ratings.insert(ratings.columns.get_loc("rep_wkt_weight") + 1, 'wkt_rating_3', rep_weight(ratings['balls_for_weight_w'], ratings['wkt_rating'], ratings['rep_wkt_ratio'], param_w_dict)[1])
+    ratings = ratings.merge(career_ratings[['playerid', 'batsman', 'career_t20_run_rating', 'career_t20_wkt_rating', 'career_odi_run_rating', 'career_odi_wkt_rating']], on=['playerid', 'batsman'], how='left')
 
     # -------------------------
     # SQL upload table
@@ -180,6 +194,4 @@ for x in np.arange(0, 2, 1):
     else:
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi3_w.csv', index=False)
         sql_upload.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadRasoi_w.csv', index=False)
-
-
 

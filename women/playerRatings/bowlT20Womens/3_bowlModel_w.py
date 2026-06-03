@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
-from bowlFunctions_w import buildRunRatingsOriginal, buildWktRatingsOriginal
+from bowlFunctions_w import buildRunRatings, buildWktRatings, build_rating_debug_tables
 from paths import PROJECT_ROOT
+DEBUG_CONFIG = globals().get('DEBUG_CONFIG', None)
+BOWL_MODEL_DEBUG_TABLES = None
 
 
 # -------------------------
@@ -82,7 +84,7 @@ types = pd.pivot_table(lookbacks_player, values='date', index='bowlertype_2', ag
 
 
 # -------------------------
-# n2h adjustments
+# n2h and type adjustments
 # -------------------------
 n2h_factors_seam['bowlertype_1'] = 'seam'
 n2h_factors_spin['bowlertype_1'] = 'spin'
@@ -114,8 +116,8 @@ lookbacks_player['adj_realexpwbowl'] = lookbacks_player['realexpwbowl_2'] / (loo
 # Build outputs for jungle and rasoi
 # -------------------------
 for x in np.arange(0, 2, 1):
-
     if x == 0:
+        model_name = 'jungle'
         param_r = {
             'k_sm': 0.000512352,
             'c_sm': 19.89691679,
@@ -151,6 +153,7 @@ for x in np.arange(0, 2, 1):
         }
 
     else:
+        model_name = 'rasoi'
         param_r = {
             'k_sm': 0.000840494,
             'c_sm': 19.65001961,
@@ -185,24 +188,27 @@ for x in np.arange(0, 2, 1):
             'odi2_s': 1.085666865
         }
 
-    ratings_player_r, lookbacks_player_r = buildRunRatingsOriginal(param_r, lookbacks_player)
-    ratings_player_w, lookbacks_player_w = buildWktRatingsOriginal(param_w, lookbacks_player)
+    # build the ratings from functions in bowl functions
+    ratings_player_r, lookbacks_player_r = buildRunRatings(param_r, lookbacks_player)
+    ratings_player_w, lookbacks_player_w = buildWktRatings(param_w, lookbacks_player)
 
+    # use only t20 from now on
     bowl_data_t20 = bowl_data[bowl_data['format'] == 't20'].copy()
 
-    rating_key = ['date', 'playerid', 'bowler', 'host', 'competition']
+    # drop duplicates, this happens when players have 2 games in 1 day, like t20 finals day, it causes duplicates down the line with 2 identical ratings on 1 day, we keep 1 rating because they're the same
+    ratings_player_r = ratings_player_r.drop_duplicates(subset=['date', 'playerid', 'bowler', 'host', 'competition'])
+    ratings_player_w = ratings_player_w.drop_duplicates(subset=['date', 'playerid', 'bowler', 'host', 'competition'])
 
-    ratings_player_r = ratings_player_r.drop_duplicates(subset=rating_key)
-    ratings_player_w = ratings_player_w.drop_duplicates(subset=rating_key)
-
+    # merge the run and wkt ratings
     ratings_player = pd.merge(
         ratings_player_r.drop(labels=['realexprbowl_2', 'runs_2', 'weight_exprbowl', 'weight_runs'], axis=1),
         ratings_player_w.drop(labels=['realexpwbowl_2', 'wkt_2', 'weight_expwbowl', 'weight_wkt'], axis=1),
         how='left',
-        on=rating_key,
+        on=['date', 'playerid', 'bowler', 'host', 'competition'],
         suffixes=('_r', '_w')
     )
 
+    # merge the innings performance, we'll use later for error measurement and more
     innings_perf_out = (
         pd.pivot_table(
             bowl_data_t20,
@@ -220,7 +226,6 @@ for x in np.arange(0, 2, 1):
         )
         .reset_index()
     )
-
     innings_perf_out['i_run_ratio'] = innings_perf_out['runs'] / innings_perf_out['realexprbowl']
     innings_perf_out['i_wkt_ratio'] = innings_perf_out['wkt'] / innings_perf_out['realexpwbowl']
 
@@ -240,7 +245,7 @@ for x in np.arange(0, 2, 1):
     ratings = ratings.merge(
         ratings_player,
         how='left',
-        on=rating_key
+        on=['date', 'playerid', 'bowler', 'host', 'competition']
     )
 
     ratings = ratings[~ratings['competition'].isin(['ODI1', 'ODI2'])]
@@ -272,6 +277,19 @@ for x in np.arange(0, 2, 1):
     ratings['wkt_rating_0'] = ratings['wkt_rating_0'].fillna(1)
     ratings['run_rating'] = ratings['run_rating'].fillna(1)
     ratings['wkt_rating'] = ratings['wkt_rating'].fillna(1)
+
+
+    # -------------------------
+    # debug
+    # -------------------------
+    if DEBUG_CONFIG is not None and DEBUG_CONFIG['model'] == model_name:
+        BOWL_MODEL_DEBUG_TABLES = build_rating_debug_tables(
+            DEBUG_CONFIG,
+            ratings,
+            lookbacks_player_r,
+            lookbacks_player_w
+        )
+
 
     # -------------------------
     # Recencies + export

@@ -2,7 +2,7 @@ MAIN
 1. get mens bat/bowl same level as womens ratings
     womens batters are the best only 2 things needed
         why error analysis doesn't match optimiser
-        debug report, add odi number and clean up replacment table (fix constant, add the factor for wt20i)
+        srilanka vs sri lanka
 
     debug for women bowlers
     rep values for men
@@ -10,6 +10,7 @@ MAIN
     error analysis
     debug for men batters/men bowlers
     ensure consistency across all ratings code, should match womens
+
 
 2. first innings match market, balls remaining, wickets lost, eff target
 3. fix data get and clean process, first of all clean sql (script 1), then download sql (script 2), then clean that and adjust (Script 3), currently its 4 scripts, with duplication

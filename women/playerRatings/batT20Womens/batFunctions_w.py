@@ -299,16 +299,6 @@ def buildWktRatings(param, lookbacks_player):
 
 
 def build_rating_debug_tables(debug_config, ratings, lookbacks_player_r, lookbacks_player_w):
-    check = lookbacks_player_r[
-        (lookbacks_player_r['batsman'] == 'Beth Mooney') &
-        (lookbacks_player_r['host'] == 'India') &
-        (lookbacks_player_r['competition'] == 'Women\'s Premier League') &
-        (lookbacks_player_r['matchid'] == 101) &
-        (lookbacks_player_r['competition_2'] == 'Women\'s Premier League') &
-        (lookbacks_player_r['host_2'] == 'India')
-    ].copy()
-    print(np.mean(check['location_weight']))
-
     debug_model = debug_config['model']
     debug_type = debug_config['type']
     debug_batsman = debug_config['batsman']
@@ -426,6 +416,8 @@ def build_rating_debug_tables(debug_config, ratings, lookbacks_player_r, lookbac
 
 
 
+
+
 def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, run_params, wkt_params):
     debug_type = debug_config['type']
     debug_batsman = debug_config['batsman']
@@ -433,12 +425,11 @@ def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, run_
     debug_competition = debug_config['comp']
     debug_matchid = debug_config['matchid']
 
-    debug_mask = (
-        (ratings['batsman'] == debug_batsman) &
-        (ratings['competition'] == debug_competition) &
-        (ratings['host'] == debug_host) &
-        (ratings['matchid'] == debug_matchid)
-    )
+    # Filter to the requested player/match
+    debug_mask = ((ratings['batsman'] == debug_batsman) &
+                (ratings['competition'] == debug_competition) &
+                (ratings['host'] == debug_host) &
+                (ratings['matchid'] == debug_matchid))
 
     debug_row = ratings.loc[debug_mask, :].reset_index(drop=True)
 
@@ -446,34 +437,130 @@ def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, run_
         return {
             'type': debug_type,
             'debug_row': debug_row,
-            'breakdown': pd.DataFrame()
+            'breakdown': pd.DataFrame(),
+            'factor_breakdown': pd.DataFrame()
         }
 
+    # Select the correct replacement model
     if debug_type == 'run':
         debug_X = X_run_r.loc[debug_mask, :].reset_index(drop=True)
         params = run_params
         total_col = 'rep_run_ratio'
+        factor_col = 'run_factor'
 
     elif debug_type == 'wkt':
         debug_X = X_wkt_r.loc[debug_mask, :].reset_index(drop=True)
         params = wkt_params
         total_col = 'rep_wkt_ratio'
+        factor_col = 'wkt_factor'
 
     else:
-        raise ValueError("debug_config['type'] must be either 'run' or 'wkt'")
+        return {
+            'type': debug_type,
+            'debug_row': debug_row,
+            'breakdown': pd.DataFrame(),
+            'factor_breakdown': pd.DataFrame()
+        }
 
-    contribs = pd.DataFrame(debug_X.to_numpy() * params.to_numpy(), columns=debug_X.columns)
-    breakdown = pd.DataFrame({'feature': contribs.columns, 'contrib': contribs.iloc[0].to_numpy()})
+    # Build feature-level contribution breakdown
+    breakdown = pd.DataFrame({
+        'feature': debug_X.columns,
+        'model_value': debug_X.iloc[0].to_numpy(),
+        'coef': params.to_numpy()
+    })
 
-    const = breakdown[breakdown['feature'] == 'const']
-    breakdown = breakdown[(breakdown['feature'] != 'const') & (breakdown['contrib'] != 0)]
+    breakdown['contrib'] = breakdown['model_value'] * breakdown['coef']
+    breakdown['raw_value'] = breakdown['model_value']
+
+    # Replace transformed experience with actual career balls faced
+    breakdown.loc[breakdown['feature'] == 'experience', 'raw_value'] = debug_row['balls_faced_career'].iloc[0]
+
+    # Combine age polynomial terms into a single age row
+    age_contrib = breakdown.loc[breakdown['feature'].isin(['age_x', 'age_x^2']), 'contrib'].sum()
+    age_raw_value = debug_row['age'].iloc[0]
+    age_model_value = breakdown.loc[breakdown['feature'] == 'age_x', 'model_value'].iloc[0]
+    age_coef = age_contrib / age_model_value if age_model_value != 0 else np.nan
+
+    age_row = pd.DataFrame([{
+        'feature': 'age',
+        'raw_value': age_raw_value,
+        'model_value': age_raw_value,
+        'coef': age_coef,
+        'contrib': age_contrib
+    }])
+
+    # Combine batting order polynomial terms into a single order row
+    ord_col = 'ord_r' if 'ord_r' in debug_row.columns else ('ord_w' if 'ord_w' in debug_row.columns else 'ord')
+
+    order_contrib = breakdown.loc[breakdown['feature'].isin(['order_x', 'order_x^2']), 'contrib'].sum()
+    order_raw_value = debug_row[ord_col].iloc[0]
+    order_model_value = breakdown.loc[breakdown['feature'] == 'order_x', 'model_value'].iloc[0]
+    order_coef = order_contrib / order_model_value if order_model_value != 0 else np.nan
+
+    order_row = pd.DataFrame([{
+        'feature': 'order',
+        'raw_value': order_raw_value,
+        'model_value': order_raw_value,
+        'coef': order_coef,
+        'contrib': order_contrib
+    }])
+
+    # Remove individual polynomial terms now that they are combined
+    breakdown = breakdown.loc[
+        ~breakdown['feature'].isin(['age_x', 'age_x^2', 'order_x', 'order_x^2']),
+        :
+    ].copy()
+
+    breakdown = pd.concat([breakdown, age_row, order_row], axis=0, ignore_index=True)
+
+    # Simplify one-hot encoded feature names for display
+    breakdown.loc[breakdown['feature'].str.startswith('competition__', na=False), 'feature'] = 'competition'
+    breakdown.loc[breakdown['feature'].str.startswith('wt20i_nat__', na=False), 'feature'] = 'wt20i_nat'
+
+    # Keep const at the top and sort remaining features by contribution size
+    const = breakdown.loc[breakdown['feature'] == 'const', :].copy()
+
+    breakdown = breakdown.loc[
+        (breakdown['feature'] != 'const') &
+        (breakdown['contrib'] != 0),
+        :
+    ].copy()
+
     breakdown = breakdown.sort_values('contrib', key=lambda z: z.abs(), ascending=False)
     breakdown = pd.concat([const, breakdown], axis=0).reset_index(drop=True)
+
+    # Build running total to show how the model reaches the final value
+    breakdown['rolling_sum'] = breakdown['contrib'].cumsum()
+    breakdown = breakdown.loc[
+        :,
+        [
+            'feature',
+            'raw_value',
+            'model_value',
+            'coef',
+            'contrib',
+            'rolling_sum'
+        ]
+    ]
+
+    # Show nationality adjustment applied after the replacement model
+    factor_breakdown = pd.DataFrame()
+    if factor_col in debug_row.columns:
+        rep_value = debug_row[total_col].iloc[0]
+        factor_value = debug_row[factor_col].iloc[0]
+
+        factor_breakdown = pd.DataFrame([{
+            'rep_value': rep_value / factor_value,
+            factor_col: factor_value,
+            'final_rep_value': rep_value
+        }])
 
     return {
         'type': debug_type,
         'debug_row': debug_row,
         'breakdown': breakdown,
+        'factor_breakdown': factor_breakdown,
         'total_col': total_col
     }
+
 

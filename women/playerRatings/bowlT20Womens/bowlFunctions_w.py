@@ -60,226 +60,7 @@ def newMethodBins(df, bin_size_2=60):
     return df
 
 
-def buildRunRatingsOriginalPlayer(param, lookbacks_player):
-    k, c, h, r = (
-        param[0], param[1], param[2], param[3]
-    )
-
-    # run ratingsT20
-    lookbacks_player_r = lookbacks_player.copy()
-
-    # initial weight based on days ago and then multiply based on same comp, host, region etc
-    lookbacks_player_r['recency_weight'] = (1 - k ** lookbacks_player_r['days_ago'])
-    lookbacks_player_r['comp_enc'] = np.where(lookbacks_player_r['competition'] == lookbacks_player_r['competition_2'],
-                                              c, 1)
-    lookbacks_player_r['host_enc'] = np.where(lookbacks_player_r['host'] == lookbacks_player_r['host_2'], h, 1)
-
-    lookbacks_player_r['host_region_enc'] = np.where(lookbacks_player_r['host'] == lookbacks_player_r['host_2'], 1,
-                                                     np.where(lookbacks_player_r['host_region'] == lookbacks_player_r[
-                                                         'host_region_2'], r, 1))
-
-    lookbacks_player_r['weight'] = lookbacks_player_r['recency_weight'] * lookbacks_player_r['comp_enc'] * lookbacks_player_r['host_enc'] * lookbacks_player_r[
-        'host_region_enc']  # * lookbacks_player_r['home_away_enc']
-    # weight the runs and xruns
-    lookbacks_player_r['weight_runs'] = lookbacks_player_r['weight'] * lookbacks_player_r['runs_2']
-    lookbacks_player_r['weight_exprbowl'] = lookbacks_player_r['weight'] * lookbacks_player_r['realexprbowl']
-    # create a pivot to sum the weights then divide for the rating
-    ratings_player_r = pd.pivot_table(lookbacks_player_r,
-                                      values=['weight_runs', 'weight_exprbowl', 'ord_2', 'balls_bowled_2', 'runs_2', 'realexprbowl_2'],
-                                      index=['date', 'matchid', 'playerid', 'bowler', 'host', 'competition', 'bowlertype_2'],
-                                      aggfunc={'weight_runs': 'sum', 'weight_exprbowl': 'sum', 'balls_bowled_2': 'sum', 'ord_2': 'mean', 'runs_2': 'sum', 'realexprbowl_2': 'sum'})
-    ratings_player_r['run_rating'] = ratings_player_r['weight_runs'] / ratings_player_r['weight_exprbowl']
-    ratings_player_r = ratings_player_r.reset_index()
-    ratings_player_r['z_run_ratio'] = ratings_player_r['runs_2'] / ratings_player_r['realexprbowl_2']
-
-
-    return ratings_player_r, lookbacks_player_r
-
-
-def buildWktRatingsOriginalPlayer(param, lookbacks_player):
-    k, c, h, r = (
-        param[0], param[1], param[2], param[3]
-    )
-
-    # wkt ratingsT20, same as above
-    lookbacks_player_w = lookbacks_player.copy()
-
-    # initial weight based on days ago and then multiply based on same comp, host, region etc
-    lookbacks_player_w['recency_weight'] = (1 - k ** lookbacks_player_w['days_ago'])
-    lookbacks_player_w['comp_enc'] = np.where(lookbacks_player_w['competition'] == lookbacks_player_w['competition_2'],
-                                              c, 1)
-    lookbacks_player_w['host_enc'] = np.where(lookbacks_player_w['host'] == lookbacks_player_w['host_2'], h, 1)
-    lookbacks_player_w['host_region_enc'] = np.where(lookbacks_player_w['host'] == lookbacks_player_w['host_2'], 1,
-                                                     np.where(lookbacks_player_w['host_region'] == lookbacks_player_w[
-                                                         'host_region_2'], r, 1))
-
-    lookbacks_player_w['weight'] = lookbacks_player_w['recency_weight'] * lookbacks_player_w['comp_enc'] * lookbacks_player_w['host_enc'] * lookbacks_player_w[
-        'host_region_enc']  # * lookbacks_player_w['home_away_enc']
-
-    # weight the wkts and xwkts and then divide for the rating
-    lookbacks_player_w['weight_wkt'] = lookbacks_player_w['weight'] * lookbacks_player_w['wkt_2']
-    lookbacks_player_w['weight_expwbowl'] = lookbacks_player_w['weight'] * lookbacks_player_w['realexpwbowl']
-    # create a pivot to sum the weights then divide for the rating
-    ratings_player_w = pd.pivot_table(lookbacks_player_w,
-                                      values=['weight_wkt', 'weight_expwbowl', 'ord_2', 'balls_bowled_2', 'wkt_2', 'realexpwbowl_2'],
-                                      index=['date', 'matchid', 'playerid', 'bowler', 'host', 'competition', 'bowlertype_2'],
-                                      aggfunc={'weight_wkt': 'sum', 'weight_expwbowl': 'sum', 'balls_bowled_2': 'sum', 'ord_2': 'mean', 'wkt_2': 'sum', 'realexpwbowl_2': 'sum'})
-    ratings_player_w['wkt_rating'] = ratings_player_w['weight_wkt'] / ratings_player_w['weight_expwbowl']
-    ratings_player_w = ratings_player_w.reset_index()  # move this??
-    ratings_player_w['z_wkt_ratio'] = ratings_player_w['wkt_2'] / ratings_player_w['realexpwbowl_2']
-
-    return ratings_player_w, lookbacks_player_w
-
-
-
-
-def buildRunRatingsOriginalInning(param, lookbacks_player):
-    """
-    Builds type-aware run outputs for bowlers using different weights for seam vs spin.
-    Expects `run_params` dict with keys: k_sm, h_sm, r_sm, c_sm, k_s, h_s, r_s, c_s.
-    """
-    # run ratingsT20
-    lookbacks_player_r = lookbacks_player.copy()
-
-    def get_var(v):
-        # if bowlertype_2 == 'spin' use *_s, otherwise use *_sm (seam/medium)
-        return np.where(
-            lookbacks_player_r['bowlertype_2'] == 'spin',
-            param[f"{v}_s"],
-            param[f"{v}_sm"]
-        )
-
-    # initial weight based on days ago and then multiply based on same comp, host, region etc
-    lookbacks_player_r['recency_weight'] = ((1 - get_var('k')) ** lookbacks_player_r['days_ago'])
-    lookbacks_player_r['comp_enc'] = np.where(
-        lookbacks_player_r['competition'] == lookbacks_player_r['competition_2'],
-        get_var('c'),
-        1
-    )
-    lookbacks_player_r['host_enc'] = np.where(
-        lookbacks_player_r['host'] == lookbacks_player_r['host_2'],
-        get_var('h'),
-        1
-    )
-
-    lookbacks_player_r['host_region_enc'] = np.where(
-        lookbacks_player_r['host'] == lookbacks_player_r['host_2'],
-        1,
-        np.where(
-            lookbacks_player_r['host_region'] == lookbacks_player_r['host_region_2'],
-            get_var('r'),
-            1
-        )
-    )
-
-    # final per-row weight
-    lookbacks_player_r['weight'] = (
-        lookbacks_player_r['recency_weight'] *
-        lookbacks_player_r['comp_enc'] *
-        lookbacks_player_r['host_enc'] *
-        lookbacks_player_r['host_region_enc']
-    )  # * lookbacks_player_r['home_away_enc']  # optional
-
-    # weight the runs and expected runs vs bowler
-    lookbacks_player_r['weight_runs'] = lookbacks_player_r['weight'] * lookbacks_player_r['runs_2']
-    lookbacks_player_r['weight_exprbowl'] = lookbacks_player_r['weight'] * lookbacks_player_r['realexprbowl']
-
-    # aggregate to per-innings outputs
-    ratings_player_r = pd.pivot_table(
-        lookbacks_player_r,
-        values=[
-            'weight_runs', 'weight_exprbowl', 'ord_2', 'balls_bowled_2', 'runs_2', 'realexprbowl_2'
-        ],
-        index=['date', 'playerid', 'bowler', 'host', 'competition', 'bowlertype_2'],
-        aggfunc={
-            'weight_runs': 'sum',
-            'weight_exprbowl': 'sum',
-            'balls_bowled_2': 'sum',
-            'ord_2': 'mean',
-            'runs_2': 'sum',
-            'realexprbowl_2': 'sum',
-        }
-    )
-    ratings_player_r['run_rating'] = ratings_player_r['weight_runs'] / ratings_player_r['weight_exprbowl']
-    ratings_player_r = ratings_player_r.reset_index()
-    ratings_player_r['z_run_ratio'] = ratings_player_r['runs_2'] / ratings_player_r['realexprbowl_2']
-
-    return ratings_player_r, lookbacks_player_r
-
-
-
-def buildWktRatingsOriginalInning(param, lookbacks_player):
-    """
-    Builds type-aware wicket outputs for bowlers using different weights for seam vs spin.
-    Expects `param` dict with keys: k_sm, h_sm, r_sm, c_sm, k_s, h_s, r_s, c_s.
-    """
-
-    # Copy first so the inner function can reference this frame
-    lookbacks_player_w = lookbacks_player.copy()
-
-    def get_var(v):
-        # if bowlertype_2 == 'spin' use *_s, otherwise use *_sm (seam/medium)
-        return np.where(
-            lookbacks_player_w['bowlertype_2'] == 'spin',
-            param[f"{v}_s"],
-            param[f"{v}_sm"]
-        )
-
-    # initial weight based on days ago and then multiply based on same comp, host, region etc
-    lookbacks_player_w['recency_weight'] = ((1 - get_var('k')) ** lookbacks_player_w['days_ago'])
-    lookbacks_player_w['comp_enc'] = np.where(
-        lookbacks_player_w['competition'] == lookbacks_player_w['competition_2'],
-        get_var('c'),
-        1
-    )
-    lookbacks_player_w['host_enc'] = np.where(
-        lookbacks_player_w['host'] == lookbacks_player_w['host_2'],
-        get_var('h'),
-        1
-    )
-    lookbacks_player_w['host_region_enc'] = np.where(
-        lookbacks_player_w['host'] == lookbacks_player_w['host_2'],
-        1,
-        np.where(
-            lookbacks_player_w['host_region'] == lookbacks_player_w['host_region_2'],
-            get_var('r'),
-            1
-        )
-    )
-
-    lookbacks_player_w['weight'] = (
-        lookbacks_player_w['recency_weight'] *
-        lookbacks_player_w['comp_enc'] *
-        lookbacks_player_w['host_enc'] *
-        lookbacks_player_w['host_region_enc']
-    )  # * lookbacks_player_w['home_away_enc']
-
-    # weight the wkts and xwkts and then divide for the rating
-    lookbacks_player_w['weight_wkt'] = lookbacks_player_w['weight'] * lookbacks_player_w['wkt_2']
-    lookbacks_player_w['weight_expwbowl'] = lookbacks_player_w['weight'] * lookbacks_player_w['realexpwbowl']
-
-    # aggregate
-    ratings_player_w = pd.pivot_table(
-        lookbacks_player_w,
-        values=['weight_wkt', 'weight_expwbowl', 'ord_2', 'balls_bowled_2', 'wkt_2', 'realexpwbowl_2'],
-        index=['date', 'playerid', 'bowler', 'host', 'competition', 'bowlertype_2'],
-        aggfunc={
-            'weight_wkt': 'sum',
-            'weight_expwbowl': 'sum',
-            'balls_bowled_2': 'sum',
-            'ord_2': 'mean',
-            'wkt_2': 'sum',
-            'realexpwbowl_2': 'sum',
-        }
-    )
-    ratings_player_w['wkt_rating'] = ratings_player_w['weight_wkt'] / ratings_player_w['weight_expwbowl']
-    ratings_player_w = ratings_player_w.reset_index()
-    ratings_player_w['z_wkt_ratio'] = ratings_player_w['wkt_2'] / ratings_player_w['realexpwbowl_2']
-
-    return ratings_player_w, lookbacks_player_w
-
-
-def buildRunRatingsOriginal(param, lookbacks_player):
+def buildRunRatings(param, lookbacks_player):
     """
     Type-aware run outputs for bowlers with priority mapping:
       same_comp > is_t20 > is_odi1 > is_odi2
@@ -292,8 +73,8 @@ def buildRunRatingsOriginal(param, lookbacks_player):
       - h_*   : same host multiplier
       - r_*   : same region (host differs) multiplier
       - t20_* : prior format T20 (different competition)
-      - odi1_*: prior format ODI1
-      - odi2_*: prior format ODI2
+      - odi1_*: prior format ODI1 (first 36 overs)
+      - odi2_*: prior format ODI2 (last 14 overs)
     """
     lookbacks_player_r = lookbacks_player.copy()
 
@@ -376,7 +157,7 @@ def buildRunRatingsOriginal(param, lookbacks_player):
 
 
 
-def buildWktRatingsOriginal(param, lookbacks_player):
+def buildWktRatings(param, lookbacks_player):
     """
     Type-aware wkt outputs for bowlers with priority mapping:
       same_comp > is_t20 > is_odi1 > is_odi2
@@ -389,8 +170,8 @@ def buildWktRatingsOriginal(param, lookbacks_player):
       - h_*   : same host multiplier
       - r_*   : same region (host differs) multiplier
       - t20_* : prior format T20 (different competition)
-      - odi1_*: prior format ODI1
-      - odi2_*: prior format ODI2
+      - odi1_*: prior format ODI1 (first 36 overs)
+      - odi2_*: prior format ODI2 (last 14 overs)
     """
     lookbacks_player_w = lookbacks_player.copy()
 
@@ -465,5 +246,234 @@ def buildWktRatingsOriginal(param, lookbacks_player):
     ratings_player_w['z_wkt_ratio'] = ratings_player_w['wkt_2'] / ratings_player_w['realexpwbowl_2']
 
     return ratings_player_w, lookbacks_player_w
+
+
+
+
+def build_rating_debug_tables(debug_config, ratings, lookbacks_player_r, lookbacks_player_w):
+    debug_model = debug_config['model']
+    debug_type = debug_config['type']
+    debug_bowler = debug_config['bowler']
+    debug_host = debug_config['host']
+    debug_competition = debug_config['comp']
+    debug_matchid = debug_config['matchid']
+
+    if debug_type == 'run':
+        debug_lookbacks_source = lookbacks_player_r
+        rating_col_0, rating_col, z_col = 'run_rating_0', 'run_rating', 'z_run_ratio'
+        weight_balls_col, actual_col, expected_col = 'weight_balls_r', 'runs_2', 'realexprbowl_2'
+        weight_actual_col, weight_expected_col = 'weight_runs', 'weight_exprbowl'
+
+    elif debug_type == 'wkt':
+        debug_lookbacks_source = lookbacks_player_w
+        rating_col_0, rating_col, z_col = 'wkt_rating_0', 'wkt_rating', 'z_wkt_ratio'
+        weight_balls_col, actual_col, expected_col = 'weight_balls_w', 'wkt_2', 'realexpwbowl_2'
+        weight_actual_col, weight_expected_col = 'weight_wkt', 'weight_expwbowl'
+
+    else:
+        return {
+            'model': debug_model,
+            'type': debug_type,
+            'rating': pd.DataFrame(),
+            'lookbacks': pd.DataFrame(),
+            'comp_summary': pd.DataFrame(),
+            'recency_summary': pd.DataFrame()
+        }
+
+    debug_rating = ratings[
+        (ratings['bowler'] == debug_bowler) &
+        (ratings['host'] == debug_host) &
+        (ratings['competition'] == debug_competition) &
+        (ratings['matchid'] == debug_matchid)
+    ].copy()
+
+    debug_lookbacks = debug_lookbacks_source[
+        (debug_lookbacks_source['bowler'] == debug_bowler) &
+        (debug_lookbacks_source['host'] == debug_host) &
+        (debug_lookbacks_source['competition'] == debug_competition) &
+        (debug_lookbacks_source['matchid'] == debug_matchid)
+    ].copy()
+
+    if len(debug_rating) == 0 or len(debug_lookbacks) == 0:
+        return {
+            'model': debug_model,
+            'type': debug_type,
+            'rating': debug_rating,
+            'lookbacks': debug_lookbacks,
+            'comp_summary': pd.DataFrame(),
+            'recency_summary': pd.DataFrame()
+        }
+
+    debug_lookbacks['rating_weight_pct'] = debug_lookbacks[weight_expected_col] / debug_lookbacks[weight_expected_col].sum()
+
+    comp_summary = debug_lookbacks.groupby(['competition_2', 'host_2'], dropna=False).agg(
+        innings=('matchid_2', 'count'),
+        balls_bowled=('balls_bowled_2', 'sum'),
+        actual=(actual_col, 'sum'),
+        expected=(expected_col, 'sum'),
+        location_weight=('location_weight', 'mean'),
+        recency_weight=('recency_weight', 'mean'),
+        weight_balls=(weight_balls_col, 'sum'),
+        weight_actual=(weight_actual_col, 'sum'),
+        weight_expected=(weight_expected_col, 'sum'),
+        rating_share=('rating_weight_pct', 'sum')
+    ).reset_index()
+
+    comp_summary['rating'] = comp_summary['actual'] / comp_summary['expected']
+    comp_summary['effective_multiplier'] = comp_summary['weight_balls'] / comp_summary['balls_bowled']
+    comp_summary['effective_balls'] = comp_summary['weight_balls'] * comp_summary['balls_bowled'].sum() / comp_summary['weight_balls'].sum()
+    comp_summary['weighted_rating'] = comp_summary['weight_actual'] / comp_summary['weight_expected']
+    comp_summary = comp_summary.rename(columns={'competition_2': 'competition', 'host_2': 'host'})
+    comp_summary = comp_summary.sort_values('rating_share', ascending=False).reset_index(drop=True)
+    comp_summary = comp_summary[['competition', 'host', 'innings', 'balls_bowled', 'actual', 'expected', 'rating', 'location_weight', 'recency_weight', 'effective_multiplier', 'effective_balls', 'weighted_rating', 'rating_share']]
+    comp_summary = comp_summary[~((comp_summary['rating_share'] < 0.01) & (comp_summary['balls_bowled'] < 100))].reset_index(drop=True)
+
+    debug_lookbacks['recency'] = pd.cut(
+        debug_lookbacks['days_ago'],
+        bins=[-1, 90, 180, 365, 730, np.inf],
+        labels=['0-90', '91-180', '181-365', '1-2 years', '2+ years']
+    )
+
+    recency_summary = debug_lookbacks.groupby('recency', observed=False).agg(
+        innings=('matchid_2', 'count'),
+        balls_bowled=('balls_bowled_2', 'sum'),
+        actual=(actual_col, 'sum'),
+        expected=(expected_col, 'sum'),
+        location_weight=('location_weight', 'mean'),
+        recency_weight=('recency_weight', 'mean'),
+        weight_balls=(weight_balls_col, 'sum'),
+        weight_actual=(weight_actual_col, 'sum'),
+        weight_expected=(weight_expected_col, 'sum'),
+        rating_share=('rating_weight_pct', 'sum')
+    ).reset_index()
+
+    recency_summary['rating'] = recency_summary['actual'] / recency_summary['expected']
+    recency_summary['effective_multiplier'] = recency_summary['weight_balls'] / recency_summary['balls_bowled']
+    recency_summary['effective_balls'] = recency_summary['weight_balls'] * recency_summary['balls_bowled'].sum() / recency_summary['weight_balls'].sum()
+    recency_summary['weighted_rating'] = recency_summary['weight_actual'] / recency_summary['weight_expected']
+    recency_summary = recency_summary[['recency', 'innings', 'balls_bowled', 'actual', 'expected', 'rating', 'location_weight', 'recency_weight', 'effective_multiplier', 'effective_balls', 'weighted_rating', 'rating_share']]
+    recency_summary = recency_summary[~((recency_summary['rating_share'] < 0.01) & (recency_summary['balls_bowled'] < 100))].reset_index(drop=True)
+
+    return {
+        'model': debug_model,
+        'type': debug_type,
+        'rating': debug_rating,
+        'lookbacks': debug_lookbacks,
+        'comp_summary': comp_summary,
+        'recency_summary': recency_summary
+    }
+
+
+def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, run_params, wkt_params):
+    debug_type = debug_config['type']
+    debug_bowler = debug_config['bowler']
+    debug_host = debug_config['host']
+    debug_competition = debug_config['comp']
+    debug_matchid = debug_config['matchid']
+
+    debug_mask = (
+        (ratings['bowler'] == debug_bowler) &
+        (ratings['competition'] == debug_competition) &
+        (ratings['host'] == debug_host) &
+        (ratings['matchid'] == debug_matchid)
+    )
+
+    debug_row = ratings.loc[debug_mask, :].reset_index(drop=True)
+
+    if len(debug_row) == 0:
+        return {
+            'type': debug_type,
+            'debug_row': debug_row,
+            'breakdown': pd.DataFrame(),
+            'factor_breakdown': pd.DataFrame()
+        }
+
+    if debug_type == 'run':
+        debug_X = X_run_r.loc[debug_mask, :].reset_index(drop=True)
+        params = run_params
+        total_col = 'rep_run_ratio'
+        factor_col = 'run_factor'
+
+    elif debug_type == 'wkt':
+        debug_X = X_wkt_r.loc[debug_mask, :].reset_index(drop=True)
+        params = wkt_params
+        total_col = 'rep_wkt_ratio'
+        factor_col = 'wkt_factor'
+
+    else:
+        return {
+            'type': debug_type,
+            'debug_row': debug_row,
+            'breakdown': pd.DataFrame(),
+            'factor_breakdown': pd.DataFrame()
+        }
+
+    breakdown = pd.DataFrame({
+        'feature': debug_X.columns,
+        'model_value': debug_X.iloc[0].to_numpy(),
+        'coef': params.to_numpy()
+    })
+
+    breakdown['contrib'] = breakdown['model_value'] * breakdown['coef']
+    breakdown['raw_value'] = breakdown['model_value']
+
+    breakdown.loc[breakdown['feature'] == 'experience', 'raw_value'] = debug_row['balls_bowled_career'].iloc[0]
+
+    if {'overseas_pct_x', 'overseas_pct_x^2'}.issubset(set(breakdown['feature'])):
+        overseas_pct_contrib = breakdown.loc[breakdown['feature'].isin(['overseas_pct_x', 'overseas_pct_x^2']), 'contrib'].sum()
+        overseas_pct_raw_value = debug_row['overseas_pct'].iloc[0]
+        overseas_pct_model_value = breakdown.loc[breakdown['feature'] == 'overseas_pct_x', 'model_value'].iloc[0]
+        overseas_pct_coef = overseas_pct_contrib / overseas_pct_model_value if overseas_pct_model_value != 0 else np.nan
+
+        overseas_pct_row = pd.DataFrame([{
+            'feature': 'overseas_pct',
+            'raw_value': overseas_pct_raw_value,
+            'model_value': overseas_pct_raw_value,
+            'coef': overseas_pct_coef,
+            'contrib': overseas_pct_contrib
+        }])
+
+        breakdown = breakdown.loc[~breakdown['feature'].isin(['overseas_pct_x', 'overseas_pct_x^2']), :].copy()
+        breakdown = pd.concat([breakdown, overseas_pct_row], axis=0, ignore_index=True)
+
+    breakdown.loc[breakdown['feature'].str.startswith('competition__', na=False), 'feature'] = 'competition'
+    breakdown.loc[breakdown['feature'].str.startswith('bowler_arm__', na=False), 'feature'] = 'bowler_arm'
+    breakdown.loc[breakdown['feature'].str.startswith('bowler_pace__', na=False), 'feature'] = 'bowler_pace'
+    breakdown.loc[breakdown['feature'].str.startswith('wt20i_nat__', na=False), 'feature'] = 'wt20i_nat'
+
+    const = breakdown.loc[breakdown['feature'] == 'const', :].copy()
+
+    breakdown = breakdown.loc[
+        (breakdown['feature'] != 'const') &
+        (breakdown['contrib'] != 0),
+        :
+    ].copy()
+
+    breakdown = breakdown.sort_values('contrib', key=lambda z: z.abs(), ascending=False)
+    breakdown = pd.concat([const, breakdown], axis=0).reset_index(drop=True)
+
+    breakdown['rolling_sum'] = breakdown['contrib'].cumsum()
+    breakdown = breakdown.loc[:, ['feature', 'raw_value', 'model_value', 'coef', 'contrib', 'rolling_sum']]
+
+    factor_breakdown = pd.DataFrame()
+    if factor_col in debug_row.columns:
+        rep_value = debug_row[total_col].iloc[0]
+        factor_value = debug_row[factor_col].iloc[0]
+
+        factor_breakdown = pd.DataFrame([{
+            'rep_value': rep_value / factor_value,
+            factor_col: factor_value,
+            'final_rep_value': rep_value
+        }])
+
+    return {
+        'type': debug_type,
+        'debug_row': debug_row,
+        'breakdown': breakdown,
+        'factor_breakdown': factor_breakdown,
+        'total_col': total_col
+    }
+
+
 
 

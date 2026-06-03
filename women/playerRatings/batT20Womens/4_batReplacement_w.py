@@ -95,6 +95,7 @@ def build_ratings_features_bat(ratings, transformers):
     competition_encodings = make_ohe(competition, transformers['competition_cats'], 'competition', drop_first=False)
     competition_encodings = competition_encodings.drop(columns=['competition__WT20I'], errors='ignore')
 
+
     # WT20I nationality encodings
     wt20i_nat = np.array(np.where(ratings['competition'] == 'WT20I', ratings['nationality'], 'nil')).reshape(-1, 1)
     wt20i_nat_cats = ['nil', 'England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']
@@ -295,7 +296,4 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle2_w.csv', index=False)
     else:
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi2_w.csv', index=False)
-
-
-# print(np.mean(bat_data['run_sqe']))
 

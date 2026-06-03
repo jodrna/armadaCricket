@@ -174,7 +174,6 @@ bat_data['uniqueMatchMarker'] = mask & ~bat_data[mask].duplicated(subset=['playe
 bat_data['careerT20MatchNumber'] = bat_data.groupby('playerid')['uniqueMatchMarker'].cumsum()
 
 
-
 # -------------------------
 # Export
 # -------------------------

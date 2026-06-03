@@ -22,7 +22,7 @@ BAT_MODEL_DEBUG_TABLES = None
 bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/batDataCombinedClean_w.csv', parse_dates=['date', 'dob'])
 n2h_factors = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batN2HFactors_w.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
 n2h_grad = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batN2HFactorsGradient_w.csv').rename(columns={'balls_faced_host_mean_y': 'balls_faced_host'})
-bat_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batWeightings.csv')
+bat_weightings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batWeightings_w.csv')
 
 
 # -------------------------
@@ -35,15 +35,10 @@ bat_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxili
 # -------------------------
 # Basic preprocessing
 # -------------------------
-bat_data['competition'] = np.where(
-    bat_data['competition'] == 'WODI',
-    np.where(bat_data['ballsremaining'] < 84, 'ODI2', 'ODI1'),
-    bat_data['competition']
-)
+bat_data['competition'] = np.where(bat_data['competition'] == 'WODI', np.where(bat_data['ballsremaining'] < 84, 'ODI2', 'ODI1'), bat_data['competition'])
 
 bat_data['format'] = bat_data['format'].fillna('t20')
 
-bat_weightings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batWeightings_w.csv')
 bat_data = bat_data.merge(bat_weightings, on='balls_faced_career', how='left')
 bat_data['runs_weight_curve'] = bat_data['runs_weight_curve'].fillna(1)
 bat_data['wkts_weight_curve'] = bat_data['wkts_weight_curve'].fillna(1)
@@ -94,8 +89,11 @@ avg_ord.rename(columns={'ord': 'avg_ord'}, inplace=True)
 lookbacks_player = lookbacks_player.merge(avg_ord, on=('playerid', 'batsman'), how='left')
 
 
+
+
+
 # -------------------------
-# n2h: nationality -> host adjustments
+# n2h adjustments
 # -------------------------
 lookbacks_player = lookbacks_player.merge(
     n2h_factors.loc[:, ['nationality', 'host', 'run_factor', 'wkt_factor']],
@@ -210,15 +208,15 @@ for x in np.arange(0, 2, 1):
     bat_data_t20 = bat_data[bat_data['format'] == 't20'].copy()
 
     # drop duplicates, this happens when players have 2 games in 1 day, like t20 finals day, it causes duplicates down the line with 2 identical ratings on 1 day, we keep 1 rating because they're the same
-    ratings_player_r = ratings_player_r.drop_duplicates(subset=['date', 'matchid', 'playerid', 'batsman', 'host', 'competition'])
-    ratings_player_w = ratings_player_w.drop_duplicates(subset=['date', 'matchid', 'playerid', 'batsman', 'host', 'competition'])
+    ratings_player_r = ratings_player_r.drop_duplicates(subset=['date', 'playerid', 'batsman', 'host', 'competition'])
+    ratings_player_w = ratings_player_w.drop_duplicates(subset=['date', 'playerid', 'batsman', 'host', 'competition'])
 
     # merge the run and wkt ratings
     ratings_player = pd.merge(
         ratings_player_r.drop(labels=['realexprbat_2', 'runs_2', 'weight_exprbat', 'weight_runs'], axis=1),
         ratings_player_w.drop(labels=['realexpwbat_2', 'wkt_2', 'weight_expwbat', 'weight_wkt'], axis=1),
         how='left',
-        on=['date', 'matchid', 'playerid', 'batsman', 'host', 'competition'],
+        on=['date', 'playerid', 'batsman', 'host', 'competition'],
         suffixes=('_r', '_w'))
 
     # merge the innings performance, we'll use later for error measurement and more
@@ -255,7 +253,7 @@ for x in np.arange(0, 2, 1):
     ratings = ratings.merge(
         ratings_player,
         how='left',
-        on=['date', 'matchid', 'playerid', 'batsman', 'host', 'competition']
+        on=['date', 'playerid', 'batsman', 'host', 'competition']
     )
 
     ratings = ratings[~ratings['competition'].isin(['ODI1', 'ODI2'])]
@@ -330,5 +328,6 @@ for x in np.arange(0, 2, 1):
     else:
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi_w.csv', index=False)
 
-
+print(np.mean(ratings['wkt_rating']))
+print(np.mean(ratings['run_rating']))
 
