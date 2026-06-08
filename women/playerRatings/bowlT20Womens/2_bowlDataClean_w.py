@@ -11,8 +11,6 @@ player_info = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/auxi
 ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/auxiliaries/bowlRatingsFor_w.csv')       # list of comps and hosts we want ratingsT20 for
 balls_per_match = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/data/ballsPerMatch_w.csv')       # average balls bowled per match for all bowlers, used in rep values
 
-# anything containing odi simply becomes WODI
-bowl_data['competition'] = np.where(bowl_data['competition'].str.contains('ODI', na=False), 'WODI', bowl_data['competition'])
 
 # -------------------------
 # Optional: filter a single bowler for speed
@@ -20,6 +18,16 @@ bowl_data['competition'] = np.where(bowl_data['competition'].str.contains('ODI',
 # TEST_BOWLER = 'Alana King'
 # bowl_data = bowl_data[bowl_data['bowler'] == TEST_BOWLER]
 # player_info = player_info[player_info['name'] == TEST_BOWLER]
+
+
+
+# -------------------------
+# fix some comp names
+# -------------------------
+bowl_data['competition'] = np.where(bowl_data['competition'].str.contains('ODI', na=False), 'WODI', bowl_data['competition'])
+bowl_data['competition'] = np.where(bowl_data['competition'] == 'ICC Womens World Cup Warm-up Matches', 'WODI', bowl_data['competition'])
+bowl_data['competition'] = np.where(bowl_data['competition'] == 'Women\'s World Cup', 'WODI', bowl_data['competition'])
+
 
 
 # -------------------------

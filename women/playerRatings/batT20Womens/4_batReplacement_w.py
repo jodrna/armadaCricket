@@ -192,6 +192,16 @@ for x in np.arange(0, 2, 1):
     rep_wkt_ratio_model = sm.OLS(y, X_wkt, missing='drop').fit()
     wkt_params = rep_wkt_ratio_model.params.copy()
 
+
+    # avg contributions for each parameter to be use in the batter debug report later
+    run_contributions = X_run.mul(run_params, axis=1)
+    avg_run_contributions = pd.DataFrame({
+        'coefficient': run_params,
+        'avg_model_value': X_run.mean(),
+        'avg_contribution': run_contributions.mean()
+    }).sort_values('avg_contribution', ascending=False)
+
+
     # -------------------------
     # 6) Predict training data
     # -------------------------
@@ -237,6 +247,8 @@ for x in np.arange(0, 2, 1):
             ratings,
             X_run_r,
             X_wkt_r,
+            X_run,
+            X_wkt,
             run_params,
             wkt_params
         )

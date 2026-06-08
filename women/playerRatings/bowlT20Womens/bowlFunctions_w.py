@@ -117,18 +117,19 @@ def buildRunRatings(param, lookbacks_player):
     lookbacks_player_r['region_enc'] = np.where((~host_same) & region_same, get_var('r'), 1.0)
 
     # location per-row weight
-    lookbacks_player_r['weightOne'] = (
+    lookbacks_player_r['location_weight'] = (
         lookbacks_player_r['primary_weight'] *
         lookbacks_player_r['host_enc'] *
         lookbacks_player_r['region_enc']
     )
 
-    lookbacks_player_r['weight'] = lookbacks_player_r['weightOne'] * lookbacks_player_r['recency_weight']
+    lookbacks_player_r['weight'] = lookbacks_player_r['location_weight'] * lookbacks_player_r['recency_weight']
 
     # weight the runs and expected runs vs bowler
     lookbacks_player_r['weight_runs'] = lookbacks_player_r['weight'] * lookbacks_player_r['runs_2']
     lookbacks_player_r['weight_exprbowl'] = lookbacks_player_r['weight'] * lookbacks_player_r['adj_realexprbowl']
     lookbacks_player_r['weight_exprbowl_unadjusted'] = lookbacks_player_r['weight'] * lookbacks_player_r['realexprbowl_2']
+    lookbacks_player_r['weight_balls_r'] = lookbacks_player_r['weight'] * lookbacks_player_r['balls_bowled_2']
 
 
     # aggregate to per-innings outputs
@@ -214,18 +215,19 @@ def buildWktRatings(param, lookbacks_player):
     lookbacks_player_w['region_enc'] = np.where((~host_same) & region_same, get_var('r'), 1.0)
 
     # location per-row weight
-    lookbacks_player_w['weightOne'] = (
+    lookbacks_player_w['location_weight'] = (
         lookbacks_player_w['primary_weight'] *
         lookbacks_player_w['host_enc'] *
         lookbacks_player_w['region_enc']
     )
 
-    lookbacks_player_w['weight'] = lookbacks_player_w['weightOne'] * lookbacks_player_w['recency_weight']
+    lookbacks_player_w['weight'] = lookbacks_player_w['location_weight'] * lookbacks_player_w['recency_weight']
 
     # weight the wkt and expected wkt vs bowler
     lookbacks_player_w['weight_wkt'] = lookbacks_player_w['weight'] * lookbacks_player_w['wkt_2']
     lookbacks_player_w['weight_expwbowl'] = lookbacks_player_w['weight'] * lookbacks_player_w['adj_realexpwbowl']
     lookbacks_player_w['weight_expwbowl_unadjusted'] = lookbacks_player_w['weight'] * lookbacks_player_w['realexpwbowl_2']
+    lookbacks_player_w['weight_balls_w'] = lookbacks_player_w['weight'] * lookbacks_player_w['balls_bowled_2']
 
     # aggregate to per-innings outputs
     ratings_player_w = pd.pivot_table(
@@ -362,6 +364,7 @@ def build_rating_debug_tables(debug_config, ratings, lookbacks_player_r, lookbac
         'comp_summary': comp_summary,
         'recency_summary': recency_summary
     }
+
 
 
 def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, run_params, wkt_params):
