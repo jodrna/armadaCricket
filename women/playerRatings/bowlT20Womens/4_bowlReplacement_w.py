@@ -2,104 +2,123 @@ import pandas as pd
 import numpy as np
 from sklearn import preprocessing
 import statsmodels.api as sm
+from bowlFunctions_w import build_replacement_debug_tables
 from paths import PROJECT_ROOT
+DEBUG_CONFIG = globals().get('DEBUG_CONFIG', None)
+BOWL_REPLACEMENT_DEBUG_TABLES = None
+
+def make_ohe(values, cats, prefix, drop_first=True):
+    drop = 'first' if drop_first else None
+    encoder = preprocessing.OneHotEncoder(sparse_output=False, categories=[cats], drop=drop, handle_unknown='ignore')
+    encoded = encoder.fit_transform(values)
+
+    if drop_first:
+        columns = [f'{prefix}__{cat}' for cat in cats[1:]]
+    else:
+        columns = [f'{prefix}__{cat}' for cat in cats]
+
+    return pd.DataFrame(encoded, columns=columns)
 
 
-def build_training_features_bowl(bowl_data, ratings):
-    # Competition encodings (categories from outputs, fit on bowl_data like original)
-    competition = np.array(ratings['competition'] + " " + ratings['H/A_competition']).reshape(-1, 1)
-    competition_cats = list(np.unique(competition).reshape(1, -1))
-    competition = np.array(bowl_data['competition'] + " " + bowl_data['H/A_competition']).reshape(-1, 1)
-    competition_encodings = pd.DataFrame(preprocessing.OneHotEncoder(sparse_output=False, categories=competition_cats).fit_transform(competition), columns=competition_cats)
+def get_competition_cats(ratings):
+    return sorted(np.unique(ratings['competition'] + ' ' + ratings['H/A_competition']).tolist())
 
-    # Bowler type encodings (fit on bowl_data like original)
-    bowler_type = np.array(bowl_data['bowlertype_2']).reshape(-1, 1)
-    bowler_type_cats = list(np.unique(bowler_type).reshape(1, -1))
-    bowler_type_encodings = pd.DataFrame(preprocessing.OneHotEncoder(sparse_output=False, categories=bowler_type_cats).fit_transform(bowler_type), columns=bowler_type_cats)
+
+def build_training_features_bowl(bowl_data, ratings, transformers):
+    # Competition encodings, explicit WT20I Home baseline
+    competition_cats = get_competition_cats(ratings)
+    transformers['competition_cats'] = competition_cats
+    competition = np.array(bowl_data['competition'] + ' ' + bowl_data['H/A_competition']).reshape(-1, 1)
+    competition_encodings = make_ohe(competition, competition_cats, 'competition', drop_first=False)
+    competition_encodings = competition_encodings.drop(columns=['competition__WT20I Home'], errors='ignore')
 
     # Bowler arm encodings
     bowl_data['bowler_arm'] = np.where((bowl_data['bowler_arm'] == 'left_seam') | (bowl_data['bowler_arm'] == 'right_seam') | (bowl_data['bowler_arm'] == 'left_f_spin') | (bowl_data['bowler_arm'] == 'right_f_spin'), bowl_data['bowler_arm'], 'other')
     bowler_arm = np.array(bowl_data['bowler_arm']).reshape(-1, 1)
-    bowler_arm_cats = list(np.unique(np.array(['left_seam', 'right_seam', 'left_f_spin', 'right_f_spin']).reshape(-1, 1)).reshape(1, -1))
-    bowler_arm_encodings = pd.DataFrame(preprocessing.OneHotEncoder(sparse_output=False, categories=bowler_arm_cats, handle_unknown='ignore').fit_transform(bowler_arm), columns=bowler_arm_cats)
+    bowler_arm_cats = ['other', 'left_seam', 'right_seam', 'left_f_spin', 'right_f_spin']
+    bowler_arm_encodings = make_ohe(bowler_arm, bowler_arm_cats, 'bowler_arm')
 
     # Bowler pace encodings
     bowl_data['bowler_pace'] = np.where(bowl_data['bowler_pace'] == 'fast', bowl_data['bowler_pace'], 'other')
     bowler_pace = np.array(bowl_data['bowler_pace']).reshape(-1, 1)
-    bowler_pace_cats = list(np.unique(np.array(['fast']).reshape(-1, 1)).reshape(1, -1))
-    bowler_pace_encodings = pd.DataFrame(preprocessing.OneHotEncoder(sparse_output=False, categories=bowler_pace_cats, handle_unknown='ignore').fit_transform(bowler_pace), columns=bowler_pace_cats)
+    bowler_pace_cats = ['other', 'fast']
+    bowler_pace_encodings = make_ohe(bowler_pace, bowler_pace_cats, 'bowler_pace')
 
-    # T20I nationality encodings (else nil)
-    t20i_nat = np.array(np.where(bowl_data['competition'] == 'T20I', bowl_data['nationality'], 'nil')).reshape(-1, 1)
-    t20i_nat_cats = list(np.unique(np.array(['England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']).reshape(-1, 1)).reshape(1, -1))
-    t20i_nat_encodings = pd.DataFrame(preprocessing.OneHotEncoder(sparse_output=False, categories=t20i_nat_cats, handle_unknown='ignore').fit_transform(t20i_nat), columns=t20i_nat_cats)
+    # WT20I nationality encodings
+    wt20i_nat = np.array(np.where(bowl_data['competition'] == 'WT20I', bowl_data['nationality'], 'nil')).reshape(-1, 1)
+    wt20i_nat_cats = ['nil', 'England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']
+    wt20i_nat_encodings = make_ohe(wt20i_nat, wt20i_nat_cats, 'wt20i_nat')
 
-    ballspermatch = pd.DataFrame(bowl_data.loc[:, ['ballspermatch']])
+    # Average balls bowled per match
+    ballspermatch = pd.DataFrame(bowl_data.loc[:, ['ballspermatch']]).reset_index(drop=True)
 
-    # Experience (Box-Cox) for RUN model
+    # Experience transform
     experience = pd.DataFrame(bowl_data.loc[:, ['balls_bowled_career']])
-    run_transformer = preprocessing.PowerTransformer(method='box-cox', standardize=False)
-    run_transformer.fit(experience)
-    experience_run = pd.DataFrame(run_transformer.transform(experience), columns=['experience'])
+    transformer = preprocessing.PowerTransformer(method='box-cox', standardize=False)
+    transformer.fit(experience)
+    transformers['experience_transformer'] = transformer
+    experience = pd.DataFrame(transformer.transform(experience), columns=['experience']).reset_index(drop=True)
 
-    # Overseas pct poly (RUN)
+    # Overseas pct poly RUN
     overseas_pct = pd.DataFrame(bowl_data.loc[:, ['overseas_pct']])
-    overseas_pct_run = pd.DataFrame(preprocessing.PolynomialFeatures(degree=2).fit_transform(overseas_pct), columns=['overseas_pct_constant', 'overseas_pct_x', 'overseas_pct_x^2'])
+    overseas_pct_run = pd.DataFrame(preprocessing.PolynomialFeatures(degree=2, include_bias=False).fit_transform(overseas_pct), columns=['overseas_pct_x', 'overseas_pct_x^2']).reset_index(drop=True)
 
-    # Overseas pct poly (WKT)
+    # Overseas pct poly WKT
     overseas_pct = pd.DataFrame(bowl_data.loc[:, ['overseas_pct']])
-    overseas_pct_wkt = pd.DataFrame(preprocessing.PolynomialFeatures(degree=2).fit_transform(overseas_pct), columns=['overseas_pct_constant', 'overseas_pct_x', 'overseas_pct_x^2'])
+    overseas_pct_wkt = pd.DataFrame(preprocessing.PolynomialFeatures(degree=2, include_bias=False).fit_transform(overseas_pct), columns=['overseas_pct_x', 'overseas_pct_x^2']).reset_index(drop=True)
 
-    # Experience (Box-Cox) for WKT lambda capture (like original) — not used in X for wkt model
-    experience = pd.DataFrame(bowl_data.loc[:, ['balls_bowled_career']])
-    wkt_transformer = preprocessing.PowerTransformer(method='box-cox', standardize=False)
-    wkt_transformer.fit(experience)
+    X_run = pd.concat([competition_encodings, bowler_arm_encodings, bowler_pace_encodings, wt20i_nat_encodings, ballspermatch, overseas_pct_run, experience], axis=1)
+    X_wkt = pd.concat([competition_encodings, bowler_arm_encodings, bowler_pace_encodings, wt20i_nat_encodings, ballspermatch, overseas_pct_wkt, experience], axis=1)
 
-    X_run = pd.concat([competition_encodings, bowler_type_encodings, bowler_arm_encodings, bowler_pace_encodings, t20i_nat_encodings, ballspermatch, overseas_pct_run, experience_run], axis=1)
-    X_wkt = pd.concat([competition_encodings, bowler_type_encodings, bowler_arm_encodings, bowler_pace_encodings, t20i_nat_encodings, ballspermatch, overseas_pct_wkt], axis=1)
+    X_run = sm.add_constant(X_run, has_constant='add')
+    X_wkt = sm.add_constant(X_wkt, has_constant='add')
 
-    return bowl_data, X_run, X_wkt, run_transformer, wkt_transformer
+    return bowl_data, X_run, X_wkt, transformers
 
 
-def build_ratings_features_bowl(ratings, run_transformer):
-    # IMPORTANT: preserve original behaviour (refit encoders on outputs, not reuse training encoders)
+def build_ratings_features_bowl(ratings, transformers):
+    # Competition encodings, explicit WT20I Home baseline
+    competition = np.array(ratings['competition'] + ' ' + ratings['H/A_competition']).reshape(-1, 1)
+    competition_encodings = make_ohe(competition, transformers['competition_cats'], 'competition', drop_first=False)
+    competition_encodings = competition_encodings.drop(columns=['competition__WT20I Home'], errors='ignore')
 
-    competition = np.array(ratings['competition'] + " " + ratings['H/A_competition']).reshape(-1, 1)
-    competition_cats = list(np.unique(competition).reshape(1, -1))
-    competition_encodings = pd.DataFrame(preprocessing.OneHotEncoder(sparse_output=False, categories=competition_cats).fit_transform(competition), columns=competition_cats)
-
-    bowler_type = np.array(ratings['bowlertype_2']).reshape(-1, 1)
-    bowler_type_cats = list(np.unique(bowler_type).reshape(1, -1))
-    bowler_type_encodings = pd.DataFrame(preprocessing.OneHotEncoder(sparse_output=False, categories=bowler_type_cats).fit_transform(bowler_type), columns=bowler_type_cats)
-
+    # Bowler arm encodings
     ratings['bowler_arm'] = np.where((ratings['bowler_arm'] == 'left_seam') | (ratings['bowler_arm'] == 'right_seam') | (ratings['bowler_arm'] == 'left_f_spin') | (ratings['bowler_arm'] == 'right_f_spin'), ratings['bowler_arm'], 'other')
     bowler_arm = np.array(ratings['bowler_arm']).reshape(-1, 1)
-    bowler_arm_cats = list(np.unique(np.array(['left_seam', 'right_seam', 'left_f_spin', 'right_f_spin']).reshape(-1, 1)).reshape(1, -1))
-    bowler_arm_encodings = pd.DataFrame(preprocessing.OneHotEncoder(sparse_output=False, categories=bowler_arm_cats, handle_unknown='ignore').fit_transform(bowler_arm), columns=bowler_arm_cats)
+    bowler_arm_cats = ['other', 'left_seam', 'right_seam', 'left_f_spin', 'right_f_spin']
+    bowler_arm_encodings = make_ohe(bowler_arm, bowler_arm_cats, 'bowler_arm')
 
+    # Bowler pace encodings
     ratings['bowler_pace'] = np.where(ratings['bowler_pace'] == 'fast', ratings['bowler_pace'], 'other')
     bowler_pace = np.array(ratings['bowler_pace']).reshape(-1, 1)
-    bowler_pace_cats = list(np.unique(np.array(['fast']).reshape(-1, 1)).reshape(1, -1))
-    bowler_pace_encodings = pd.DataFrame(preprocessing.OneHotEncoder(sparse_output=False, categories=bowler_pace_cats, handle_unknown='ignore').fit_transform(bowler_pace), columns=bowler_pace_cats)
+    bowler_pace_cats = ['other', 'fast']
+    bowler_pace_encodings = make_ohe(bowler_pace, bowler_pace_cats, 'bowler_pace')
 
-    t20i_nat = np.array(np.where(ratings['competition'] == 'T20I', ratings['nationality'], 'nil')).reshape(-1, 1)
-    t20i_nat_cats = list(np.unique(np.array(['England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']).reshape(-1, 1)).reshape(1, -1))
-    t20i_nat_encodings = pd.DataFrame(preprocessing.OneHotEncoder(sparse_output=False, categories=t20i_nat_cats, handle_unknown='ignore').fit_transform(t20i_nat), columns=t20i_nat_cats)
+    # WT20I nationality encodings
+    wt20i_nat = np.array(np.where(ratings['competition'] == 'WT20I', ratings['nationality'], 'nil')).reshape(-1, 1)
+    wt20i_nat_cats = ['nil', 'England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']
+    wt20i_nat_encodings = make_ohe(wt20i_nat, wt20i_nat_cats, 'wt20i_nat')
 
-    ballspermatch = pd.DataFrame(ratings.loc[:, ['ballspermatch']])
+    # Balls per match bowled on average
+    ballspermatch = pd.DataFrame(ratings.loc[:, ['ballspermatch']]).reset_index(drop=True)
 
+    # Experience transform
     experience = pd.DataFrame(ratings.loc[:, ['balls_bowled_career']])
-    experience = pd.DataFrame(run_transformer.transform(experience), columns=['experience'])
+    experience = pd.DataFrame(transformers['experience_transformer'].transform(experience), columns=['experience']).reset_index(drop=True)
 
+    # Overseas pct poly RUN
     overseas_pct = pd.DataFrame(ratings.loc[:, ['overseas_pct']])
-    overseas_pct = pd.DataFrame(preprocessing.PolynomialFeatures(degree=2).fit_transform(overseas_pct), columns=['overseas_pct_constant', 'overseas_pct_x', 'overseas_pct_x^2'])
+    overseas_pct_run = pd.DataFrame(preprocessing.PolynomialFeatures(degree=2, include_bias=False).fit_transform(overseas_pct), columns=['overseas_pct_x', 'overseas_pct_x^2']).reset_index(drop=True)
 
-    X_run = pd.concat([competition_encodings, bowler_type_encodings, bowler_arm_encodings, bowler_pace_encodings, t20i_nat_encodings, ballspermatch, overseas_pct, experience], axis=1)
-
+    # Overseas pct poly WKT
     overseas_pct = pd.DataFrame(ratings.loc[:, ['overseas_pct']])
-    overseas_pct = pd.DataFrame(preprocessing.PolynomialFeatures(degree=2).fit_transform(overseas_pct), columns=['overseas_pct_constant', 'overseas_pct_x', 'overseas_pct_x^2'])
+    overseas_pct_wkt = pd.DataFrame(preprocessing.PolynomialFeatures(degree=2, include_bias=False).fit_transform(overseas_pct), columns=['overseas_pct_x', 'overseas_pct_x^2']).reset_index(drop=True)
 
-    X_wkt = pd.concat([competition_encodings, bowler_type_encodings, bowler_arm_encodings, bowler_pace_encodings, t20i_nat_encodings, ballspermatch, overseas_pct], axis=1)
+    X_run = pd.concat([competition_encodings, bowler_arm_encodings, bowler_pace_encodings, wt20i_nat_encodings, ballspermatch, overseas_pct_run, experience], axis=1)
+    X_wkt = pd.concat([competition_encodings, bowler_arm_encodings, bowler_pace_encodings, wt20i_nat_encodings, ballspermatch, overseas_pct_wkt, experience], axis=1)
+
+    X_run = sm.add_constant(X_run, has_constant='add')
+    X_wkt = sm.add_constant(X_wkt, has_constant='add')
 
     return ratings, X_run, X_wkt
 
@@ -110,42 +129,18 @@ for x in np.arange(0, 2, 1):
     # 1) Imports
     # -------------------------
     bowl_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/data/bowlDataCombinedClean_w.csv', parse_dates=['date', 'dob'])
-    tier_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/auxiliaries/bowlTierData_w.csv')
 
     if x == 0:
+        model_name = 'jungle'
         ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/outputs/bowlRatingsJungle_w.csv', parse_dates=['date'])
     else:
+        model_name = 'rasoi'
         ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/outputs/bowlRatingsRasoi_w.csv', parse_dates=['date'])
 
     # -------------------------
-    # 2) Filters (main comps only)
+    # 2) Filters
     # -------------------------
-    bowl_data = bowl_data.loc[
-        bowl_data['competition'].isin([
-                    "Abu Dhabi Women's T20 Counties Super Cup",
-        'FairBreak Invitational Tournament',
-        'New Zealand',
-        'South Africa',
-        "The Hundred (Women's Comp)",
-        "Vitality Women's T20 County Cup",
-        'WT20I',
-        "Women's Big Bash League",
-        "Women's Premier League",
-        "Women's Vitality Blast",
-        'tier_2']), :]
-
-    ratings = ratings.loc[ratings['competition'].isin([
-                    "Abu Dhabi Women's T20 Counties Super Cup",
-        'FairBreak Invitational Tournament',
-        'New Zealand',
-        'South Africa',
-        "The Hundred (Women's Comp)",
-        "Vitality Women's T20 County Cup",
-        'WT20I',
-        "Women's Big Bash League",
-        "Women's Premier League",
-        "Women's Vitality Blast",
-        'tier_2']), :].reset_index(drop=True)
+    bowl_data = bowl_data.loc[bowl_data['format'] == 't20', :].copy()
 
     # -------------------------
     # 3) Base cleaning / merges
@@ -153,7 +148,7 @@ for x in np.arange(0, 2, 1):
     ratings['run_rating'], ratings['wkt_rating'] = ratings['run_rating'].fillna(1), ratings['wkt_rating'].fillna(1)
     ratings['balls_bowled_r'], ratings['balls_bowled_w'] = ratings['balls_bowled_r'].fillna(1), ratings['balls_bowled_w'].fillna(1)
 
-    bowl_data['index'] = bowl_data['competition'] + " " + bowl_data['H/A_competition']
+    bowl_data['index'] = bowl_data['competition'] + ' ' + bowl_data['H/A_competition']
     league_balls = pd.pivot_table(bowl_data, values=['balls_bowled'], index=['index', 'competition'], aggfunc='sum').reset_index()
     bowl_data = bowl_data.drop(labels=['index'], axis=1)
 
@@ -167,76 +162,73 @@ for x in np.arange(0, 2, 1):
     bowl_data = bowl_data.merge(ratings[ratings['i_balls_bowled'] > 0].loc[:, ['playerid', 'date', 'run_rating', 'wkt_rating']], how='left', on=['playerid', 'date'])
 
     # -------------------------
-    # 4) Fit RUN + WKT models (train on bowl_data)
+    # 4) Fit RUN + WKT models
     # -------------------------
-    bowl_data, X_run, X_wkt, run_transformer, wkt_transformer = build_training_features_bowl(bowl_data, ratings)
+    transformers = {}
+    bowl_data, X_run, X_wkt, transformers = build_training_features_bowl(bowl_data, ratings, transformers)
 
     y = pd.DataFrame(bowl_data['run_ratio'])
-    rep_run_ratio_model = sm.OLS(y, X_run).fit()
+    rep_run_ratio_model = sm.OLS(y, X_run, missing='drop').fit()
+    run_params = rep_run_ratio_model.params.copy()
+
+    y = pd.DataFrame(bowl_data['wkt_ratio'])
+    rep_wkt_ratio_model = sm.OLS(y, X_wkt,  missing='drop').fit()
+    wkt_params = rep_wkt_ratio_model.params.copy()
+
+
+    # -------------------------
+    # 5) Predict training data
+    # -------------------------
     bowl_data['rep_run_ratio'] = rep_run_ratio_model.predict(X_run)
     bowl_data['rep_runs'] = bowl_data['rep_run_ratio'] * bowl_data['realexprbowl']
 
-    y = pd.DataFrame(bowl_data['wkt_ratio'])
-    rep_wkt_ratio_model = sm.OLS(y, X_wkt).fit()
     bowl_data['rep_wkt_ratio'] = rep_wkt_ratio_model.predict(X_wkt)
     bowl_data['rep_wkt'] = bowl_data['rep_wkt_ratio'] * bowl_data['realexpwbowl']
 
     # -------------------------
-    # 5) League coefficient reversion (tier-based)
+    # 6) League coefficient reversion
     # -------------------------
-    params = pd.merge(pd.DataFrame(rep_run_ratio_model.params), pd.DataFrame(rep_wkt_ratio_model.params), how='left', left_index=True, right_index=True).reset_index()
-    params['index'] = np.where(params['index'].apply(len) == 1, params['index'].str[0], params['index'])
-    league_balls = league_balls.merge(params, how='left', on=['index'])
 
-    league_balls = league_balls.merge(tier_data, on='competition')
-
-    league_balls_no_intl = league_balls[league_balls.competition != 'T20I'].copy()
-    avg_0x = league_balls_no_intl['0_x'].mean()
-    avg_runs = league_balls_no_intl['avg_runs'].mean()
-    avg_0y = league_balls_no_intl['0_y'].mean()
-    avg_wkts = league_balls_no_intl['avg_wkts'].mean()
-
-    league_balls['runs_diff'] = league_balls['avg_runs'] - avg_runs
-    league_balls['wkts_diff'] = league_balls['avg_wkts'] - avg_wkts
-    league_balls['new_0_x'] = avg_0x + league_balls['runs_diff']
-    league_balls['new_0_y'] = avg_0y + league_balls['wkts_diff']
-
-    league_balls['avg_runs'] = np.where(league_balls['competition'] == 'T20I', league_balls['0_x'], league_balls['new_0_x'])
-    league_balls['avg_wkts'] = np.where(league_balls['competition'] == 'T20I', league_balls['0_y'], league_balls['new_0_y'])
-
+    league_balls['feature_name'] = 'competition__' + league_balls['index']
     league_balls['weight'] = np.where(league_balls['balls_bowled'] > 20000, 1, league_balls['balls_bowled'] / 20000)
-    league_balls['weight_2'] = np.where(league_balls['balls_bowled'] > 20000, 1, league_balls['balls_bowled'] / 20000)
-    league_balls['weight'] = np.where(league_balls['competition'] == 'tier_2', league_balls['weight_2'], league_balls['weight'])
 
-    league_balls['runs'] = (league_balls['weight'] * league_balls['0_x']) + ((1 - league_balls['weight']) * league_balls['avg_runs'])
-    league_balls['wkts'] = (league_balls['weight'] * league_balls['0_y']) + ((1 - league_balls['weight']) * league_balls['avg_wkts'])
+    for _, row in league_balls.iterrows():
+        if row['feature_name'] in run_params.index:
+            run_params.loc[row['feature_name']] = row['weight'] * run_params.loc[row['feature_name']]
 
-    runs_series = pd.Series(league_balls['runs'].values, index=league_balls['index'])
-    rep_run_ratio_model.params[:len(runs_series)] = runs_series.astype(float)
+        if row['feature_name'] in wkt_params.index:
+            wkt_params.loc[row['feature_name']] = row['weight'] * wkt_params.loc[row['feature_name']]
 
-    wkt_series = pd.Series(league_balls['wkts'].values, index=league_balls['index'])
-    rep_wkt_ratio_model.params[:len(wkt_series)] = wkt_series.astype(float)
-
-    params = pd.merge(pd.DataFrame(rep_run_ratio_model.params), pd.DataFrame(rep_wkt_ratio_model.params), how='left', left_index=True, right_index=True).reset_index()
-    params['index'] = np.where(params['index'].apply(len) == 1, params['index'].str[0], params['index'])
-    aux = pd.DataFrame([['λ', str(run_transformer.lambdas_[0]), str(wkt_transformer.lambdas_[0])]], columns=params.columns)
+    params = pd.merge(pd.DataFrame(run_params), pd.DataFrame(wkt_params), how='left', left_index=True, right_index=True).reset_index()
+    aux = pd.DataFrame([['λ', str(transformers['experience_transformer'].lambdas_[0]), str(transformers['experience_transformer'].lambdas_[0])]], columns=params.columns)
     params = pd.concat([params, aux], axis=0)
 
     # -------------------------
-    # 6) Predict outputs (using updated params)
+    # 6) Predict ratings outputs
     # -------------------------
-    ratings, X_run_r, X_wkt_r = build_ratings_features_bowl(ratings, run_transformer)
+    ratings, X_run_r, X_wkt_r = build_ratings_features_bowl(ratings, transformers)
 
-    ratings.insert(ratings.columns.get_loc("run_rating") + 1, 'rep_run_ratio', rep_run_ratio_model.predict(X_run_r))
-    # outputs['rep_run_ratio'] = outputs['rep_run_ratio'] * outputs['t2h_factor_r']
+    ratings.insert(ratings.columns.get_loc('run_rating') + 1, 'rep_run_ratio', X_run_r.to_numpy() @ run_params.to_numpy())
     ratings['i_rep_runs'] = ratings['rep_run_ratio'] * ratings['i_realexprbowl']
 
-    ratings.insert(ratings.columns.get_loc("wkt_rating") + 1, 'rep_wkt_ratio', rep_wkt_ratio_model.predict(X_wkt_r))
-    # outputs['rep_wkt_ratio'] = outputs['rep_wkt_ratio'] * outputs['t2h_factor_w']
+    ratings.insert(ratings.columns.get_loc('wkt_rating') + 1, 'rep_wkt_ratio', X_wkt_r.to_numpy() @ wkt_params.to_numpy())
     ratings['i_rep_wkt'] = ratings['rep_wkt_ratio'] * ratings['i_realexpwbowl']
 
     # -------------------------
-    # 7) Checks + pivots
+    # 7) Debug replacement breakdown
+    # -------------------------
+    if DEBUG_CONFIG is not None and DEBUG_CONFIG['model'] == model_name:
+        BOWL_REPLACEMENT_DEBUG_TABLES = build_replacement_debug_tables(
+            DEBUG_CONFIG,
+            ratings,
+            X_run_r,
+            X_wkt_r,
+            run_params,
+            wkt_params
+        )
+
+    # -------------------------
+    # 8) Checks + pivots
     # -------------------------
     test = ratings.copy()
 
@@ -255,15 +247,10 @@ for x in np.arange(0, 2, 1):
     bowl_data['run_err'] = bowl_data['rep_runs'] - bowl_data['runs']
     bowl_data['wkt_err'] = bowl_data['rep_wkt'] - bowl_data['wkt']
 
-    bowl_data['balls_bowled_career_round'] = bowl_data['balls_bowled_career'].apply(lambda z: int(100 * round(float(z) / 100)))
-    bowl_data['age_round'] = bowl_data['age'].apply(lambda z: int(2 * round(float(z) / 2)))
-    bowl_data['age_round'] = np.where(bowl_data['age_round'] == 16, 18, np.where(bowl_data['age_round'] > 40, 42, bowl_data['age_round']))
-    bowl_data['overseas_pct_round'] = bowl_data['overseas_pct'].apply(lambda z: 0.4 * round(float(z) / 0.4))
-
     actuals = pd.pivot_table(bowl_data,
                              values=['balls_bowled', 'realexprbowl', 'rep_runs', 'runs', 'realexpwbowl', 'rep_wkt', 'wkt', 'rep_wkt_ratio', 'rep_run_ratio', 'age', 'balls_bowled_career',
-                                                'run_sqe', 'wkt_sqe', 'run_err', 'wkt_err'],
-                             index=['host'],
+                                     'run_sqe', 'wkt_sqe', 'run_err', 'wkt_err'],
+                             index=['competition'],
                              aggfunc={'balls_bowled': 'count', 'balls_bowled_career': 'mean', 'age': 'mean', 'realexprbowl': 'sum', 'rep_runs': 'sum', 'runs': 'sum', 'realexpwbowl': 'sum',
                                       'rep_wkt': 'sum', 'wkt': 'sum', 'rep_run_ratio': 'mean', 'rep_wkt_ratio': 'mean', 'run_sqe': 'mean', 'wkt_sqe': 'mean', 'run_err': 'sum', 'wkt_err': 'sum'}).reset_index()
 
@@ -278,11 +265,14 @@ for x in np.arange(0, 2, 1):
     actuals_ratings['wkt_ratio'] = actuals_ratings['i_wkt'] / actuals_ratings['i_realexpwbowl']
 
     # -------------------------
-    # 8) Export
+    # 9) Export
     # -------------------------
     if x == 0:
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/outputs/bowlRatingsJungle2_w.csv', index=False)
     else:
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/outputs/bowlRatingsRasoi2_w.csv', index=False)
+
+
+
 
 

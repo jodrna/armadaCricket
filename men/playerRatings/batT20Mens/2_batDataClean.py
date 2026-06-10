@@ -8,7 +8,6 @@ bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batData
 player_info = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/playerInfo.csv', parse_dates=['dob'])
 ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batRatingsFor.csv')
 
-
 # # if we want to do a test we can select just one batsman to speed it up using this filter
 # bat_data = bat_data[bat_data['batsman'] == 'AB de Villiers']
 

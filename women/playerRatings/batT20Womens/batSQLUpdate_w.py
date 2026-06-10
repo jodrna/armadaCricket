@@ -7,12 +7,12 @@ from db import engine
 from paths import PROJECT_ROOT
 import subprocess
 from pathlib import Path
-
 connection = engine.connect()
 
-run_type = 1
 ### 1 will only run if new matches are present in the db since last run
 ### 0 will push through batter ratings only, regardless of when the last run was
+run_type = 0
+
 
 sql_test = pd.read_sql_query("""select max(last_date) as last_date from player_ratings.max_date_ratings_w""", con=connection)
 last_date = str(sql_test['last_date'].iloc[0])[:10]

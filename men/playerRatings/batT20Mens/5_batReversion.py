@@ -263,3 +263,8 @@ for x in np.arange(0, 2, 1):
 #
 #
 #
+
+
+ratings = ratings[ratings['batsman'] == 'Jason Roy']
+
+
