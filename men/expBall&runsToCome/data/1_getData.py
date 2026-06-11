@@ -10,7 +10,7 @@ import subprocess
 connection = engine.connect()
 
 #updating all data (1) or just daily update (2)?
-run_type = 2
+run_type = 1
 
 subprocess.run(['git', 'pull'], check=True)
 last_date_data = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/latest_data_clean.csv', parse_dates=['date'])
@@ -146,7 +146,7 @@ raw_data = raw_data.drop_duplicates(subset=['id'])
 
 ## export
 if run_type == 1:
-    raw_data.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/Data/Cleaned_t20bbb3.csv', index=False)
+    raw_data.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', index=False)
     sqlupload = raw_data.loc[:,['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required', 'wkt_value_sum_smooth']]
     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a', 'wkt_value_sum_smooth']
 
