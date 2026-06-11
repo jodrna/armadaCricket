@@ -40,33 +40,33 @@ x_scatter_max = masterLookup['totalInningRunsToComeSimBiasSpline'].max()
 y_scatter_min = masterLookup['totalInningRunsToComeSimSTD'].min()
 y_scatter_max = masterLookup['totalInningRunsToComeSimSTD'].max()
 
-fig, axes = plt.subplots(nrows=10, ncols=2, figsize=(16, 32), sharex=False, sharey=False)
-
-for wk in range(10):
-    ax_line = axes[wk, 0]
-    ax_scatter = axes[wk, 1]
-
-    # line plots
-    d_line = masterLookup.loc[masterLookup['totalInningWickets'] == wk,
-                              ['inningBallNumber',
-                               'totalInningRunsToComeSimBiasSpline',
-                               'totalInningRunsToComeSimBiasSplineYear']].sort_values('inningBallNumber')
-    ax_line.plot(d_line['inningBallNumber'], d_line['totalInningRunsToComeSimBiasSpline'])
-    ax_line.plot(d_line['inningBallNumber'], d_line['totalInningRunsToComeSimBiasSplineYear'])
-    ax_line.set_xlim(x_line_min, x_line_max)
-    ax_line.set_ylim(y_line_min, y_line_max)
-
-    # scatter plots
-    d_scatter = masterLookup.loc[masterLookup['totalInningWickets'] == wk,
-                                 ['totalInningRunsToComeSimBiasSpline', 'totalInningRunsToComeSimSTD']]
-    ax_scatter.scatter(d_scatter['totalInningRunsToComeSimBiasSpline'],
-                       d_scatter['totalInningRunsToComeSimSTD'],
-                       s=10, alpha=0.7)
-    ax_scatter.set_xlim(x_scatter_min, x_scatter_max)
-    ax_scatter.set_ylim(y_scatter_min, y_scatter_max)
-
-plt.tight_layout()
-plt.show()
+# fig, axes = plt.subplots(nrows=10, ncols=2, figsize=(16, 32), sharex=False, sharey=False)
+#
+# for wk in range(10):
+#     ax_line = axes[wk, 0]
+#     ax_scatter = axes[wk, 1]
+#
+#     # line plots
+#     d_line = masterLookup.loc[masterLookup['totalInningWickets'] == wk,
+#                               ['inningBallNumber',
+#                                'totalInningRunsToComeSimBiasSpline',
+#                                'totalInningRunsToComeSimBiasSplineYear']].sort_values('inningBallNumber')
+#     ax_line.plot(d_line['inningBallNumber'], d_line['totalInningRunsToComeSimBiasSpline'])
+#     ax_line.plot(d_line['inningBallNumber'], d_line['totalInningRunsToComeSimBiasSplineYear'])
+#     ax_line.set_xlim(x_line_min, x_line_max)
+#     ax_line.set_ylim(y_line_min, y_line_max)
+#
+#     # scatter plots
+#     d_scatter = masterLookup.loc[masterLookup['totalInningWickets'] == wk,
+#                                  ['totalInningRunsToComeSimBiasSpline', 'totalInningRunsToComeSimSTD']]
+#     ax_scatter.scatter(d_scatter['totalInningRunsToComeSimBiasSpline'],
+#                        d_scatter['totalInningRunsToComeSimSTD'],
+#                        s=10, alpha=0.7)
+#     ax_scatter.set_xlim(x_scatter_min, x_scatter_max)
+#     ax_scatter.set_ylim(y_scatter_min, y_scatter_max)
+#
+# plt.tight_layout()
+# plt.show()
 
 
 
@@ -77,53 +77,53 @@ plt.show()
 stdsReal = trainData.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'].agg(count='count', mean='mean', std='std', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)).reset_index()
 stdsClassAdjusted = simClassAdjusted.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'].agg(count='count', mean='mean', std='std', skew=lambda x: x.skew(), kurtosis=lambda x: kurtosis(x, fisher=True)).reset_index()
 
-# plot mean, std, skew for each wicket value and model + 5th column scatter (std vs mean)
-fig, axes = plt.subplots(10, 5, figsize=(22, 30), sharex=False)
-metrics = ['mean', 'std', 'skew', 'kurtosis']
-titles  = ['Mean', 'Standard Deviation', 'Skewness', 'Kurtosis', 'STD vs Mean']
-
-for i in range(10):  # totalInningWickets from 0 to 9
-    # Filter by count (do once per row)
-    real_filtered = stdsReal[(stdsReal['totalInningWickets'] == i) & (stdsReal['count'] >= 100)]
-    classAdjusted_filtered = stdsClassAdjusted[(stdsClassAdjusted['totalInningWickets'] == i) & (stdsClassAdjusted['count'] >= 1000)]
-
-    # First 4 columns: original line plots
-    for j, metric in enumerate(metrics):
-        ax = axes[i, j]
-
-        # Plot Real and Adjusted
-        ax.plot(real_filtered['inningBallNumber'], real_filtered[metric], label='Real', color='green')
-        ax.plot(classAdjusted_filtered['inningBallNumber'], classAdjusted_filtered[metric], label='Class Adjusted', color='orange')
-
-        # Titles and labels
-        if i == 0:
-            ax.set_title(titles[j])
-        if j == 0:
-            ax.set_ylabel(f'Wickets: {i}')
-        if i == 9 and j == 2:
-            ax.legend(loc='lower right')
-
-    # 5th column: scatter of std vs mean
-    ax_scatter = axes[i, 4]
-    # Plot only if there is data after dropna
-    rf = real_filtered[['mean', 'std']].dropna()
-    cf = classAdjusted_filtered[['mean', 'std']].dropna()
-
-    if not rf.empty:
-        ax_scatter.scatter(rf['mean'], rf['std'], label='Real', alpha=0.6, color='green')
-    if not cf.empty:
-        ax_scatter.scatter(cf['mean'], cf['std'], label='Class Adjusted', alpha=0.6, color='orange')
-    if rf.empty and cf.empty:
-        ax_scatter.text(0.5, 0.5, 'No data', ha='center', va='center', transform=ax_scatter.transAxes)
-
-    if i == 0:
-        ax_scatter.set_title(titles[4])
-    # Optional: only one legend for the scatter, bottom row
-    if i == 9:
-        ax_scatter.legend(loc='lower right')
-
-plt.tight_layout()
-plt.show()
+# # plot mean, std, skew for each wicket value and model + 5th column scatter (std vs mean)
+# fig, axes = plt.subplots(10, 5, figsize=(22, 30), sharex=False)
+# metrics = ['mean', 'std', 'skew', 'kurtosis']
+# titles  = ['Mean', 'Standard Deviation', 'Skewness', 'Kurtosis', 'STD vs Mean']
+#
+# for i in range(10):  # totalInningWickets from 0 to 9
+#     # Filter by count (do once per row)
+#     real_filtered = stdsReal[(stdsReal['totalInningWickets'] == i) & (stdsReal['count'] >= 100)]
+#     classAdjusted_filtered = stdsClassAdjusted[(stdsClassAdjusted['totalInningWickets'] == i) & (stdsClassAdjusted['count'] >= 1000)]
+#
+#     # First 4 columns: original line plots
+#     for j, metric in enumerate(metrics):
+#         ax = axes[i, j]
+#
+#         # Plot Real and Adjusted
+#         ax.plot(real_filtered['inningBallNumber'], real_filtered[metric], label='Real', color='green')
+#         ax.plot(classAdjusted_filtered['inningBallNumber'], classAdjusted_filtered[metric], label='Class Adjusted', color='orange')
+#
+#         # Titles and labels
+#         if i == 0:
+#             ax.set_title(titles[j])
+#         if j == 0:
+#             ax.set_ylabel(f'Wickets: {i}')
+#         if i == 9 and j == 2:
+#             ax.legend(loc='lower right')
+#
+#     # 5th column: scatter of std vs mean
+#     ax_scatter = axes[i, 4]
+#     # Plot only if there is data after dropna
+#     rf = real_filtered[['mean', 'std']].dropna()
+#     cf = classAdjusted_filtered[['mean', 'std']].dropna()
+#
+#     if not rf.empty:
+#         ax_scatter.scatter(rf['mean'], rf['std'], label='Real', alpha=0.6, color='green')
+#     if not cf.empty:
+#         ax_scatter.scatter(cf['mean'], cf['std'], label='Class Adjusted', alpha=0.6, color='orange')
+#     if rf.empty and cf.empty:
+#         ax_scatter.text(0.5, 0.5, 'No data', ha='center', va='center', transform=ax_scatter.transAxes)
+#
+#     if i == 0:
+#         ax_scatter.set_title(titles[4])
+#     # Optional: only one legend for the scatter, bottom row
+#     if i == 9:
+#         ax_scatter.legend(loc='lower right')
+#
+# plt.tight_layout()
+# plt.show()
 
 
 
@@ -201,7 +201,7 @@ row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBal
 
 # Extract the moments
 # mean = row2['mean'].values[0]
-mean = 173.5
+mean = 175.6
 
 std = row2['std'].values[0]
 skew_val = row2['skew'].values[0]
@@ -216,17 +216,17 @@ H4 = z**4 - 6 * z**2 + 3
 gc_pdf = phi * (1 + (skew_val / 6) * H3 + (kurt_val / 24) * H4)
 gc_pdf = np.maximum(gc_pdf, 0)
 gc_pdf /= np.trapz(gc_pdf, x)
-
-# Plot
-plt.figure(figsize=(10, 6))
-sns.kdeplot(trainData_filtered['totalInningRunsToCome'], label='real', fill=True)
-plt.plot(x, gc_pdf, label='gram-charlier approx (normalized)', linestyle='--')
-plt.xlabel('totalInningRunsToCome')
-plt.ylabel('Density')
-plt.title(f'Inning Ball {inningBallNumber}, Wickets {totalInningWickets}')
-plt.legend()
-plt.grid(True)
-plt.show()
+#
+# # Plot
+# plt.figure(figsize=(10, 6))
+# sns.kdeplot(trainData_filtered['totalInningRunsToCome'], label='real', fill=True)
+# plt.plot(x, gc_pdf, label='gram-charlier approx (normalized)', linestyle='--')
+# plt.xlabel('totalInningRunsToCome')
+# plt.ylabel('Density')
+# plt.title(f'Inning Ball {inningBallNumber}, Wickets {totalInningWickets}')
+# plt.legend()
+# plt.grid(True)
+# plt.show()
 
 
 
