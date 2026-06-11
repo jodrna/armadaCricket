@@ -23,7 +23,7 @@ connection = engine.connect()
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
 # simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
-matchMarket = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w1.csv')
+matchMarket = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w.csv')
 trainData = trainData[trainData['inningNumber'] == 1]
 
 
@@ -74,8 +74,10 @@ trainData = trainData[trainData['inningNumber'] == 1]
 
 
 # to download sim data
-sql_query = '''select  * from player_ratings.sim_class_adjusted'''
-simClassAdjusted = pd.read_sql_query(sql_query, con=connection)
+# sql_query = '''select  * from player_ratings.sim_class_adjusted'''
+# simClassAdjusted = pd.read_sql_query(sql_query, con=connection)
+# simClassAdjusted.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
+simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
 
 # --- global axis ranges ---
 masterLookup = masterLookup[masterLookup['daysGroup'] == 10]
@@ -235,11 +237,6 @@ plt.show()
 # plt.show()
 
 
-
-
-
-
-
 # this will plot a real world distribution and then a distribution based off the 4 moments, mean, std, skew and kurt
 # Set game state
 inningBallNumber = 1
@@ -252,7 +249,7 @@ row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBal
 
 # Extract the moments
 # mean = row2['mean'].values[0]
-mean = 152.67
+mean = 151.7
 
 std = row2['std'].values[0]
 skew_val = row2['skew'].values[0]
