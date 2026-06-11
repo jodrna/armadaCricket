@@ -63,7 +63,7 @@ chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
 chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inningBallNumber', 'sample', 'totalInningRunsToComeSimBiasSpline', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
 chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSpline']
-chaseLookup['daysGroup'] = 13
+chaseLookup['daysGroup'] = 12
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSpline']).reset_index(drop=True)
 chaseLookup['in'] = 1
 
@@ -167,9 +167,10 @@ bias['bias'] = bias['m_chaseWin%'] / bias['chaseWin']
 bias['win%'] = bias['chaseWin'] / bias['sample']
 
 # compare
-chaseLookup = chaseLookup.merge(chaseLookupLive.loc[:, ['m_chaseWin%', 'totalInningWickets', 'runsRequired', 'inningBallsRemaining']],
+chaseLookup = chaseLookup.merge(chaseLookupLive.loc[:, ['m_chaseWin%old', 'm_chaseWin%', 'totalInningWickets', 'runsRequired', 'inningBallsRemaining']],
                                 how='left', on=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], suffixes=('', 'Live'))
 chaseLookup['m_diff'] = chaseLookup['m_chaseWin%'] - chaseLookup['m_chaseWin%Live']
+chaseLookup['m_diff_old'] = chaseLookup['m_chaseWin%'] - chaseLookup['m_chaseWin%old']
 
 
 # chase win % year
@@ -220,4 +221,8 @@ chaseLookup.insert(col_position, 'lookup', (chaseLookup['totalInningWickets'] + 
 
 # exports
 chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w.csv', index=False)
+
+comparison = chaseLookup[(chaseLookup.totalInningWickets == 0) & (chaseLookup.inningBallsRemaining == 120)]
+comparison = comparison.loc[:,['runsRequired', 'm_chaseWin%', 'm_chaseWin%Live', 'm_chaseWin%old', 'm_diff', 'm_diff_old']]
+
 
