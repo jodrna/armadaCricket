@@ -249,74 +249,74 @@ row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBal
 
 # Extract the moments
 # mean = row2['mean'].values[0]
-mean = 151.7
+mean_estimate = 151.7
 
-std = row2['std'].values[0]
-skew_val = row2['skew'].values[0]
-kurt_val = row2['kurtosis'].values[0]
+for i in range(0, 10, 1):
 
-# Build Gram–Charlier PDF
-x = np.linspace(mean - 4 * std, mean + 4 * std, 1000)
-z = (x - mean) / std
-phi = norm.pdf(z)
-H3 = z**3 - 3 * z
-H4 = z**4 - 6 * z**2 + 3
-gc_pdf = phi * (1 + (skew_val / 6) * H3 + (kurt_val / 24) * H4)
-gc_pdf = np.maximum(gc_pdf, 0)
-gc_pdf /= np.trapz(gc_pdf, x)
+    mean_adjust = (i - 4) * 0.5
+    mean = mean_estimate + mean_adjust
+    std = row2['std'].values[0]
+    skew_val = row2['skew'].values[0]
+    kurt_val = row2['kurtosis'].values[0]
 
-# Plot
-plt.figure(figsize=(10, 6))
-sns.kdeplot(trainData_filtered['totalInningRunsToCome'], label='real', fill=True)
-plt.plot(x, gc_pdf, label='gram-charlier approx (normalized)', linestyle='--')
-plt.xlabel('totalInningRunsToCome')
-plt.ylabel('Density')
-plt.title(f'Inning Ball {inningBallNumber}, Wickets {totalInningWickets}')
-plt.legend()
-plt.grid(True)
-plt.show()
+    # Build Gram–Charlier PDF
+    x = np.linspace(mean - 4 * std, mean + 4 * std, 1000)
+    z = (x - mean) / std
+    phi = norm.pdf(z)
+    H3 = z**3 - 3 * z
+    H4 = z**4 - 6 * z**2 + 3
+    gc_pdf = phi * (1 + (skew_val / 6) * H3 + (kurt_val / 24) * H4)
+    gc_pdf = np.maximum(gc_pdf, 0)
+    gc_pdf /= np.trapz(gc_pdf, x)
 
-
-
-
-
-
-
-# this finds the mean which gives the match market win % we want at the start of the 2nd innings, set the mean first, try different means to get the % you want
-# YOU MUST CHANGE THE MEAN ABOVE FIRST
-runs_range = np.arange(0, 301)
-
-probabilities = []
-for r in runs_range:
-
-    lower = r - 0.5
-    upper = r + 0.5
-
-    mask = (x >= lower) & (x <= upper)
-
-    if mask.sum() > 1:
-        prob = np.trapz(gc_pdf[mask], x[mask])
-    else:
-        prob = 0
-
-    probabilities.append(prob)
-
-prob_df = pd.DataFrame({
-    'runs': runs_range,
-    'probability': probabilities
-})
-
-# Normalise in case of small numerical drift
-prob_df['probability'] = prob_df['probability'] / prob_df['probability'].sum()
+    # # Plot
+    # plt.figure(figsize=(10, 6))
+    # sns.kdeplot(trainData_filtered['totalInningRunsToCome'], label='real', fill=True)
+    # plt.plot(x, gc_pdf, label='gram-charlier approx (normalized)', linestyle='--')
+    # plt.xlabel('totalInningRunsToCome')
+    # plt.ylabel('Density')
+    # plt.title(f'Inning Ball {inningBallNumber}, Wickets {totalInningWickets}')
+    # plt.legend()
+    # plt.grid(True)
+    # plt.show()
 
 
-# Optional: cumulative probability
-prob_df['cum_probability'] = prob_df['probability'].cumsum()
+    # this finds the mean which gives the match market win % we want at the start of the 2nd innings, set the mean first, try different means to get the % you want
+    # YOU MUST CHANGE THE MEAN ABOVE FIRST
+    runs_range = np.arange(0, 301)
 
-matchMarket = matchMarket[(matchMarket['inningBallNumber'] == 1) & (matchMarket['totalInningWickets'] == 0)]
-prob_df = prob_df.merge(matchMarket.loc[:, ['runsRequired', 'm_chaseWin%']], how='left', left_on='runs', right_on='runsRequired')
-prob_df['probs'] = prob_df['m_chaseWin%'] * prob_df['probability']
-print(np.sum(prob_df['probs']))
+    probabilities = []
+    for r in runs_range:
+
+        lower = r - 0.5
+        upper = r + 0.5
+
+        mask = (x >= lower) & (x <= upper)
+
+        if mask.sum() > 1:
+            prob = np.trapz(gc_pdf[mask], x[mask])
+        else:
+            prob = 0
+
+        probabilities.append(prob)
+
+    prob_df = pd.DataFrame({
+        'runs': runs_range,
+        'probability': probabilities
+    })
+
+    # Normalise in case of small numerical drift
+    prob_df['probability'] = prob_df['probability'] / prob_df['probability'].sum()
+
+
+    # Optional: cumulative probability
+    prob_df['cum_probability'] = prob_df['probability'].cumsum()
+
+    matchMarket = matchMarket[(matchMarket['inningBallNumber'] == 1) & (matchMarket['totalInningWickets'] == 0)]
+    prob_df = prob_df.merge(matchMarket.loc[:, ['runsRequired', 'm_chaseWin%']], how='left', left_on='runs', right_on='runsRequired')
+    prob_df['probs'] = prob_df['m_chaseWin%'] * prob_df['probability']
+    win_prob = np.sum(prob_df['probs'])
+    print(f"mean runs: {mean},   win prob: {win_prob}")
 
 
 
