@@ -138,7 +138,7 @@ masterLookup['daysGroup'] = masterLookup['year'] - 2015
 
 # duplicate the latest year and relabel as 9.4, this gives us the number we want to match the match market
 extraRows = masterLookup.loc[masterLookup['daysGroup'] == 11].copy()
-extraRows['daysGroup'] = 9.6
+extraRows['daysGroup'] = 9.9
 
 # append future-year rows back onto master lookup
 masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
