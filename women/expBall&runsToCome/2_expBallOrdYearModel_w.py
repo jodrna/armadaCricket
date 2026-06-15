@@ -9,7 +9,7 @@ from paths import PROJECT_ROOT
 # import datasets and filter to 1st innings only
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
-masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/1_masterLookup.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/1_masterLookup_w.csv')
 
 # do some random cleaning and prep
 trainData = trainData[(trainData['noballRuns'] == 0) & (trainData['wideRuns'] == 0)]
@@ -141,5 +141,5 @@ masterLookup = masterLookup.rename(columns={'daysGroup': 'year'})
 masterLookup['year'] = masterLookup['year'] + 2015
 
 # export
-masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/2_masterLookup.csv', index=False)
+masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/2_masterLookup_w.csv', index=False)
 

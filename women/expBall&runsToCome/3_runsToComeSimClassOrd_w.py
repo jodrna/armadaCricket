@@ -4,9 +4,9 @@ import time
 from paths import PROJECT_ROOT
 
 # import files
-masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/2_masterLookup.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/2_masterLookup_w.csv')
 rateTrajectoryAdjustments = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/auxiliaries/rateTrajectoryAdjustments_w.csv')
-fxbXslw = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/auxiliaries/fxbXslw.csv')
+fxbXslw = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/auxiliaries/fxbXslw_w.csv')
 
 # the master lookup has values for ord and year, we don't want those for the sim, so drop them
 masterLookup = masterLookup.drop_duplicates(subset=['totalInningWickets', 'inningBallNumber']).reset_index(drop=True)

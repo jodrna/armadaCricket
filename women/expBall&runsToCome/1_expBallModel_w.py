@@ -216,4 +216,4 @@ classBias = pd.pivot_table(masterLookup, values=['sumProdClassRuns', 'm_batsmanR
 
 
 # export
-masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/1_masterLookup.csv', index=False)
+masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/1_masterLookup_w.csv', index=False)
