@@ -175,8 +175,9 @@ for x in np.arange(0, 2, 1):
     # -------------------------
     # SQL upload table
     # -------------------------
-    sql_upload = ratings[ratings['date'] == ratings['date'].max()]
-
+    sql_upload = ratings[ratings['date'] == ratings['date'].max()].copy()
+    sql_upload.loc[:, 'last_match_date'] = ratings.loc[ratings['matchid'] != 101, 'date'].max()
+    # read raw combined names to make sure every playerid keeps a batter name even if naming differs after cleaning
     batter_names = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/batDataCombinedClean_w.csv', parse_dates=['date']).loc[:, ['playerid', 'batsman']].drop_duplicates()
     sql_upload = sql_upload.merge(batter_names, how='left', left_on=['playerid'], right_on=['playerid'])
 
@@ -194,4 +195,7 @@ for x in np.arange(0, 2, 1):
     else:
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi3_w.csv', index=False)
         sql_upload.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadRasoi_w.csv', index=False)
+
+
+
 

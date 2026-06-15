@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from db import engine
 from paths import PROJECT_ROOT
 connection = engine.connect()
@@ -9,13 +10,22 @@ connection = engine.connect()
 # -------------------------
 t20_sql = '''
 select id, matchid, date,
-case when competition = 'WT20I' then
-(case when major_nation = 2 then
-(case when (battingteam = 'Australia Women' or battingteam = 'England Women' or battingteam = 'India Women' or battingteam = 'New Zealand Women' or battingteam = 'South Africa Women') then 'WT20I' else 'tier_2' end)
-else 'WT20I' end)
-else (case when ("host" = 'South Africa' or "host" = 'New Zealand') then (case when competition = 'SA20' then 'SA20' else "host" end) else
-case when (competition = 'Charlotte Edwards Cup' or competition = 'Women''s Cricket Super League') then 'Women''s Vitality Blast' else case when competition = 'Women''s T20 Challenge' then 'Women''s Premier League' else competition end end
-end)
+case when competition = 'WT20I' then 'WT20I'
+else
+(
+    case when ("host" = 'South Africa' or "host" = 'New Zealand')
+        then (case when competition = 'SA20' then 'SA20' else "host" end)
+    else
+        case when (competition = 'Charlotte Edwards Cup' or competition = 'Women''s Cricket Super League')
+            then 'Women''s Vitality Blast'
+        else
+            case when competition = 'Women''s T20 Challenge'
+                then 'Women''s Premier League'
+            else competition
+            end
+        end
+    end
+)
 end as competition,
 venue, host, innings, innperiod, home, away, battingteam, batterid, batsman, ord, batsmanballs balls_faced_innings, ball,
 bowlerid, bowler, byes, legbyes, noball, wide, extras, runs as runs_raw, runs - noball - byes runs, bowlerwicket wkt, realexprbat, realexpwbat, realexpwbowl, realexprbowl, ballsremaining, bowlerball
@@ -28,6 +38,15 @@ order by date, matchid desc
 '''
 
 allData = pd.read_sql_query(t20_sql, con=connection)
+
+
+# # -------------------------
+# # set tiers
+# # -------------------------
+# allData['bowlingteam'] = np.where(allData['battingteam'] == allData['home'], allData['away'], allData['home'])
+# allData.loc[(allData['competition'] == 'WT20I') & (~allData['bowlingteam'].isin(['Australia Women', 'England Women', 'India Women', 'New Zealand Women', 'South Africa Women'])), 'competition'] = 'tier_2'
+# allData.loc[(allData['competition'] == 'WT20I') & (~allData['battingteam'].isin(['Australia Women', 'England Women', 'India Women', 'New Zealand Women', 'South Africa Women'])), 'competition'] = 'tier_2'
+
 
 # -------------------------
 # T20 Bat Data

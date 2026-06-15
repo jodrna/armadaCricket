@@ -195,11 +195,33 @@ for x in np.arange(0, 2, 1):
 
     # avg contributions for each parameter to be use in the batter debug report later
     run_contributions = X_run.mul(run_params, axis=1)
-    avg_run_contributions = pd.DataFrame({
-        'coefficient': run_params,
-        'avg_model_value': X_run.mean(),
-        'avg_contribution': run_contributions.mean()
+    avg_run_category_contributions = pd.DataFrame({
+        'category': ['Intercept', 'Competition', 'Nationality', 'Age', 'Experience', 'Order', 'oppo'],
+        'avg_contribution': [
+            run_contributions['const'].mean(),
+            run_contributions.filter(like='competition__').sum(axis=1).mean(),
+            run_contributions.filter(like='wt20i_nat__').sum(axis=1).mean(),
+            run_contributions[['age_x', 'age_x^2']].sum(axis=1).mean(),
+            run_contributions['experience'].mean(),
+            run_contributions[['order_x', 'order_x^2']].sum(axis=1).mean(),
+            run_contributions['oppo'].mean()
+        ]
     }).sort_values('avg_contribution', ascending=False)
+
+    wkt_contributions = X_wkt.mul(wkt_params, axis=1)
+    avg_wkt_category_contributions = pd.DataFrame({
+        'category': ['Intercept', 'Competition', 'Nationality', 'Age', 'Experience', 'Order', 'Opposition'],
+        'avg_contribution': [
+            wkt_contributions['const'].mean(),
+            wkt_contributions.filter(like='competition__').sum(axis=1).mean(),
+            wkt_contributions.filter(like='wt20i_nat__').sum(axis=1).mean(),
+            wkt_contributions[['age_x', 'age_x^2']].sum(axis=1).mean(),
+            wkt_contributions['experience'].mean(),
+            wkt_contributions[['order_x', 'order_x^2']].sum(axis=1).mean(),
+            wkt_contributions['oppo'].mean()
+        ]
+    }).sort_values('avg_contribution', ascending=False)
+
 
 
     # -------------------------
@@ -308,4 +330,6 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle2_w.csv', index=False)
     else:
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi2_w.csv', index=False)
+
+
 

@@ -1,15 +1,17 @@
 MAIN
 1. get mens bat/bowl same level as womens ratings
-    womens batters are the best only 2 things needed
-        why error analysis doesn't match optimiser
-        srilanka vs sri lanka
+    womens bowler opt values, possible rogues
 
-    debug for women bowlers
     rep values for men
     bat model for men
     error analysis
     debug for men batters/men bowlers
     ensure consistency across all ratings code, should match womens
+
+    womens batters future;
+        error analysis
+        srilanka vs sri lanka
+
 
 
 2. first innings match market, balls remaining, wickets lost, eff target

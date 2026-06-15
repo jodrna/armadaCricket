@@ -10,6 +10,7 @@ bat_data = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/bat
 player_info = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/playerInfo_w.csv', parse_dates=['dob'])
 ratings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/auxiliaries/batRatingsFor_w.csv')
 
+
 # -------------------------
 # Optional: filter a single batter for speed
 # -------------------------
@@ -76,6 +77,12 @@ bat_data = bat_data.replace({'home_region': regions, 'host_region': regions}).dr
 bat_data.insert(bat_data.columns.get_loc("battingteam") + 1, 'bowlingteam', np.where(bat_data['home'] == bat_data['battingteam'], bat_data['away'], bat_data['home']))
 
 bat_data = bat_data.rename(columns={'name': 'batsman'})
+
+# -------------------------
+# set tiers
+# -------------------------
+bat_data['competition'] = np.where(bat_data['competition'] == 'tier_2', 'WT20I', bat_data['competition'])
+bat_data.loc[(bat_data['competition'] == 'WT20I') & (~bat_data['bowlingteam'].isin(['Australia Women', 'England Women', 'India Women', 'New Zealand Women', 'South Africa Women'])), 'competition'] = 'tier_2'
 
 
 # -------------------------

@@ -328,6 +328,3 @@ for x in np.arange(0, 2, 1):
     else:
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi_w.csv', index=False)
 
-print(np.mean(ratings['wkt_rating']))
-print(np.mean(ratings['run_rating']))
-

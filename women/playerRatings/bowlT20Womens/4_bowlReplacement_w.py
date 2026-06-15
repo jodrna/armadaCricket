@@ -223,9 +223,12 @@ for x in np.arange(0, 2, 1):
             ratings,
             X_run_r,
             X_wkt_r,
+            X_run,
+            X_wkt,
             run_params,
             wkt_params
         )
+
 
     # -------------------------
     # 8) Checks + pivots
@@ -271,8 +274,6 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/outputs/bowlRatingsJungle2_w.csv', index=False)
     else:
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/outputs/bowlRatingsRasoi2_w.csv', index=False)
-
-
 
 
 

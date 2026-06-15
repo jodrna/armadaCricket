@@ -27,7 +27,7 @@ trainData = trainData[trainData['inningNumber'] == 1]
 
 
 # --- global axis ranges ---
-masterLookup = masterLookup[masterLookup['daysGroup'] == 11]
+masterLookup = masterLookup[masterLookup['daysGroup'] == 1]
 x_line_min = masterLookup['inningBallNumber'].min()
 x_line_max = masterLookup['inningBallNumber'].max()
 y_line_min = masterLookup[['totalInningRunsToComeSimBiasSpline',

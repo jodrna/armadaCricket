@@ -141,6 +141,7 @@ print('Running bowl replacement debug...')
 replacement_results = runpy.run_path(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/4_bowlReplacement_w.py', init_globals={'DEBUG_CONFIG': DEBUG_CONFIG})
 replacement_debug = replacement_results['BOWL_REPLACEMENT_DEBUG_TABLES']
 
+
 if replacement_debug is None:
     raise ValueError(f'No replacement debug output found for {DEBUG_CONFIG}')
 

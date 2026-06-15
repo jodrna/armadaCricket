@@ -20,7 +20,6 @@ balls_per_match = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/
 # player_info = player_info[player_info['name'] == TEST_BOWLER]
 
 
-
 # -------------------------
 # fix some comp names
 # -------------------------
@@ -206,8 +205,14 @@ bowl_data.insert(bowl_data.columns.get_loc("bowlertype_2") + 1, 'bowler_arm', bo
 bowl_data.insert(bowl_data.columns.get_loc("bowlertype_2") + 1, 'bowler_pace', bowl_data['bowlerstyle'].replace(bowler_pace))
 
 bowl_data.insert(bowl_data.columns.get_loc("battingteam") + 1, 'bowlingteam', np.where(bowl_data['home'] == bowl_data['battingteam'], bowl_data['away'], bowl_data['home']))
-
 bowl_data = bowl_data.rename(columns={'bowlerwicket': 'wkt', 'name': 'bowler'})
+
+
+# -------------------------
+# set tiers
+# -------------------------
+bowl_data['competition'] = np.where(bowl_data['competition'] == 'tier_2', 'WT20I', bowl_data['competition'])
+bowl_data.loc[(bowl_data['competition'] == 'WT20I') & (~bowl_data['bowlingteam'].isin(['Australia Women', 'England Women', 'India Women', 'New Zealand Women', 'South Africa Women'])), 'competition'] = 'tier_2'
 
 
 # -------------------------
@@ -325,5 +330,4 @@ types2 = pd.pivot_table(bowl_data, values=['date'], index=['bowlertype_2', 'bowl
 # Export
 # -------------------------
 bowl_data.to_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/data/bowlDataCombinedClean_w.csv', index=False)
-
 
