@@ -44,9 +44,7 @@ chaseSituations = chaseSituations.sort_values(by=['inningBallsRemaining', 'runsR
 trainData = trainData[trainData['inningNumber'] == 2]
 trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
 # we need to remove duplicates in runs to come so just select batting order 1
-
-
-
+masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 10)]
 # merge in runs to come
 trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSpline', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 # create a ratio of runs to come to be used as a predictor, drop any nans
