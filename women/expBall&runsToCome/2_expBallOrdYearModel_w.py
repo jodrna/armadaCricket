@@ -105,10 +105,10 @@ df = df[df['ord'] < 12]
 # by merging on just wickets we dduplicate the rows for order
 masterLookup = masterLookup.merge(df, how='left', on=['totalInningWickets'])
 
-# Duplicate each row 11 times, for each year
-masterLookup = pd.DataFrame(np.repeat(masterLookup.values, 11, axis=0), columns=masterLookup.columns)
+# Duplicate each row 12 times, for each year
+masterLookup = pd.DataFrame(np.repeat(masterLookup.values, 12, axis=0), columns=masterLookup.columns)
 # Add the ID column ranging from 0 to 9 for each group of repeated rows
-masterLookup['daysGroup'] = np.tile(np.arange(11), 8880)
+masterLookup['daysGroup'] = np.tile(np.arange(12), 8880)
 
 
 
