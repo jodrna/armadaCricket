@@ -1,8 +1,16 @@
 import pandas as pd
 import numpy as np
 from scipy.optimize import least_squares
-from batFunctions import qualityMethodBins, newMethodBins, buildRunRatingsOriginal, buildRunRatingsMapOne, buildRunRatingsMapTwo, buildRunRatingsMapPriority, buildWktRatingsMapPriority, buildWktRatingsOriginal
+from batFunctions import qualityMethodBins, newMethodBins, buildRunRatings, buildWktRatings
 from paths import PROJECT_ROOT
+
+
+# -------------------------
+# Configure
+# -------------------------
+model_name = 'jungle'     # jungle / rasoi
+target = 'runs'           # runs / wkts
+mode = 'optimise'         # test / optimise
 
 
 # -------------------------
@@ -11,7 +19,8 @@ from paths import PROJECT_ROOT
 bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombinedClean.csv', parse_dates=['date', 'dob'])
 n2h_factors = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batN2HFactors.csv')[['nationality', 'host_2', 'host', 'run_factor', 'wkt_factor']]
 n2h_grad = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batN2HFactorsGradient.csv').rename(columns={'balls_faced_host_mean_y': 'balls_faced_host'})
-current_ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle3.csv')
+current_ratings_path = PROJECT_ROOT / f"men/playerRatings/batT20Mens/outputs/batRatings{model_name.capitalize()}3.csv"
+current_ratings = pd.read_csv(current_ratings_path)
 bat_weightings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batWeightings.csv')
 
 
@@ -69,12 +78,12 @@ lookbacks_player = lookbacks_player.merge(n2h_factors_2.loc[:, ['nationality', '
 # if the matchup does not exist in n2h we set a value of 1 when home, for away we set 0.9882 for runs and 1.0146 for wkts
 home_pred = lookbacks_player['H/A_competition'] == 'Home'
 home_hist = lookbacks_player['H/A_competition_2'] == 'Home'
-m = lookbacks_player['run_factor'].isna();    lookbacks_player.loc[m, 'run_factor']    = np.where(home_pred[m], 1, 0.9882)
-m = lookbacks_player['run_factor_2'].isna();  lookbacks_player.loc[m, 'run_factor_2']  = np.where(home_hist[m], 1, 0.9882)
-m = lookbacks_player['wkt_factor'].isna();    lookbacks_player.loc[m, 'wkt_factor']    = np.where(home_pred[m], 1, 1.0146)
-m = lookbacks_player['wkt_factor_2'].isna();  lookbacks_player.loc[m, 'wkt_factor_2']  = np.where(home_hist[m], 1, 1.0146)
+m = lookbacks_player['run_factor'].isna(); lookbacks_player.loc[m, 'run_factor'] = np.where(home_pred[m], 1, 0.9882)
+m = lookbacks_player['run_factor_2'].isna(); lookbacks_player.loc[m, 'run_factor_2'] = np.where(home_hist[m], 1, 0.9882)
+m = lookbacks_player['wkt_factor'].isna(); lookbacks_player.loc[m, 'wkt_factor'] = np.where(home_pred[m], 1, 1.0146)
+m = lookbacks_player['wkt_factor_2'].isna(); lookbacks_player.loc[m, 'wkt_factor_2'] = np.where(home_hist[m], 1, 1.0146)
 
-# Experience smoothing (apply only when away), first adjust the y games
+# experience smoothing (apply only when away), first adjust the y games
 lookbacks_player = lookbacks_player.merge(n2h_grad, on='balls_faced_host', how='left')
 away_pred = lookbacks_player['H/A_competition'] == 'Away'
 lookbacks_player.loc[away_pred, 'run_factor'] = lookbacks_player.loc[away_pred, 'run_factor'] * lookbacks_player.loc[away_pred, 'run_factor_smooth']
@@ -93,20 +102,12 @@ lookbacks_player['adj_realexpwbat'] = lookbacks_player['realexpwbat_2'] / (lookb
 
 
 # -------------------------
-# Merge current outputs into row-level bat_data (for binning / error measurement)
-# -------------------------
-bat_data = bat_data.merge(current_ratings.loc[:, ['playerid', 'matchid', 'run_rating_3', 'wkt_rating_3', 'host', 'competition']], on=['playerid', 'matchid', 'host', 'competition'], how='left')
-bat_data = bat_data[(bat_data['competition'] != 'ODI') & (bat_data['balls_faced'] > 0)].dropna(subset=['run_rating_3', 'wkt_rating_3'])
-
-
-# -------------------------
-# Tables for inspection
+# Tables for debugging
 # -------------------------
 ratingsOuter = []
 pivotOuter = []
 bat_dataOuter = []
 lookbacksOuter = []
-opt_history = pd.DataFrame(columns=['rmse', 'sse_mean', 'sse_total', 'param0', 'param1', 'param2', 'param3', 'param4', 'param5', 'param6', 'param7', 'param8', 'param9'])
 
 
 def optimise_params(param, lookbacks_player, build_fn, rating_col, exp_col, actual_col, weight_curve_col, out_pred_col, bin_col='binid'):
@@ -141,48 +142,51 @@ def optimise_params(param, lookbacks_player, build_fn, rating_col, exp_col, actu
     bat_dataOuter.clear(); bat_dataOuter.append(bat_data_i)
     lookbacksOuter.clear(); lookbacksOuter.append(lookbacks_i)
 
-    row = {'rmse': rmse, 'sse_mean': sse_mean, 'sse_total': sse_total, **{f'param{i}': float(p) for i, p in enumerate(param)}}
+    row = {'rmse': rmse, 'sse_mean': sse_mean, 'sse_total': sse_total, **{param_names[i]: float(p) for i, p in enumerate(param)}}
     opt_history.loc[len(opt_history)] = row
 
     return residual
 
 
+# -------------------------
+# Target config
+# -------------------------
+target_cfg = {
+    'runs': {
+        'build_fn': buildRunRatings,
+         'rating_col': 'run_rating',
+         'rating_col_3': 'run_rating_3',
+         'exp_col': 'realexprbat',
+         'actual_col': 'runs',
+         'weight_curve_col': 'runs_weight_curve',
+         'out_pred_col': 'runs_pred'
+         },
+    'wkts': {
+        'build_fn': buildWktRatings,
+        'rating_col': 'wkt_rating',
+        'rating_col_3': 'wkt_rating_3',
+        'exp_col': 'realexpwbat',
+        'actual_col': 'wkt',
+        'weight_curve_col': 'wkts_weight_curve',
+        'out_pred_col': 'wkts_pred'
+    }
+}
 
+build_fn = target_cfg[target]['build_fn']
+rating_col = target_cfg[target]['rating_col']
+rating_col_3 = target_cfg[target]['rating_col_3']
+exp_col = target_cfg[target]['exp_col']
+actual_col = target_cfg[target]['actual_col']
+weight_curve_col = target_cfg[target]['weight_curve_col']
+out_pred_col = target_cfg[target]['out_pred_col']
 
 
 # -------------------------
-# Params (dict -> list(values) to match the other script)
+# Params
 # -------------------------
-# # params optimised for runs using quality grouping
-# param0_dict = {
-#             't': 14.378529018603198,
-#             'cd': 7.216926617554105,
-#             'ci': 12.707149487260645,
-#             't20': 7.329201869901505,
-#             'odi2': 2.3432102672470165,
-#             'odi1': 1.0475674672311073,
-#             'dh': 0.9436118924235586,
-#             'h': 1.0014649111276281,
-#             'r': 1.2825266178392976,
-#             'k': 0.0005820512705756658
-#         }
-
-# # params optimised for wkts using quality grouping
-# param0_dict =  {
-#             't': 3.41440778574228,
-#             'cd': 3.8550667414475166,
-#             'ci': 3.173504179099174,
-#             't20': 2.8307723622651193,
-#             'odi2': 1.768518342724164,
-#             'odi1': 1.8861942674443977,
-#             'dh': 0.9999987012055916,
-#             'h': 1.0424860935622535,
-#             'r': 1.000036085364987,
-#             'k': 0.0005218027196937207
-#         }
-
-# params optimised for runs using innings grouping
-param0_dict = {
+params = {
+    'jungle': {
+        'runs': {
             't': 19.999999999996337,
             'cd': 12.703358637592292,
             'ci': 17.706963771657964,
@@ -193,61 +197,103 @@ param0_dict = {
             'h': 1.000000000000151,
             'r': 1.5560721081512878,
             'k': 0.0007808593485848481
+        },
+        'wkts': {
+            't': 10.665839292300744,
+            'cd': 19.69562611112414,
+            'ci': 7.303091969673036,
+            't20': 8.71748836667601,
+            'odi2': 1.0000000000012472,
+            'odi1': 5.143348793195919,
+            'dh': 0.996138316983375,
+            'h': 1.2366377661922816,
+            'r': 1.0049889542275614,
+            'k': 0.0008133348754199519
         }
+    },
+    'rasoi': {
+        'runs': {
+            't': 14.378529018603198,
+            'cd': 7.216926617554105,
+            'ci': 12.707149487260645,
+            't20': 7.329201869901505,
+            'odi2': 2.3432102672470165,
+            'odi1': 1.0475674672311073,
+            'dh': 0.9436118924235586,
+            'h': 1.0014649111276281,
+            'r': 1.2825266178392976,
+            'k': 0.0005820512705756658
+        },
+        'wkts': {
+            't': 3.41440778574228,
+            'cd': 3.8550667414475166,
+            'ci': 3.173504179099174,
+            't20': 2.8307723622651193,
+            'odi2': 1.768518342724164,
+            'odi1': 1.8861942674443977,
+            'dh': 0.9999987012055916,
+            'h': 1.0424860935622535,
+            'r': 1.000036085364987,
+            'k': 0.0005218027196937207
+        }
+    }
+}
 
-# # params optimised for wkts using innings grouping
-# param0_dict = {
-#             't': 10.665839292300744,
-#             'cd': 19.69562611112414,
-#             'ci': 7.303091969673036,
-#             't20': 8.71748836667601,
-#             'odi2': 1.0000000000012472,
-#             'odi1': 5.143348793195919,
-#             'dh': 0.996138316983375,
-#             'h': 1.2366377661922816,
-#             'r': 1.0049889542275614,
-#             'k': 0.0008133348754199519
-#         }
-
+param0_dict = params[model_name][target]
+param_names = list(param0_dict.keys())
 param0 = list(param0_dict.values())
+opt_history = pd.DataFrame(columns=['rmse', 'sse_mean', 'sse_total'] + param_names)
 
 
 # -------------------------
-# Bounds (unchanged)
+# Bounds
 # -------------------------
 lower_dict = {'t': 1, 'cd': 1, 'ci': 1, 't20': 1, 'odi2': 1, 'odi1': 1, 'dh': 0, 'h': 1, 'r': 1, 'k': 0}
 upper_dict = {'t': 20, 'cd': 20, 'ci': 20, 't20': 20, 'odi2': 20, 'odi1': 20, 'dh': 1, 'h': 20, 'r': 20, 'k': 0.01}
-lower = list(lower_dict.values()); upper = list(upper_dict.values())
+
+lower = list(lower_dict.values())
+upper = list(upper_dict.values())
 
 
 # -------------------------
-# Choose grouping method (bins)
+# Choose grouping method, jungle = quality, rasoi = innings bins
 # -------------------------
-# bat_data = qualityMethodBins(bat_data, bin_size=40, rating_col='wkt_rating_3', out_col='binid')
-bat_data = newMethodBins(bat_data)
+if model_name == 'jungle':
+    bat_data = qualityMethodBins(bat_data, bin_size=40, rating_col=rating_col_3, out_col='binid')
+
+else:
+    bat_data = bat_data.merge(current_ratings.loc[:, ['playerid', 'matchid', 'host', 'competition', rating_col_3]], on=['playerid', 'matchid', 'host', 'competition'], how='left')
+    bat_data = bat_data[(bat_data['competition'] != 'ODI') & (bat_data['balls_faced'] > 0)].dropna(subset=[rating_col_3])
+    bat_data = newMethodBins(bat_data, bin_size=40, rating_col=rating_col_3, out_col='binid')
 
 
 # -------------------------
 # Optimiser config + objective
 # -------------------------
-cfg = dict(lookbacks_player=lookbacks_player,
-           build_fn=buildRunRatingsMapPriority,
-           rating_col='run_rating',
-           exp_col='realexprbat',
-           actual_col='runs',
-           weight_curve_col='runs_weight_curve',
-           out_pred_col='runs_pred',
-           bin_col='binid')
-obj_fn = lambda p: optimise_params(p, **cfg)
+optimiser_cfg = dict(
+    lookbacks_player=lookbacks_player,
+    build_fn=build_fn,
+    rating_col=rating_col,
+    exp_col=exp_col,
+    actual_col=actual_col,
+    weight_curve_col=weight_curve_col,
+    out_pred_col=out_pred_col,
+    bin_col='binid'
+)
+
+obj_fn = lambda p: optimise_params(p, **optimiser_cfg)
 
 
 # -------------------------
-# Optimisation
+# Optimisation/Testing
 # -------------------------
-optimise = least_squares(obj_fn, param0, ftol=1e-5, bounds=(lower, upper))
+if mode == 'optimise':
+    result = least_squares(obj_fn, param0, ftol=1e-5, bounds=(lower, upper))
 
+    print('{')
+    for name, value in zip(param_names, result.x):
+        print(f"    '{name}': {value:.9f},")
+    print('}')
 
-# -------------------------
-# Test evaluation of params
-# -------------------------
-# test = obj_fn(param0)
+else:
+    obj_fn(param0)

@@ -157,3 +157,15 @@ print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalIn
 # export
 masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/4_masterLookup_w.csv', index=False)
 
+
+
+simData = simData[[
+    'simID',
+    'inningBallNumber',
+    'totalInningWickets',
+    'totalInningRunsToCome',
+    'sample'
+]]
+
+simData.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/simDataSmall.csv', index=False)
+

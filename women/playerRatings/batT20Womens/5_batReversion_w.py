@@ -181,9 +181,9 @@ for x in np.arange(0, 2, 1):
     batter_names = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/batDataCombinedClean_w.csv', parse_dates=['date']).loc[:, ['playerid', 'batsman']].drop_duplicates()
     sql_upload = sql_upload.merge(batter_names, how='left', left_on=['playerid'], right_on=['playerid'])
 
-    sql_upload = sql_upload.loc[:, ['batsman_y', 'playerid', 'host', 'ord_r', 'balls_faced_r', 'run_rating', 'wkt_rating', 'competition', 'rep_run_weight', 'run_rating_3', 'rep_wkt_weight', 'wkt_rating_3']]
+    sql_upload = sql_upload.loc[:, ['last_match_date', 'batsman_y', 'playerid', 'host', 'ord_r', 'balls_faced_r', 'run_rating', 'wkt_rating', 'competition', 'rep_run_weight', 'run_rating_3', 'rep_wkt_weight', 'wkt_rating_3']]
     sql_upload.insert(sql_upload.columns.get_loc("wkt_rating") + 1, 'external_rating', 28)
-    sql_upload.columns = ['batter', 'playerid', 'host', 'order', 'balls_faced', 'run_rating', 'wkt_rating', 'external_rating', 'competition', 'rep_run_weight', 'run_rating_2', 'rep_wkt_weight', 'wkt_rating_2']
+    sql_upload.columns = ['last_match_date', 'batter', 'playerid', 'host', 'order', 'balls_faced', 'run_rating', 'wkt_rating', 'external_rating', 'competition', 'rep_run_weight', 'run_rating_2', 'rep_wkt_weight', 'wkt_rating_2']
 
     # -------------------------
     # Exports

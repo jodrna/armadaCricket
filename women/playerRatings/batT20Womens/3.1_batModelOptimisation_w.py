@@ -101,7 +101,6 @@ lookbacks_player['adj_realexprbat'] = lookbacks_player['realexprbat_2'] / (lookb
 lookbacks_player['adj_realexpwbat'] = lookbacks_player['realexpwbat_2'] / (lookbacks_player['wkt_factor'] / lookbacks_player['wkt_factor_2'])
 
 
-
 # -------------------------
 # Tables for debugging
 # -------------------------
@@ -147,9 +146,6 @@ def optimise_params(param, lookbacks_player, build_fn, rating_col, exp_col, actu
     opt_history.loc[len(opt_history)] = row
 
     return residual
-
-
-
 
 
 # -------------------------
@@ -260,7 +256,7 @@ upper = list(upper_dict.values())
 
 
 # -------------------------
-# Choose grouping method, jungle = new, rasoi = quality, also merge in current ratings to decide bins
+# Choose grouping method, jungle = quality, rasoi = new, also merge in current ratings to decide bins
 # -------------------------
 if model_name == 'jungle':
     bat_data = qualityMethodBins(bat_data)
@@ -269,9 +265,6 @@ else:
     bat_data = bat_data.merge(current_ratings.loc[:, ['playerid', 'matchid', 'host', 'competition', rating_col_3]], on=['playerid', 'matchid', 'host', 'competition'], how='left')
     bat_data = bat_data[(bat_data['competition'] != 'ODI') & (bat_data['balls_faced'] > 0)].dropna(subset=[rating_col_3])
     bat_data = newMethodBins(bat_data, bin_size=40, rating_col=rating_col_3, out_col='binid')
-
-
-
 
 
 # -------------------------
@@ -289,7 +282,6 @@ optimiser_cfg = dict(
 )
 
 obj_fn = lambda p: optimise_params(p, **optimiser_cfg)
-
 
 
 # -------------------------

@@ -29,7 +29,6 @@ bat_weightings = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/au
 # Test one batsman
 # -------------------------
 # bat_data = bat_data[(bat_data['batsman'] == 'Alana King')]
-# bat_data = bat_data[(bat_data['playerid'] == 489889)]
 
 
 # -------------------------
