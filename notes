@@ -1,27 +1,18 @@
 MAIN
-1. get mens bat/bowl same level as womens ratings
-    rep values for men
-    bat model for men
+1. player ratings
     error analysis
-    debug for men batters/men bowlers
-    ensure consistency across all ratings code, should match womens
-
-    womens batters future;
-        error analysis
-        srilanka vs sri lanka
-
-
-
-2. first innings match market, balls remaining, wickets lost, eff target
+    can we merge some men's and women's code
+2. would be good to see the first innings match market stuff now all the adjusted RA_sum is fixed and working ok. You'd just need to rerun the get and clean data files first
 3. fix data get and clean process, first of all clean sql (script 1), then download sql (script 2), then clean that and adjust (Script 3), currently its 4 scripts, with duplication
     done I believe
-
+4. ball tracking IPL data
 
 
 from Will:
 1. adjusted second inns match market for women, same as you did for men (data on the way)
 2. adjusted first inns match market for women, the thing you're currently doing for men
 3. the by year adjust for inruns we did for men in 5_runsToComeYearModel_w.py (which handled br and wickets lost better) needs doing for women as well
+
 
 Other projects
 # ipl pitch data continues
