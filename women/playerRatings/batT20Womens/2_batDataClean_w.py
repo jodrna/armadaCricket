@@ -104,7 +104,7 @@ active_hosts['date'] = active_hosts['date'].dt.normalize()
 
 active = active.merge(active_hosts, how='left', on='date')
 
-active['battingteam'] = np.where(active['competition'] == 'T20I', active['nationality'], np.nan)
+active['battingteam'] = np.where(active['competition'] == 'WT20I', active['nationality'], np.nan)
 
 top_nations = {"Australia", "England", "India", "New Zealand", "South Africa"}
 active.loc[(active["competition"] == "T20I") & (~active["nationality"].isin(top_nations)), "competition"] = "tier_2"
@@ -130,8 +130,8 @@ bat_data.insert(bat_data.columns.get_loc("home_region") + 1, 'H/A_country', np.w
 bat_data.insert(bat_data.columns.get_loc("home_region") + 1, 'H/A_competition', np.where(bat_data['nationality'] == bat_data['host'], 'Home', 'Away'))
 
 
-bat_data['ipl_t20i'] = np.where((bat_data['competition'] == 'Indian Premier League') | (bat_data['competition'] == 'T20I'), 1, 0)
-bat_data['home_league'] = np.where((bat_data['H/A_competition'] == 'Home') & (bat_data['competition'] != 'T20I'), 1, 0)
+bat_data['ipl_t20i'] = np.where((bat_data['competition'] == 'Indian Premier League') | (bat_data['competition'] == 'WT20I'), 1, 0)
+bat_data['home_league'] = np.where((bat_data['H/A_competition'] == 'Home') & (bat_data['competition'] != 'WT20I'), 1, 0)
 
 
 # -------------------------

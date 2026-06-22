@@ -368,7 +368,7 @@ def build_rating_debug_tables(debug_config, ratings, lookbacks_player_r, lookbac
     comp_summary = comp_summary.rename(columns={'competition_2': 'competition', 'host_2': 'host'})
     comp_summary = comp_summary.sort_values('rating_share', ascending=False).reset_index(drop=True)
     comp_summary = comp_summary[['competition', 'host', 'innings', 'balls_faced', 'runs', 'xruns', 'rating', 'location_weight', 'recency_weight', 'effective_multiplier', 'effective_balls', 'weighted_rating', 'rating_share']]
-    comp_summary = comp_summary[~((comp_summary['rating_share'] < 0.01) & (comp_summary['balls_faced'] < 100))].reset_index(drop=True)
+    comp_summary = comp_summary[comp_summary['rating_share'] > 0.01].reset_index(drop=True)
 
     debug_lookbacks['recency'] = pd.cut(
         debug_lookbacks['days_ago'],

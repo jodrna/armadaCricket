@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
-from bowlFunctions import buildRunRatingsOriginal, buildWktRatingsOriginal
+from bowlFunctions import buildRunRatingsOriginal, buildWktRatingsOriginal, build_rating_debug_tables
 from paths import PROJECT_ROOT
+DEBUG_CONFIG = globals().get('DEBUG_CONFIG', None)
+BOWL_MODEL_DEBUG_TABLES = None
 
 
 # -------------------------
@@ -36,7 +38,7 @@ bowl_data['wkts_weight_curve'] = bowl_data['wkts_weight_curve'].fillna(1)
 # -------------------------
 # Build innings table (includes dummy innings)
 # -------------------------
-innings_info = bowl_data.loc[:, ['date', 'matchid', 'playerid', 'bowler', 'bowlertype_1', 'bowlertype_2', 'bowler_arm', 'bowler_pace', 'nationality', 'competition', 'host', 'host_region', 'balls_bowled_career', 'balls_bowled_host']].drop_duplicates(['matchid', 'playerid', 'date', 'host', 'competition', 'bowlertype_2'])
+innings_info = bowl_data.loc[:, ['date', 'matchid', 'playerid', 'bowler', 'bowlertype_1', 'bowlertype_2', 'bowlertype_3', 'nationality', 'competition', 'host', 'host_region', 'balls_bowled_career', 'balls_bowled_host']].drop_duplicates(['matchid', 'playerid', 'date', 'host', 'competition', 'bowlertype_2'])
 
 innings_perf = (
     pd.pivot_table(
@@ -51,8 +53,7 @@ innings_perf = (
 innings = innings_info.merge(
     innings_perf,
     how='left',
-    left_on=['date', 'matchid', 'playerid', 'competition', 'host'],
-    right_on=['date', 'matchid', 'playerid', 'competition', 'host']
+    on=['date', 'matchid', 'playerid', 'competition', 'host']
 )
 
 
@@ -118,85 +119,75 @@ for x in np.arange(0, 2, 1):
     # Params
     # -------------------------
     if x == 0:
+        model_name = 'jungle'
         param_r = {
-            # seam
             'k_sm': 0.0005008276228889989,
             'c_sm': 7.29840353607683,
+            't20_sm': 7.7372167697739265,
+            'odi2_sm': 2.4294379752824353,
+            'odi1_sm': 1.446303641838873,
             'h_sm': 1.0114692993691115,
             'r_sm': 1.043945731972048,
-            't20_sm': 7.7372167697739265,
-            'odi1_sm': 1.446303641838873,
-            'odi2_sm': 2.4294379752824353,
-
-            # spin
             'k_s': 0.00027871471614363506,
             'c_s': 14.923183476220958,
-            'h_s': 1.1267633615674064,
-            'r_s': 1.2521822101207563,
             't20_s': 14.603647049760088,
+            'odi2_s': 1.7957572339991006,
             'odi1_s': 1.5553567852506576,
-            'odi2_s': 1.7957572339991006
+            'h_s': 1.1267633615674064,
+            'r_s': 1.2521822101207563
         }
 
         param_w = {
-            # seam
             'k_sm': 1.42331275124588E-05,
             'c_sm': 3.47533966945173,
+            't20_sm': 1.56008026180969,
+            'odi2_sm': 1.0012817205809,
+            'odi1_sm': 3.37376205521305,
             'h_sm': 1.03595437463297,
             'r_sm': 1,
-            't20_sm': 1.56008026180969,
-            'odi1_sm': 3.37376205521305,
-            'odi2_sm': 1.0012817205809,
-
-            # spin
             'k_s': 1.34260736114398E-37,
             'c_s': 1.9041603982315,
-            'h_s': 1.58142850948847,
-            'r_s': 1,
             't20_s': 1.01955708661337,
+            'odi2_s': 7.34490267562728,
             'odi1_s': 3.45421466548782,
-            'odi2_s': 7.34490267562728
+            'h_s': 1.58142850948847,
+            'r_s': 1
         }
 
     else:
+        model_name = 'rasoi'
         param_r = {
-            # seam
             'k_sm': 0.0011382609267270565,
             'c_sm': 16.953378400432086,
+            't20_sm': 12.177669532266274,
+            'odi2_sm': 5.744193498143377,
+            'odi1_sm': 1.1590533206158844,
             'h_sm': 1.2710488606389592,
             'r_sm': 1.6768547749481717,
-            't20_sm': 12.177669532266274,
-            'odi1_sm': 1.1590533206158844,
-            'odi2_sm': 5.744193498143377,
-
-            # spin
             'k_s': 0.0005191664823675481,
             'c_s': 14.48415344195518,
-            'h_s': 1.0000010236429717,
-            'r_s': 1.0000000000000002,
             't20_s': 9.182168920911959,
+            'odi2_s': 1.430452173375036,
             'odi1_s': 3.3650636465902326,
-            'odi2_s': 1.430452173375036
+            'h_s': 1.0000010236429717,
+            'r_s': 1.0000000000000002
         }
 
         param_w = {
-            # seam
             'k_sm': 0.000454733281725276,
             'c_sm': 19.9999999999999,
+            't20_sm': 8.9818576218138,
+            'odi2_sm': 1,
+            'odi1_sm': 5.36104365455827,
             'h_sm': 1,
             'r_sm': 1,
-            't20_sm': 8.9818576218138,
-            'odi1_sm': 5.36104365455827,
-            'odi2_sm': 1,
-
-            # spin
             'k_s': 0.000568710279419475,
             'c_s': 19.9999995896568,
-            'h_s': 1.40063771403683,
-            'r_s': 1.53738619957142,
             't20_s': 4.34771795586107,
+            'odi2_s': 1,
             'odi1_s': 9.20359746630065,
-            'odi2_s': 1
+            'h_s': 1.40063771403683,
+            'r_s': 1.53738619957142
         }
 
     # -------------------------
@@ -205,6 +196,12 @@ for x in np.arange(0, 2, 1):
     ratings_player_r, lookbacks_player_r = buildRunRatingsOriginal(param_r, lookbacks_player)
     ratings_player_w, lookbacks_player_w = buildWktRatingsOriginal(param_w, lookbacks_player)
     bowl_data_t20 = bowl_data[bowl_data['format'] == 't20'].copy()
+
+    # -------------------------
+    # Drop duplicate same-day ratings before merging
+    # -------------------------
+    ratings_player_r = ratings_player_r.drop_duplicates(subset=['date', 'playerid', 'bowler', 'host', 'competition'])
+    ratings_player_w = ratings_player_w.drop_duplicates(subset=['date', 'playerid', 'bowler', 'host', 'competition'])
 
     # -------------------------
     # Merge run + wkt outputs
@@ -218,22 +215,13 @@ for x in np.arange(0, 2, 1):
     )
 
     # -------------------------
-    # Ratings info merge
-    # -------------------------
-    ratings_player = ratings_player.merge(
-        bowl_data_t20.loc[:, ['date', 'matchid', 'battingteam', 'playerid', 'bowler', 'bowlertype_2', 'bowler_arm', 'bowler_pace', 'bowler_level', 'ballspermatch', 'age', 'nationality', 'home_region', 'host', 'host_region', 'H/A_competition', 'H/A_country', 'H/A_region', 'competition', 'overseas_pct']].drop_duplicates(),
-        how='outer',
-        on=['date', 'playerid', 'bowler', 'host', 'competition']
-    )
-
-    # -------------------------
     # Innings performance merge
     # -------------------------
     innings_perf_out = (
         pd.pivot_table(
             bowl_data_t20,
             values=['balls_bowled', 'balls_bowled_career', 'balls_bowled_host', 'runs', 'wkt', 'realexprbowl', 'realexpwbowl'],
-            index=['date', 'playerid', 'bowler', 'host', 'competition'],
+            index=['date', 'matchid', 'playerid', 'bowler', 'host', 'competition'],
             aggfunc={
                 'balls_bowled': 'sum',
                 'balls_bowled_career': 'min',
@@ -251,13 +239,34 @@ for x in np.arange(0, 2, 1):
     innings_perf_out['i_wkt_ratio'] = innings_perf_out['wkt'] / innings_perf_out['realexpwbowl']
 
     # -------------------------
+    # Ratings info merge
+    # -------------------------
+    ratings_info = bowl_data_t20.loc[:, [
+        'date', 'matchid', 'battingteam', 'playerid', 'bowler', 'bowlertype_1',
+        'bowlertype_2', 'bowlertype_3', 'bowler_level', 'ballspermatch', 'age',
+        'nationality', 'home_region', 'host', 'host_region', 'H/A_competition',
+        'H/A_country', 'H/A_region', 'competition', 'overseas_pct'
+    ]].drop_duplicates(['date', 'matchid', 'playerid', 'bowler', 'host', 'competition'])
+
+    # -------------------------
     # Final outputs table
     # -------------------------
-    ratings = innings_perf_out.merge(ratings_player, how='outer', on=['date', 'playerid', 'bowler', 'host', 'competition'])
+    ratings = innings_perf_out.merge(
+        ratings_info,
+        how='left',
+        on=['date', 'matchid', 'playerid', 'bowler', 'host', 'competition']
+    )
+
+    ratings = ratings.merge(
+        ratings_player,
+        how='left',
+        on=['date', 'playerid', 'bowler', 'host', 'competition']
+    )
+
     ratings = ratings[~ratings['competition'].isin(['ODI1', 'ODI2'])]
 
     ratings = ratings.loc[:, [
-        'date', 'matchid', 'battingteam', 'playerid', 'bowler', 'bowlertype_2', 'bowler_arm', 'bowler_pace', 'bowler_level', 'ballspermatch', 'age',
+        'date', 'matchid', 'battingteam', 'playerid', 'bowler', 'bowlertype_1', 'bowlertype_2', 'bowlertype_3', 'bowler_level', 'ballspermatch', 'age',
         'nationality', 'home_region', 'host', 'host_region', 'H/A_competition', 'H/A_country', 'H/A_region', 'competition', 'balls_bowled_career',
         'balls_bowled_host', 'overseas_pct', 'balls_bowled_2_r', 'ord_2_r', 'z_run_ratio', 'run_rating_0', 'run_rating', 'balls_bowled_2_w',
         'ord_2_w', 'z_wkt_ratio', 'wkt_rating_0', 'wkt_rating', 'balls_bowled', 'realexprbowl', 'runs', 'i_run_ratio', 'realexpwbowl', 'wkt', 'i_wkt_ratio'
@@ -281,6 +290,17 @@ for x in np.arange(0, 2, 1):
     ratings['wkt_rating'] = ratings['wkt_rating'].fillna(1)
 
     # -------------------------
+    # Debug
+    # -------------------------
+    if DEBUG_CONFIG is not None and DEBUG_CONFIG['model'] == model_name:
+        BOWL_MODEL_DEBUG_TABLES = build_rating_debug_tables(
+            DEBUG_CONFIG,
+            ratings,
+            lookbacks_player_r,
+            lookbacks_player_w
+        )
+
+    # -------------------------
     # Exports
     # -------------------------
     if x == 0:
@@ -290,7 +310,7 @@ for x in np.arange(0, 2, 1):
         recencies_r = recencies_r.merge(recencies_t, how='left', on=['playerid'])
         recencies_r['recency_weight_bbb_runs'] = recencies_r['recency_weight_match_sum_x'] / recencies_r['recency_weight_match_sum_y'] / recencies_r['balls_bowled_2']
 
-        recencies_w = lookbacks_player_w[((lookbacks_player_r['competition'] == 'T20I') | (lookbacks_player_r['competition'] == 'tier_2')) & (lookbacks_player_w['host'] == 'West Indies') & (lookbacks_player_w['date'] == lookbacks_player_r['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_bowled_2']]
+        recencies_w = lookbacks_player_w[((lookbacks_player_w['competition'] == 'T20I') | (lookbacks_player_w['competition'] == 'tier_2')) & (lookbacks_player_w['host'] == 'West Indies') & (lookbacks_player_w['date'] == lookbacks_player_w['date'].max())].loc[:, ['playerid', 'matchid_2', 'recency_weight', 'balls_bowled_2']]
         recencies_w['recency_weight_match_sum'] = recencies_w['recency_weight'] * recencies_w['balls_bowled_2']
         recencies_t = pd.pivot_table(recencies_w, index=['playerid'], values=['recency_weight_match_sum'], aggfunc='sum').reset_index()
         recencies_w = recencies_w.merge(recencies_t, how='left', on=['playerid'])

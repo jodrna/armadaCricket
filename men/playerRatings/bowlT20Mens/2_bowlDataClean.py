@@ -143,35 +143,45 @@ bowler_type_2 = {'Left-arm fast': 'seam',
                 'Right-arm bowler': 'seam',
                 'legbreak': 'w_spin'}
 
-bowler_arm = {'Left-arm fast': 'left_seam',
-                'Left-arm fast-medium': 'left_seam',
-                'Left-arm medium': 'left_seam',
-                'Left-arm medium-fast': 'left_seam',
-                'Left-arm slow': 'left_f_spin',
-                'Right-arm fast': 'right_seam',
-                'Right-arm fast-medium': 'right_seam',
-                'Right-arm medium': 'right_seam',
-                'Right-arm medium-fast': 'right_seam',
-                'Right-arm offbreak': 'right_w_spin',
-                'Right-arm slow': 'right_f_spin',
-                'Right-arm slow-medium': 'right_seam',
-                'Slow left-arm chinaman': 'left_w_spin',
-                'Slow left-arm orthodox': 'left_f_spin',
-                'Slow left-arm unorthodox': 'left_w_spin',
-              'Left Orthodox': 'left_f_spin',
-              'Left Pace': 'left_seam',
-              'Left Seam': 'left_seam',
-              'Left Unorthodox': 'left_w_spin',
-              'Left-arm slow-medium': 'left_f_spin',
-              'Right arm Offbreak': 'right_w_spin',
-              'Right Legspin': 'right_w_spin',
-              'Right Offspin': 'right_f_spin',
-              'Right Pace': 'right_seam',
-              'Right Seam': 'right_seam',
-              'Right-arm bowler': 'right_seam'}
+bowler_type_3 = {'Left-arm fast': 'left_seam_fast',
+                'Left-arm fast-medium': 'left_seam_fast',
+                'Left-arm medium-fast': 'left_seam_fast',
 
-bowler_pace = {'Right-arm fast': 'fast',
-               'Left-arm fast': 'fast'}
+                'Left-arm medium': 'left_seam',
+                'Left Pace': 'left_seam',
+                'Left Seam': 'left_seam',
+
+                'Right-arm fast': 'right_seam_fast',
+                'Right-arm fast-medium': 'right_seam_fast',
+                'Right-arm medium-fast': 'right_seam_fast',
+
+                'Right-arm medium': 'right_seam',
+                'Right-arm slow-medium': 'right_seam',
+                'Right Pace': 'right_seam',
+                'Right Seam': 'right_seam',
+                'Right-arm bowler': 'right_seam',
+
+                'Left-arm slow': 'left_f_spin',
+                'Slow left-arm orthodox': 'left_f_spin',
+                'Left Orthodox': 'left_f_spin',
+                'Left-arm slow-medium': 'left_f_spin',
+
+                'Right-arm slow': 'right_f_spin',
+                'Right Offspin': 'right_f_spin',
+
+                'Right-arm offbreak': 'right_f_spin',
+                'Right arm Offbreak': 'right_f_spin',
+
+                'Legbreak': 'right_w_spin',
+                'Legbreak googly': 'right_w_spin',
+                'Right Legspin': 'right_w_spin',
+
+                'Slow left-arm chinaman': 'left_w_spin',
+                'Slow left-arm unorthodox': 'left_w_spin',
+                'Left Unorthodox': 'left_w_spin'}
+
+# bowler_pace = {'Right-arm fast': 'fast',
+#                'Left-arm fast': 'fast'}
 
 
 # -------------------------
@@ -188,10 +198,11 @@ bowl_data.insert(bowl_data.columns.get_loc("nationality") + 1, 'home_region', bo
 
 bowl_data = bowl_data.replace({'home_region': regions, 'host_region': regions}).drop(['bowler', 'bowlerid'], axis=1)
 
+# type 1 used in N2H, type 2 usded in ratings, type 3 used in rep values
 bowl_data.insert(bowl_data.columns.get_loc("bowlerstyle") + 1, 'bowlertype_1', bowl_data['bowlerstyle'].replace(bowler_type_1))
-bowl_data.insert(bowl_data.columns.get_loc("bowlerstyle") + 1, 'bowlertype_2', bowl_data['bowlerstyle'].replace(bowler_type_2))
-bowl_data.insert(bowl_data.columns.get_loc("bowlertype_2") + 1, 'bowler_arm', bowl_data['bowlerstyle'].replace(bowler_arm))
-bowl_data.insert(bowl_data.columns.get_loc("bowlertype_2") + 1, 'bowler_pace', bowl_data['bowlerstyle'].replace(bowler_pace))
+bowl_data.insert(bowl_data.columns.get_loc("bowlertype_1") + 1, 'bowlertype_2', bowl_data['bowlerstyle'].replace(bowler_type_2))
+bowl_data.insert(bowl_data.columns.get_loc("bowlertype_2") + 1, 'bowlertype_3', bowl_data['bowlerstyle'].replace(bowler_type_3))
+# bowl_data.insert(bowl_data.columns.get_loc("bowlertype_2") + 1, 'bowler_pace', bowl_data['bowlerstyle'].replace(bowler_pace))
 
 bowl_data.insert(bowl_data.columns.get_loc("battingteam") + 1, 'bowlingteam', np.where(bowl_data['home'] == bowl_data['battingteam'], bowl_data['away'], bowl_data['home']))
 
@@ -204,7 +215,7 @@ bowl_data['bowler'] = np.where(bowl_data['playerid'] == 893955, 'Ollie G Robinso
 # -------------------------
 # Create dummy "today" innings across all major hosts (for current outputs)
 # -------------------------
-active = bowl_data.loc[:, ['bowler', 'playerid', 'nationality', 'home_region', 'dob', 'bowlerstyle', 'bowlertype_1', 'bowlertype_2', 'bowler_arm', 'bowler_pace']].drop_duplicates()
+active = bowl_data.loc[:, ['bowler', 'playerid', 'nationality', 'home_region', 'dob', 'bowlerstyle', 'bowlertype_2', 'bowlertype_3']].drop_duplicates()
 
 active['date'] = pd.to_datetime("today")
 active['date'] = active['date'].dt.normalize()
@@ -306,17 +317,17 @@ bowl_data = bowl_data.drop(labels=['overseas_pct_x', 'overseas_pct_y'], axis=1)
 # -------------------------
 # Bowler type sanity checks
 # -------------------------
-error_check = bowl_data.copy()
-error_check = error_check.loc[:, ['bowler', 'bowlertype_2']]
-
-error_check = error_check[(error_check['bowlertype_2'] != 'seam') & (error_check['bowlertype_2'] != 'f_spin') & (error_check['bowlertype_2'] != 'w_spin')]
-
-bowler_errors = error_check['bowler'].unique()
-print(bowler_errors)
-
-types = error_check.drop_duplicates(subset=['bowler', 'bowlertype_2'])
-
-types2 = pd.pivot_table(bowl_data, values=['date'], index=['bowlertype_2', 'bowlerstyle', 'bowler_pace', 'bowler_arm'], aggfunc='count').reset_index()
+# error_check = bowl_data.copy()
+# error_check = error_check.loc[:, ['bowler', 'bowlertype_2']]
+#
+# error_check = error_check[(error_check['bowlertype_2'] != 'seam') & (error_check['bowlertype_2'] != 'f_spin') & (error_check['bowlertype_2'] != 'w_spin')]
+#
+# bowler_errors = error_check['bowler'].unique()
+# print(bowler_errors)
+#
+# types = error_check.drop_duplicates(subset=['bowler', 'bowlertype_2'])
+#
+# types2 = pd.pivot_table(bowl_data, values=['date'], index=['bowlertype_2', 'bowlerstyle', 'bowler_pace', 'bowler_arm'], aggfunc='count').reset_index()
 
 
 # -------------------------

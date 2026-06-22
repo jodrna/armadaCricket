@@ -169,7 +169,6 @@ bowler_arm = {'Left-arm fast': 'left_seam',
               'Left Orthodox': 'left_f_spin',
               'Legbreak': 'right_w_spin',
               'Legbreak googly': 'right_w_spin',
-
               'Left Pace': 'left_seam',
               'Left Seam': 'left_seam',
               'Left Unorthodox': 'left_w_spin',

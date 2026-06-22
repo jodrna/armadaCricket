@@ -276,4 +276,7 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/bowlT20Womens/outputs/bowlRatingsRasoi2_w.csv', index=False)
 
 
+print(np.mean(bowl_data['run_sqe']))
+print(np.mean(bowl_data['wkt_sqe']))
+
 
