@@ -42,7 +42,7 @@ bowl_data['wkts_weight_curve'] = bowl_data['wkts_weight_curve'].fillna(1)
 # -------------------------
 innings_info = bowl_data.loc[:, [
     'date', 'matchid', 'playerid', 'bowler', 'bowlertype_1', 'bowlertype_2',
-    'bowler_arm', 'bowler_pace', 'nationality', 'competition', 'host',
+    'bowlertype_3', 'nationality', 'competition', 'host',
     'host_region', 'balls_bowled_career', 'balls_bowled_host'
 ]].drop_duplicates(['matchid', 'playerid', 'date', 'host', 'competition', 'bowlertype_2'])
 
@@ -231,8 +231,8 @@ for x in np.arange(0, 2, 1):
     innings_perf_out['i_wkt_ratio'] = innings_perf_out['wkt'] / innings_perf_out['realexpwbowl']
 
     ratings_info = bowl_data_t20.loc[:, [
-        'date', 'matchid', 'battingteam', 'playerid', 'bowler', 'bowlertype_2',
-        'bowler_arm', 'bowler_pace', 'bowler_level', 'ballspermatch', 'age',
+        'date', 'matchid', 'battingteam', 'playerid', 'bowler', 'bowlertype_1',
+        'bowlertype_2', 'bowlertype_3', 'bowler_level', 'ballspermatch', 'age',
         'nationality', 'home_region', 'host', 'host_region', 'H/A_competition',
         'H/A_country', 'H/A_region', 'competition', 'overseas_pct'
     ]].drop_duplicates(['date', 'matchid', 'playerid', 'bowler', 'host', 'competition'])
@@ -252,8 +252,8 @@ for x in np.arange(0, 2, 1):
     ratings = ratings[~ratings['competition'].isin(['ODI1', 'ODI2'])]
 
     ratings = ratings.loc[:, [
-        'date', 'matchid', 'battingteam', 'playerid', 'bowler', 'bowlertype_2',
-        'bowler_arm', 'bowler_pace', 'bowler_level', 'ballspermatch', 'age',
+        'date', 'matchid', 'battingteam', 'playerid', 'bowler', 'bowlertype_1',
+        'bowlertype_2', 'bowlertype_3', 'bowler_level', 'ballspermatch', 'age',
         'nationality', 'home_region', 'host', 'host_region', 'H/A_competition',
         'H/A_country', 'H/A_region', 'competition', 'balls_bowled_career',
         'balls_bowled_host', 'overseas_pct', 'balls_bowled_2_r', 'ord_2_r',

@@ -61,9 +61,9 @@ def load_debug_ratings(debug_config):
 
 
 def add_top_rating_values(story, debug_config, ratings, styles):
-    cols = ['age', 'nationality', 'bowlertype_2', 'bowler_arm', 'bowler_pace', 'bowler_level', 'ballspermatch', 'balls_bowled_career']
+    cols = ['age', 'nationality', 'bowlertype_3', 'bowler_level', 'ballspermatch', 'balls_bowled_career']
     df = ratings.loc[:, cols].copy()
-    df.columns = ['age', 'nationality', 'type', 'arm', 'pace', 'level', 'balls_per_match', 'balls_bowled_career']
+    df.columns = ['age', 'nationality', 'type', 'level', 'balls_per_match', 'balls_bowled_career']
     df['age'] = df['age'].round(2)
     df['balls_per_match'] = df['balls_per_match'].round(2)
     text = ' | '.join([f'{col}: {df.iloc[0][col]}' for col in df.columns])

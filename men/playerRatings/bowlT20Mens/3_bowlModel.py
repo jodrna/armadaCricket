@@ -38,7 +38,8 @@ bowl_data['wkts_weight_curve'] = bowl_data['wkts_weight_curve'].fillna(1)
 # -------------------------
 # Build innings table (includes dummy innings)
 # -------------------------
-innings_info = bowl_data.loc[:, ['date', 'matchid', 'playerid', 'bowler', 'bowlertype_1', 'bowlertype_2', 'bowlertype_3', 'nationality', 'competition', 'host', 'host_region', 'balls_bowled_career', 'balls_bowled_host']].drop_duplicates(['matchid', 'playerid', 'date', 'host', 'competition', 'bowlertype_2'])
+innings_info = bowl_data.loc[:, ['date', 'matchid', 'playerid', 'bowler', 'bowlertype_1', 'bowlertype_2', 'bowlertype_3', 'nationality', 'competition', 'host', 'host_region', 'balls_bowled_career',
+                                 'balls_bowled_host']].drop_duplicates(['matchid', 'playerid', 'date', 'host', 'competition', 'bowlertype_2'])
 
 innings_perf = (
     pd.pivot_table(

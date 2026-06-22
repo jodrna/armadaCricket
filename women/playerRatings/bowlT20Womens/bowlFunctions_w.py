@@ -369,6 +369,7 @@ def build_rating_debug_tables(debug_config, ratings, lookbacks_player_r, lookbac
 
 
 
+
 def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, X_run_train, X_wkt_train, run_params, wkt_params):
     debug_type = debug_config['type']
     debug_bowler = debug_config['bowler']
@@ -376,11 +377,22 @@ def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, X_ru
     debug_competition = debug_config['comp']
     debug_matchid = debug_config['matchid']
 
-    debug_mask = ((ratings['bowler'] == debug_bowler) & (ratings['competition'] == debug_competition) & (ratings['host'] == debug_host) & (ratings['matchid'] == debug_matchid))
+    debug_mask = (
+        (ratings['bowler'] == debug_bowler) &
+        (ratings['competition'] == debug_competition) &
+        (ratings['host'] == debug_host) &
+        (ratings['matchid'] == debug_matchid)
+    )
+
     debug_row = ratings.loc[debug_mask, :].reset_index(drop=True)
 
     if len(debug_row) == 0:
-        return {'type': debug_type, 'debug_row': debug_row, 'breakdown': pd.DataFrame(), 'factor_breakdown': pd.DataFrame()}
+        return {
+            'type': debug_type,
+            'debug_row': debug_row,
+            'breakdown': pd.DataFrame(),
+            'factor_breakdown': pd.DataFrame()
+        }
 
     if debug_type == 'run':
         debug_X = X_run_r.loc[debug_mask, :].reset_index(drop=True)
@@ -395,18 +407,24 @@ def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, X_ru
         total_col = 'rep_wkt_ratio'
         factor_col = 'wkt_factor'
     else:
-        return {'type': debug_type, 'debug_row': debug_row, 'breakdown': pd.DataFrame(), 'factor_breakdown': pd.DataFrame()}
+        return {
+            'type': debug_type,
+            'debug_row': debug_row,
+            'breakdown': pd.DataFrame(),
+            'factor_breakdown': pd.DataFrame()
+        }
 
     def category_contrib(X, params):
         contrib = X.mul(params, axis=1)
-        nat_contrib = contrib.filter(like='wt20i_nat__').sum(axis=1)
+
+        nationality_contrib = contrib.filter(like='wt20i_nat__').sum(axis=1)
+        bowlertype_3_contrib = contrib.filter(like='bowlertype_3__').sum(axis=1)
 
         return pd.Series({
             'const': contrib['const'].mean(),
             'competition': contrib.filter(like='competition__').sum(axis=1).mean(),
-            'nationality': nat_contrib.loc[nat_contrib.abs() > 1e-12].mean(),
-            'bowler_arm': contrib.filter(like='bowler_arm__').sum(axis=1).mean(),
-            'bowler_pace': contrib.filter(like='bowler_pace__').sum(axis=1).mean(),
+            'bowlertype_3': bowlertype_3_contrib.mean(),
+            'nationality': nationality_contrib.loc[nationality_contrib.abs() > 1e-12].mean(),
             'ballspermatch': contrib['ballspermatch'].mean(),
             'overseas_pct': contrib[['overseas_pct_x', 'overseas_pct_x^2']].sum(axis=1).mean(),
             'experience': contrib['experience'].mean()
@@ -425,9 +443,18 @@ def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, X_ru
 
     breakdown.loc[breakdown['feature'] == 'experience', 'raw_value'] = debug_row['balls_bowled_career'].iloc[0]
 
-    overseas_pct_contrib = breakdown.loc[breakdown['feature'].isin(['overseas_pct_x', 'overseas_pct_x^2']), 'contrib'].sum()
+    overseas_pct_contrib = breakdown.loc[
+        breakdown['feature'].isin(['overseas_pct_x', 'overseas_pct_x^2']),
+        'contrib'
+    ].sum()
+
     overseas_pct_raw_value = debug_row['overseas_pct'].iloc[0]
-    overseas_pct_model_value = breakdown.loc[breakdown['feature'] == 'overseas_pct_x', 'model_value'].iloc[0]
+
+    overseas_pct_model_value = breakdown.loc[
+        breakdown['feature'] == 'overseas_pct_x',
+        'model_value'
+    ].iloc[0]
+
     overseas_pct_coef = overseas_pct_contrib / overseas_pct_model_value if overseas_pct_model_value != 0 else np.nan
 
     overseas_pct_row = pd.DataFrame([{
@@ -438,13 +465,27 @@ def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, X_ru
         'contrib': overseas_pct_contrib
     }])
 
-    breakdown = breakdown.loc[~breakdown['feature'].isin(['overseas_pct_x', 'overseas_pct_x^2']), :].copy()
+    breakdown = breakdown.loc[
+        ~breakdown['feature'].isin(['overseas_pct_x', 'overseas_pct_x^2']),
+        :
+    ].copy()
+
     breakdown = pd.concat([breakdown, overseas_pct_row], axis=0, ignore_index=True)
 
-    breakdown.loc[breakdown['feature'].str.startswith('competition__', na=False), 'feature'] = 'competition'
-    breakdown.loc[breakdown['feature'].str.startswith('wt20i_nat__', na=False), 'feature'] = 'nationality'
-    breakdown.loc[breakdown['feature'].str.startswith('bowler_arm__', na=False), 'feature'] = 'bowler_arm'
-    breakdown.loc[breakdown['feature'].str.startswith('bowler_pace__', na=False), 'feature'] = 'bowler_pace'
+    breakdown.loc[
+        breakdown['feature'].str.startswith('competition__', na=False),
+        'feature'
+    ] = 'competition'
+
+    breakdown.loc[
+        breakdown['feature'].str.startswith('bowlertype_3__', na=False),
+        'feature'
+    ] = 'bowlertype_3'
+
+    breakdown.loc[
+        breakdown['feature'].str.startswith('wt20i_nat__', na=False),
+        'feature'
+    ] = 'nationality'
 
     breakdown = breakdown.groupby('feature', as_index=False).agg({
         'raw_value': 'sum',
@@ -458,13 +499,27 @@ def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, X_ru
 
     const = breakdown.loc[breakdown['feature'] == 'const', :].copy()
 
-    breakdown = breakdown.loc[(breakdown['feature'] != 'const') & (breakdown['contrib'] != 0), :].copy()
+    breakdown = breakdown.loc[
+        (breakdown['feature'] != 'const') &
+        (breakdown['contrib'] != 0),
+        :
+    ].copy()
+
     breakdown = breakdown.sort_values('contrib', key=lambda z: z.abs(), ascending=False)
     breakdown = pd.concat([const, breakdown], axis=0).reset_index(drop=True)
 
     breakdown['rolling_sum'] = breakdown['contrib'].cumsum()
 
-    breakdown = breakdown.loc[:, ['feature', 'raw_value', 'model_value', 'coef', 'avg_contrib', 'contrib', 'contrib_diff', 'rolling_sum']]
+    breakdown = breakdown.loc[:, [
+        'feature',
+        'raw_value',
+        'model_value',
+        'coef',
+        'avg_contrib',
+        'contrib',
+        'contrib_diff',
+        'rolling_sum'
+    ]]
 
     factor_breakdown = pd.DataFrame()
 
@@ -485,5 +540,6 @@ def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, X_ru
         'factor_breakdown': factor_breakdown,
         'total_col': total_col
     }
+
 
 

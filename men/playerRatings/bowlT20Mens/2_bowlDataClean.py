@@ -180,8 +180,6 @@ bowler_type_3 = {'Left-arm fast': 'left_seam_fast',
                 'Slow left-arm unorthodox': 'left_w_spin',
                 'Left Unorthodox': 'left_w_spin'}
 
-# bowler_pace = {'Right-arm fast': 'fast',
-#                'Left-arm fast': 'fast'}
 
 
 # -------------------------
@@ -202,7 +200,6 @@ bowl_data = bowl_data.replace({'home_region': regions, 'host_region': regions}).
 bowl_data.insert(bowl_data.columns.get_loc("bowlerstyle") + 1, 'bowlertype_1', bowl_data['bowlerstyle'].replace(bowler_type_1))
 bowl_data.insert(bowl_data.columns.get_loc("bowlertype_1") + 1, 'bowlertype_2', bowl_data['bowlerstyle'].replace(bowler_type_2))
 bowl_data.insert(bowl_data.columns.get_loc("bowlertype_2") + 1, 'bowlertype_3', bowl_data['bowlerstyle'].replace(bowler_type_3))
-# bowl_data.insert(bowl_data.columns.get_loc("bowlertype_2") + 1, 'bowler_pace', bowl_data['bowlerstyle'].replace(bowler_pace))
 
 bowl_data.insert(bowl_data.columns.get_loc("battingteam") + 1, 'bowlingteam', np.where(bowl_data['home'] == bowl_data['battingteam'], bowl_data['away'], bowl_data['home']))
 
