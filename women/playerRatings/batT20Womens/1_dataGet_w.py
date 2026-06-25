@@ -40,12 +40,12 @@ order by date, matchid desc
 allData = pd.read_sql_query(t20_sql, con=connection)
 
 
-# # -------------------------
-# # set tiers
-# # -------------------------
-# allData['bowlingteam'] = np.where(allData['battingteam'] == allData['home'], allData['away'], allData['home'])
-# allData.loc[(allData['competition'] == 'WT20I') & (~allData['bowlingteam'].isin(['Australia Women', 'England Women', 'India Women', 'New Zealand Women', 'South Africa Women'])), 'competition'] = 'tier_2'
-# allData.loc[(allData['competition'] == 'WT20I') & (~allData['battingteam'].isin(['Australia Women', 'England Women', 'India Women', 'New Zealand Women', 'South Africa Women'])), 'competition'] = 'tier_2'
+# -------------------------
+# set tiers
+# -------------------------
+allData['bowlingteam'] = np.where(allData['battingteam'] == allData['home'], allData['away'], allData['home'])
+allData.loc[(allData['competition'] == 'WT20I') & (~allData['bowlingteam'].isin(['Australia Women', 'England Women', 'India Women', 'New Zealand Women', 'South Africa Women'])), 'competition'] = 'tier_2'
+allData.loc[(allData['competition'] == 'WT20I') & (~allData['battingteam'].isin(['Australia Women', 'England Women', 'India Women', 'New Zealand Women', 'South Africa Women'])), 'competition'] = 'tier_2'
 
 
 # -------------------------

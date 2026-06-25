@@ -53,10 +53,10 @@ def build_training_features_bowl(bowl_data, ratings, transformers):
     bowlertype_3_encodings = make_ohe(bowlertype_3, bowlertype_3_cats, 'bowlertype_3')
 
     # WT20I nationality encodings
-    wt20i_nat = np.array(np.where(bowl_data['competition'] == 'WT20I', bowl_data['nationality'], 'nil')).reshape(-1, 1)
-    wt20i_nat_cats = ['nil', 'England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']
+    wt20i_nat = np.where((bowl_data['competition'] == 'WT20I') & (bowl_data['nationality'].isin(['England', 'India', 'Australia', 'New Zealand', 'South Africa'])), bowl_data['nationality'], 'tier_2').reshape(-1, 1)
+    wt20i_nat_cats = ['tier_2', 'England', 'India', 'Australia', 'New Zealand', 'South Africa']
     transformers['wt20i_nat_cats'] = wt20i_nat_cats
-    wt20i_nat_encodings = make_ohe(wt20i_nat, wt20i_nat_cats, 'wt20i_nat')
+    wt20i_nat_encodings = make_ohe(wt20i_nat, wt20i_nat_cats, 'wt20i_nat', drop_first=True)
 
     # Average balls bowled per match
     ballspermatch = pd.DataFrame(bowl_data.loc[:, ['ballspermatch']]).reset_index(drop=True)
@@ -96,8 +96,8 @@ def build_ratings_features_bowl(ratings, transformers):
     bowlertype_3_encodings = make_ohe(bowlertype_3, transformers['bowlertype_3_cats'], 'bowlertype_3')
 
     # WT20I nationality encodings
-    wt20i_nat = np.array(np.where(ratings['competition'] == 'WT20I', ratings['nationality'], 'nil')).reshape(-1, 1)
-    wt20i_nat_encodings = make_ohe(wt20i_nat, transformers['wt20i_nat_cats'], 'wt20i_nat')
+    wt20i_nat = np.where((ratings['competition'] == 'WT20I') & (ratings['nationality'].isin(['England', 'India', 'Australia', 'New Zealand', 'South Africa'])), ratings['nationality'], 'tier_2').reshape(-1, 1)
+    wt20i_nat_encodings = make_ohe(wt20i_nat, transformers['wt20i_nat_cats'], 'wt20i_nat', drop_first=True)
 
     # Balls per match bowled on average
     ballspermatch = pd.DataFrame(ratings.loc[:, ['ballspermatch']]).reset_index(drop=True)

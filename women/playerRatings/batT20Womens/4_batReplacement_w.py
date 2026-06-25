@@ -44,9 +44,9 @@ def build_training_features_bat(bat_data, transformers):
     competition_encodings = competition_encodings.drop(columns=['competition__WT20I'], errors='ignore')
 
     # WT20I nationality encodings
-    wt20i_nat = np.array(np.where(bat_data['competition'] == 'WT20I', bat_data['nationality'], 'nil')).reshape(-1, 1)
-    wt20i_nat_cats = ['nil', 'England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']
-    wt20i_nat_encodings = make_ohe(wt20i_nat, wt20i_nat_cats, 'wt20i_nat')
+    wt20i_nat_cats = ['nil', 'tier_2', 'England', 'India', 'Australia', 'New Zealand', 'South Africa']
+    wt20i_nat = np.where(bat_data['competition'] != 'WT20I', 'nil', np.where(bat_data['nationality'].isin(wt20i_nat_cats[2:]), bat_data['nationality'], 'tier_2')).reshape(-1, 1)
+    wt20i_nat_encodings = make_ohe(wt20i_nat, wt20i_nat_cats, 'wt20i_nat', drop_first=True)
 
     # Age poly
     age = pd.DataFrame(bat_data.loc[:, ['age']])
@@ -95,11 +95,10 @@ def build_ratings_features_bat(ratings, transformers):
     competition_encodings = make_ohe(competition, transformers['competition_cats'], 'competition', drop_first=False)
     competition_encodings = competition_encodings.drop(columns=['competition__WT20I'], errors='ignore')
 
-
     # WT20I nationality encodings
-    wt20i_nat = np.array(np.where(ratings['competition'] == 'WT20I', ratings['nationality'], 'nil')).reshape(-1, 1)
-    wt20i_nat_cats = ['nil', 'England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']
-    wt20i_nat_encodings = make_ohe(wt20i_nat, wt20i_nat_cats, 'wt20i_nat')
+    wt20i_nat_cats = ['nil', 'tier_2', 'England', 'India', 'Australia', 'New Zealand', 'South Africa']
+    wt20i_nat = np.where(ratings['competition'] != 'WT20I', 'nil', np.where(ratings['nationality'].isin(wt20i_nat_cats[2:]), ratings['nationality'], 'tier_2')).reshape(-1, 1)
+    wt20i_nat_encodings = make_ohe(wt20i_nat, wt20i_nat_cats, 'wt20i_nat', drop_first=True)
 
     # Age poly
     age = pd.DataFrame(ratings.loc[:, ['age']])
@@ -330,6 +329,7 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsJungle2_w.csv', index=False)
     else:
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi2_w.csv', index=False)
+
 
 
 

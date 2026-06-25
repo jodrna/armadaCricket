@@ -22,7 +22,7 @@ if (last_date == yesterday) & (run_type == 1):
     exit()
 
 # run data get
-# runpy.run_path('1_dataGet_w.py')
+runpy.run_path('1_dataGet_w.py')
 
 # check last date of downloaded data to check if need to run rest of the ratings:
 last_date2 = pd.read_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/data/batDataCombined_w.csv')

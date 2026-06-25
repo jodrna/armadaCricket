@@ -14,7 +14,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 DEBUG_CONFIG = {
     'model': 'jungle',
     'type': 'run',
-    'bowler': 'Radha Yadav',
+    'bowler': 'Sophie Ecclestone',
     'host': 'England',
     'comp': 'WT20I',
     'matchid': 101
