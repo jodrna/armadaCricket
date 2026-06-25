@@ -8,7 +8,7 @@ import seaborn as sns
 from sklearn.linear_model import LogisticRegression
 from paths import PROJECT_ROOT
 
-
+# testing
 # import and filter to 1st innings only
 trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
