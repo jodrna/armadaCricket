@@ -499,11 +499,7 @@ def build_replacement_debug_tables(debug_config, ratings, X_run_r, X_wkt_r, X_ru
 
     const = breakdown.loc[breakdown['feature'] == 'const', :].copy()
 
-    breakdown = breakdown.loc[
-        (breakdown['feature'] != 'const') &
-        (breakdown['contrib'] != 0),
-        :
-    ].copy()
+    breakdown = breakdown.loc[(breakdown['feature'] != 'const'), :].copy()
 
     breakdown = breakdown.sort_values('contrib', key=lambda z: z.abs(), ascending=False)
     breakdown = pd.concat([const, breakdown], axis=0).reset_index(drop=True)
