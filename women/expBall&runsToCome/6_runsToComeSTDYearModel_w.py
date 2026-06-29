@@ -4,6 +4,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
 import matplotlib.pyplot as plt
 from paths import PROJECT_ROOT
+from sklearn.preprocessing import PolynomialFeatures
 
 
 # import data and the runs to come modelled numbers
@@ -99,7 +100,29 @@ masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/6_masterLoo
 
 
 ras_input = masterLookup.copy()
-ras_input = ras_input[ras_input.daysGroup == 12]
+ras_input = ras_input[ras_input.daysGroup == 11.5]
 ras_input['code'] = ras_input['totalInningWickets'] + ((121 - ras_input['inningBallNumber']) / 1000)
-ras_input = ras_input.loc[:, ['code', 'sample', 'totalInningRunsToComeSimBiasSplineYearAdj', 'totalInningRunsToComeSimSTDYear', 'totalInningRunsToComeSimMin', 'totalInningRunsToComeSimMax', 'totalInningRunsToComeSimSkew', 'totalInningRunsToComeSimKurt']]
-ras_input.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ras_input_innings_w.csv', index=False)
+
+dfs = []
+
+#process to smooth women's runs between wickets lost, as there aren't enough samples for the gaps between wickets lost to be sensible:
+
+for x in range(1, 121):
+    ras_input_copy = ras_input.copy()
+    ras_input_copy = ras_input_copy[ras_input_copy.inningBallNumber == x]
+    ras_input_copy = ras_input_copy.dropna(subset=['totalInningRunsToComeSimBiasSplineYear', 'sample'])
+    poly = PolynomialFeatures(degree=2, include_bias=False)
+    X_poly = poly.fit_transform(ras_input_copy[["totalInningWickets"]])
+    model = LinearRegression().fit(X_poly, ras_input_copy["totalInningRunsToComeSimBiasSplineYear"], sample_weight=ras_input_copy["sample"])
+    ras_input_copy["totalInningRunsToComeSimBiasSplineYear_smooth"] = model.predict(X_poly)
+    dfs.append(ras_input_copy)
+
+ras_input_new = pd.concat(dfs, ignore_index=True)
+
+ras_input_new['totalInningRunsToComeSimBiasSplineYear_smoothed'] = np.where(ras_input_new['sample'] > 300, ras_input_new['totalInningRunsToComeSimBiasSplineYear'], ((ras_input_new['totalInningRunsToComeSimBiasSplineYear'] * ras_input_new['sample']) + (ras_input_new["totalInningRunsToComeSimBiasSplineYear_smooth"] * (300 - ras_input_new['sample']))) / 300)
+
+ras_input_new = ras_input_new.loc[:, ['code', 'sample', 'totalInningRunsToComeSimBiasSplineYear_smoothed', 'totalInningRunsToComeSimSTDYear', 'totalInningRunsToComeSimMin', 'totalInningRunsToComeSimMax', 'totalInningRunsToComeSimSkew', 'totalInningRunsToComeSimKurt']]
+
+##have changed the output to non-adjusted runs for women, as I think the rate of run scoring isn't handled by the player ratings so the adjust reverts everything to average
+
+ras_input_new.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ras_input_innings_w.csv', index=False)

@@ -46,9 +46,9 @@ trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
 # we need to remove duplicates in runs to come so just select batting order 1
 masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 10)]
 # merge in runs to come
-trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSpline', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
+trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSplineYear', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 # create a ratio of runs to come to be used as a predictor, drop any nans
-trainData['ratioRequired'] = trainData['runsRequired'] / trainData['totalInningRunsToComeSimBiasSpline']
+trainData['ratioRequired'] = trainData['runsRequired'] / trainData['totalInningRunsToComeSimBiasSplineYear'] # changing to include year
 trainData = trainData.dropna(axis=0, subset=['ratioRequired'])
 
 
@@ -60,11 +60,11 @@ chaseLookup = pd.pivot_table(trainData, values=['sample', 'chaseWin', 'totalInni
 chaseLookup['chaseWin%'] = chaseLookup['chaseWin'] / chaseLookup['sample']
 chaseLookup = chaseSituations.merge(chaseLookup, how='left', on=['totalInningWickets', 'inningBallNumber', 'runsRequired'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
-chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inningBallNumber', 'sample', 'totalInningRunsToComeSimBiasSpline', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
+chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inningBallNumber', 'sample', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
-chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSpline']
-chaseLookup['daysGroup'] = 12
-chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSpline']).reset_index(drop=True)
+chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSplineYear'] # changing to include year
+chaseLookup['daysGroup'] = 13.5
+chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSplineYear']).reset_index(drop=True)
 chaseLookup['in'] = 1
 
 
