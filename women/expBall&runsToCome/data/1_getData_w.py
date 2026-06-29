@@ -6,18 +6,19 @@ from datetime import timedelta, date
 from db import engine
 from paths import PROJECT_ROOT
 import subprocess
+from sqlalchemy import text
 
 connection = engine.connect()
 
 #updating all data (1) or just daily update (2)?
 run_type = 1
 
-last_date_data = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv', parse_dates=['date'])
-if last_date_data['date_of_run'].max() == pd.Timestamp(date.today()):
-    exit()
-
-last_date = last_date_data['date'].max() - timedelta(days=10)
-format_date_new = last_date.strftime("%m/%d/%Y")
+# last_date_data = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv', parse_dates=['date'])
+# if last_date_data['date_of_run'].max() == pd.Timestamp(date.today()):
+#     exit()
+#
+# last_date = last_date_data['date'].max() - timedelta(days=10)
+# format_date_new = last_date.strftime("%m/%d/%Y")
 format_date_old = '12/31/2014'
 if run_type == 1:
     format_date = format_date_old
@@ -156,12 +157,13 @@ if run_type == 1:
     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a']
 
     sqlupload.to_sql("w_t20_bbb_clean", con=connection, schema="player_ratings", if_exists='replace', index=False)
+    connection.commit()
 
     try:
 
         trans = connection.begin()
 
-        connection.execute("""UPDATE match_data.w_t20_bbb a
+        connection.execute(text("""UPDATE match_data.w_t20_bbb a
                             SET 
                                 ballsremaining = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
                                 score          = COALESCE(t.score_clean_a, a.score),
@@ -177,7 +179,7 @@ if run_type == 1:
                                 required_clean_a       = t.required_clean_a
                             FROM player_ratings.w_t20_bbb_clean t
                             WHERE a.id = t.id_clean_a
-                              AND a.id_clean_a IS NULL;  -- skip already-updated rows""")
+                              AND a.id_clean_a IS NULL;  -- skip already-updated rows"""))
 
         trans.commit()
 
@@ -195,14 +197,14 @@ else:
     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a']
 
     sqlupload.to_sql("w_t20_bbb_clean_temp", con=connection, schema="player_ratings", if_exists='replace', index=False)
-
+    connection.commit()
     print("6")
 
     try:
 
         trans = connection.begin()
 
-        connection.execute("""
+        connection.execute(text("""
         INSERT INTO player_ratings.w_t20_bbb_clean (id_clean_a, ball2_clean_a, score_clean_a, ballsremaining_clean_a, wickets_clean_a, target_clean_a, ord_clean_a, required_clean_a)
         SELECT *
         FROM player_ratings.w_t20_bbb_clean_temp t
@@ -229,7 +231,7 @@ else:
           AND a.id_clean_a IS NULL;
 
         DROP TABLE player_ratings.w_t20_bbb_clean_temp;
-        """)
+        """))
 
         trans.commit()
 
