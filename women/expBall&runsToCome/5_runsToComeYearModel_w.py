@@ -5,6 +5,7 @@ from paths import PROJECT_ROOT
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
+from sklearn.pipeline import make_pipeline
 
 # import cleaned ball-by-ball data
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
@@ -52,14 +53,20 @@ trainData = trainData.dropna(subset=['vsAdjOvr', 'vsOvr'])
 # create interaction terms between year trend and game state
 trainData['daysGroup_totalInningWickets'] = trainData['daysGroup'] * trainData['totalInningWickets']
 trainData['daysGroup_inningBallNumber'] = trainData['daysGroup'] * trainData['inningBallNumber']
-trainData['daysGroup_daysGroup'] = trainData['daysGroup'] #* trainData['daysGroup']
-
+trainData['daysGroup_daysGroup'] = trainData['daysGroup'] * trainData['daysGroup']
+trainData['daysGroup_daysGroup_daysGroup'] =  trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup']
+# trainData['daysGroup_daysGroup_daysGroup_daysGroup'] =  trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup']
+# trainData['daysGroup_daysGroup_daysGroup_daysGroup_daysGroup'] =  trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup']
 
 # features used in the regression models
 features = [
     'daysGroup',
     'daysGroup_inningBallNumber',
     'daysGroup_totalInningWickets'
+    , 'daysGroup_daysGroup'
+    , 'daysGroup_daysGroup_daysGroup'
+    # , 'daysGroup_daysGroup_daysGroup_daysGroup'
+    # , 'daysGroup_daysGroup_daysGroup_daysGroup_daysGroup'
 ]
 
 log_method = 1
@@ -84,6 +91,11 @@ y_120 = trainData120['vsAdjOvr']
 # fit model for adjusted runs-to-come
 model_adj = LinearRegression()
 model_adj.fit(X, y_adj)
+
+# degree = 2 # change this to whatever degree you want
+#
+# model_adj = make_pipeline(PolynomialFeatures(degree), LinearRegression())
+# model_adj.fit(X, y_adj)
 
 # fit model for raw runs-to-come
 model_raw = LinearRegression()
@@ -128,7 +140,7 @@ print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalIn
 print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalInningRunsToComeSimBiasSplineYear']))
 
 testing_wl_year = trainData.groupby(['totalInningWickets', 'year'])[['yearFactor', 'yearFactor2']].mean().reset_index()
-testing_br_year = trainData.groupby(['inningBallNumber', 'year'])[['yearFactor', 'yearFactor2', 'totalInningRunsToComeAdj', 'totalInningRunsToCome']].mean().reset_index()
+testing_br_year = trainData.groupby(['inningBallNumber', 'year'])[['totalInningRunsToComeSimBiasSpline', 'yearFactor', 'yearFactor2', 'totalInningRunsToComeAdj', 'totalInningRunsToCome']].mean().reset_index()
 testing_wl_2 = trainData.groupby(['totalInningWickets'])[['yearFactor', 'yearFactor2']].mean().reset_index()
 testing_wl_br = trainData.groupby(['totalInningWickets', 'inningBallNumber'])[['yearFactor', 'yearFactor2']].mean().reset_index()
 testing_br = trainData.groupby(['inningBallNumber'])[['yearFactor', 'yearFactor2']].mean().reset_index()
@@ -163,6 +175,10 @@ masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
 # recreate interaction features for prediction
 masterLookup['daysGroup_totalInningWickets'] = masterLookup['daysGroup'] * masterLookup['totalInningWickets']
 masterLookup['daysGroup_inningBallNumber'] = masterLookup['daysGroup'] * masterLookup['inningBallNumber']
+masterLookup['daysGroup_daysGroup'] = masterLookup['daysGroup'] * masterLookup['daysGroup']
+masterLookup['daysGroup_daysGroup_daysGroup'] =  masterLookup['daysGroup'] * masterLookup['daysGroup'] * masterLookup['daysGroup']
+masterLookup['daysGroup_daysGroup_daysGroup_daysGroup'] =  masterLookup['daysGroup'] * masterLookup['daysGroup'] * masterLookup['daysGroup'] * masterLookup['daysGroup']
+masterLookup['daysGroup_daysGroup_daysGroup_daysGroup_daysGroup'] =  masterLookup['daysGroup'] * masterLookup['daysGroup'] * masterLookup['daysGroup'] * masterLookup['daysGroup'] * masterLookup['daysGroup']
 
 # prediction feature matrix
 X_master = masterLookup[features]
@@ -199,6 +215,10 @@ lookupForInruns['inningBallNumber'] = 1
 lookupForInruns['daysGroup_totalInningWickets'] = lookupForInruns['daysGroup'] * lookupForInruns['totalInningWickets']
 lookupForInruns['daysGroup_inningBallNumber'] = lookupForInruns['daysGroup'] * lookupForInruns['inningBallNumber']
 lookupForInruns['daysGroup_daysGroup'] = lookupForInruns['daysGroup'] * lookupForInruns['daysGroup']
+lookupForInruns['daysGroup_daysGroup_daysGroup'] = lookupForInruns['daysGroup'] * lookupForInruns['daysGroup'] * lookupForInruns['daysGroup']
+lookupForInruns['daysGroup_daysGroup_daysGroup_daysGroup'] = lookupForInruns['daysGroup'] * lookupForInruns['daysGroup'] * lookupForInruns['daysGroup'] * lookupForInruns['daysGroup']
+lookupForInruns['daysGroup_daysGroup_daysGroup_daysGroup_daysGroup'] = lookupForInruns['daysGroup'] * lookupForInruns['daysGroup'] * lookupForInruns['daysGroup'] * lookupForInruns['daysGroup'] * lookupForInruns['daysGroup']
+
 lookupForInruns = lookupForInruns.merge(masterLookup[(masterLookup.totalInningWickets == 0) & (masterLookup.inningBallNumber == 1)].groupby(['inningBallNumber', 'totalInningWickets'])[['totalInningRunsToComeSimBiasSpline', 'predicted_RA_Sum']].mean().reset_index(), on=('totalInningWickets', 'inningBallNumber'), how='left')
 # prediction feature matrix
 X_lookup = lookupForInruns[features]
@@ -222,4 +242,6 @@ lookupForInruns['totalInningRunsToComeSimBiasSplineYear1203'] = lookupForInruns[
 
 lookupForInruns_final = lookupForInruns.loc[:, ['daysGroup', 'totalInningRunsToComeSimBiasSplineYear3', 'totalInningRunsToComeSimBiasSplineYearAdj3', 'totalInningRunsToComeSimBiasSplineYear1203']]
 
+testing_br_year['pred_runsadj'], testing_br_year['pred_runs'] = testing_br_year['totalInningRunsToComeSimBiasSpline'] * testing_br_year['yearFactor'], testing_br_year['totalInningRunsToComeSimBiasSpline'] * testing_br_year['yearFactor2']
 comparison_by_year_final = testing_br_year.copy()
+comparison_by_year_final = comparison_by_year_final.loc[:,['inningBallNumber', 'totalInningRunsToComeAdj', 'pred_runsadj', 'totalInningRunsToCome', 'pred_runs']]
