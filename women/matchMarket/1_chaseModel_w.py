@@ -63,7 +63,7 @@ chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
 chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inningBallNumber', 'sample', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
 chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSplineYear'] # changing to include year
-chaseLookup['daysGroup'] = 13.5
+chaseLookup['daysGroup'] = 13
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSplineYear']).reset_index(drop=True)
 chaseLookup['in'] = 1
 

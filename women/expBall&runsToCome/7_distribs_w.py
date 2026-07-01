@@ -249,7 +249,7 @@ row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBal
 
 # Extract the moments
 # mean = row2['mean'].values[0]
-mean_estimate = 158.99
+mean_estimate = 156.43
 
 for i in range(0, 10, 1):
 

@@ -55,8 +55,8 @@ trainData['daysGroup_totalInningWickets'] = trainData['daysGroup'] * trainData['
 trainData['daysGroup_inningBallNumber'] = trainData['daysGroup'] * trainData['inningBallNumber']
 trainData['daysGroup_daysGroup'] = trainData['daysGroup'] * trainData['daysGroup']
 trainData['daysGroup_daysGroup_daysGroup'] =  trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup']
-# trainData['daysGroup_daysGroup_daysGroup_daysGroup'] =  trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup']
-# trainData['daysGroup_daysGroup_daysGroup_daysGroup_daysGroup'] =  trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup']
+trainData['daysGroup_daysGroup_daysGroup_daysGroup'] =  trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup']
+trainData['daysGroup_daysGroup_daysGroup_daysGroup_daysGroup'] =  trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup'] * trainData['daysGroup']
 
 # features used in the regression models
 features = [
@@ -65,7 +65,7 @@ features = [
     'daysGroup_totalInningWickets'
     , 'daysGroup_daysGroup'
     , 'daysGroup_daysGroup_daysGroup'
-    # , 'daysGroup_daysGroup_daysGroup_daysGroup'
+    , 'daysGroup_daysGroup_daysGroup_daysGroup'
     # , 'daysGroup_daysGroup_daysGroup_daysGroup_daysGroup'
 ]
 
@@ -167,7 +167,7 @@ masterLookup['daysGroup'] = masterLookup['year'] - 2015
 
 # duplicate the latest year and relabel as 9.4, this gives us the number we want to match the match market
 extraRows = masterLookup.loc[masterLookup['daysGroup'] == masterLookup['daysGroup'].max()].copy()
-extraRows['daysGroup'] = 11.5
+extraRows['daysGroup'] = 12.2
 
 # append future-year rows back onto master lookup
 masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)

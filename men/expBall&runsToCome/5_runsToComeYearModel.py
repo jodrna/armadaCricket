@@ -111,7 +111,7 @@ print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalIn
 print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalInningRunsToComeSimBiasSplineYear']))
 
 testing_wl_year = trainData.groupby(['totalInningWickets', 'year'])[['yearFactor', 'yearFactor2']].mean().reset_index()
-testing_br_year = trainData.groupby(['inningBallNumber', 'year'])[['yearFactor', 'yearFactor2', 'totalInningRunsToComeAdj', 'totalInningRunsToCome']].mean().reset_index()
+testing_br_year = trainData.groupby(['inningBallNumber', 'year'])[['totalInningRunsToComeSimBiasSpline', 'yearFactor', 'yearFactor2', 'totalInningRunsToComeAdj', 'totalInningRunsToCome']].mean().reset_index()
 testing_wl_2 = trainData.groupby(['totalInningWickets'])[['yearFactor', 'yearFactor2']].mean().reset_index()
 testing_wl_br = trainData.groupby(['totalInningWickets', 'inningBallNumber'])[['yearFactor', 'yearFactor2']].mean().reset_index()
 testing_br = trainData.groupby(['inningBallNumber'])[['yearFactor', 'yearFactor2']].mean().reset_index()
@@ -198,4 +198,6 @@ lookupForInruns['totalInningRunsToComeSimBiasSplineYear3'] = lookupForInruns['to
 
 lookupForInruns_final = lookupForInruns.loc[:, ['daysGroup', 'totalInningRunsToComeSimBiasSplineYear3', 'totalInningRunsToComeSimBiasSplineYearAdj3']]
 
+testing_br_year['pred_runsadj'], testing_br_year['pred_runs'] = testing_br_year['totalInningRunsToComeSimBiasSpline'] * testing_br_year['yearFactor'], testing_br_year['totalInningRunsToComeSimBiasSpline'] * testing_br_year['yearFactor2']
 comparison_by_year_final = testing_br_year.copy()
+comparison_by_year_final = comparison_by_year_final.loc[:,['inningBallNumber', 'totalInningRunsToComeAdj', 'pred_runsadj', 'totalInningRunsToCome', 'pred_runs']]
