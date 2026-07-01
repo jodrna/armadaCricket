@@ -7,6 +7,7 @@ from db import engine
 from paths import PROJECT_ROOT
 import subprocess
 from sqlalchemy import text
+import sqlalchemy
 
 connection = engine.connect()
 
@@ -28,7 +29,7 @@ else:
 print("2")
 # param = [(format_date,)] #here we convert the format_date to a tuple, because the method of inserting variables into the SQL query requires either a tuple or a dictionary. To make a dictionary we would need to put a placeholder name in the sql query but for some reason this doesn't work with postgres Sql (according to gpt)
 sql_query = '''select  matchid, id, tier, date, year, competition, venue, host, home, away, battingteam, innings, ball, delivery2, runs, score, t_runs, wicket, wickets, t_wickets,
-                                 ballsremaining, target, reduced, max_balls, noball, wide, ord, byes, legbyes, innperiod, bowlerwicket, realexprbat, realexpwbat, realexprbowl, realexpwbowl, rating_sample_size, major_nation, batsmanballs, ovrexpr, ovrexpw, batsman, nonstriker, bowler, batterid, bowlerid, av_runs_bat, av_wkts_bat, style_new
+                                 ballsremaining, target, reduced, max_balls, noball, wide, ord, byes, legbyes, innperiod, bowlerwicket, realexprbat, realexpwbat, realexprbowl, realexpwbowl, rating_sample_size, major_nation, batsmanballs, ovrexpr, ovrexpw, batsman, nonstriker, bowler, batterid, bowlerid, av_runs_bat, av_wkts_bat, style_new, power_surge
                                  from match_data.w_t20_bbb tb
                                  where tier < 3
                                  and date > %s
@@ -64,8 +65,8 @@ raw_data = raw_data.merge(targets, how='left', on=['matchid', 'innings'])
 raw_data['target'] = raw_data['target_x']
 raw_data = raw_data.drop(labels=['target_x'], axis=1)
 
-# take out big bash after 2019 season because of the power surge
-raw_data = raw_data[(raw_data['competition'] != 'Women\'s Big Bash League') | (raw_data['date'] < date(2020, 6, 6))]
+# # # take out big bash after 2019 season because of the power surge
+# raw_data = raw_data[(raw_data['competition'] != 'Women\'s Big Bash League') | (raw_data['date'] < date(2020, 6, 6))]
 # take out the 100
 raw_data = raw_data[(raw_data['competition'] != 'The Hundred (Women\'s Comp)')]
 # # for t20i only include the major nations

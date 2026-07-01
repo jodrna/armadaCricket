@@ -28,8 +28,8 @@ trainData['isWicketRunOut'] = np.where(trainData['isWicket'] > trainData['isWick
 trainData['chaseWin'] = np.where(trainData['totalInningRunsEnd'] >= trainData['target'], 1, 0)
 trainData['runsRequired'] = trainData['target'] - trainData['totalInningRuns']
 
-# take out big bash power surge and 10 wickets down, keep only matches after 1st Jan 2015
-trainData = trainData[(trainData['competition'] != 'Big Bash League') | (trainData['date'] < '06-06-2020')]
+# # take out big bash power surge and 10 wickets down, keep only matches after 1st Jan 2015
+# trainData = trainData[(trainData['competition'] != 'Big Bash League') | (trainData['date'] < '06-06-2020')]
 # trainData['totalInningWickets'] = np.where(trainData['isWicket'] == True, trainData['totalInningWickets'] - 1, trainData['totalInningWickets'])
 trainData = trainData[trainData['totalInningWickets'] <= 9]
 trainData = trainData[trainData['totalInningWickets'] >= 0]
