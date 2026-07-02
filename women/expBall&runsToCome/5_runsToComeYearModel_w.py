@@ -6,9 +6,11 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
 from sklearn.pipeline import make_pipeline
+from datetime import timedelta, date
 
 # import cleaned ball-by-ball data
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
+trainData = trainData[(trainData['competition'] != "Women's Big Bash League") | (trainData['date'] < pd.Timestamp(2020, 6, 6))]
 
 # import master lookup table from previous modelling step
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/4_masterLookup_w.csv')
@@ -78,12 +80,15 @@ if log_method == 1:
     trainData['vsOvr'] = np.log1p(trainData['vsOvr'] - vsOvrMin)
 # feature matrix
 X = trainData[features]
+##make a new raw train data set without big bash in as BBL needs to be adjusted for surge
+trainData_raw = trainData[(trainData['competition'] != "Women's Big Bash League") | (trainData['date'] < pd.Timestamp(2020, 6, 6))]
+X_raw = trainData_raw[features]
 # target using adjusted runs
 y_adj = trainData['vsAdjOvr']
 # target using raw runs
-y_raw = trainData['vsOvr']
+y_raw = trainData_raw['vsOvr']
 # target using just 120br runs
-trainData120 = trainData[(trainData['inningBallNumber'] == 1) & (trainData['year'] > 2018)]
+trainData120 = trainData_raw[(trainData_raw['inningBallNumber'] == 1) & (trainData_raw['year'] > 2018)]
 X120 = trainData120[['daysGroup']]#, 'daysGroup_daysGroup']]
 y_120 = trainData120['vsAdjOvr']
 
@@ -99,7 +104,7 @@ model_adj.fit(X, y_adj)
 
 # fit model for raw runs-to-come
 model_raw = LinearRegression()
-model_raw.fit(X, y_raw)
+model_raw.fit(X_raw, y_raw)
 
 # fit model for adjusted 120br runs-to-come
 # from sklearn.isotonic import IsotonicRegression
