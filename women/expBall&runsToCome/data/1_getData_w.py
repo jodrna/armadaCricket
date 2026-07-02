@@ -14,12 +14,12 @@ connection = engine.connect()
 #updating all data (1) or just daily update (2)?
 run_type = 1
 
-# last_date_data = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv', parse_dates=['date'])
-# if last_date_data['date_of_run'].max() == pd.Timestamp(date.today()):
-#     exit()
-#
-# last_date = last_date_data['date'].max() - timedelta(days=10)
-# format_date_new = last_date.strftime("%m/%d/%Y")
+last_date_data = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv', parse_dates=['date'])
+if last_date_data['date_of_run'].max() == pd.Timestamp(date.today()):
+    exit()
+
+last_date = last_date_data['date'].max() - timedelta(days=10)
+format_date_new = last_date.strftime("%m/%d/%Y")
 format_date_old = '12/31/2014'
 if run_type == 1:
     format_date = format_date_old
@@ -37,7 +37,7 @@ sql_query = '''select  matchid, id, tier, date, year, competition, venue, host, 
                                  order by matchid, innings, id'''
 
 sql_data = pd.read_sql_query(sql_query, con=connection, params=(format_date,))  # param is the format_date in this case. It is subbed in for %s within the query. You could have multiple %s in the query and multiple parameters in order
-
+connection.commit()
 print("3")
 
 # #export then import again, simple way to get date format correct
@@ -157,93 +157,78 @@ if run_type == 1:
     sqlupload = raw_data.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]
     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a']
 
-    sqlupload.to_sql("w_t20_bbb_clean", con=connection, schema="player_ratings", if_exists='replace', index=False)
-    connection.commit()
+    with connection.begin():
+        connection.execute(text("TRUNCATE TABLE player_ratings.w_t20_bbb_clean"))
+        sqlupload.to_sql(
+            "w_t20_bbb_clean",
+            con=connection,
+            schema="player_ratings",
+            if_exists='append',
+            index=False
+        )
 
-    try:
-
-        trans = connection.begin()
-
-        connection.execute(text("""UPDATE match_data.w_t20_bbb a
-                            SET 
-                                ballsremaining = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
-                                score          = COALESCE(t.score_clean_a, a.score),
-                                target         = COALESCE(t.target_clean_a, a.target),
-                                ord            = COALESCE(t.ord_clean_a, a.ord),
-                                id_clean_a             = t.id_clean_a,
-                                ball2_clean_a          = t.ball2_clean_a,
-                                score_clean_a          = t.score_clean_a,
-                                ballsremaining_clean_a = t.ballsremaining_clean_a,
-                                wickets_clean_a        = t.wickets_clean_a,
-                                target_clean_a         = t.target_clean_a,
-                                ord_clean_a            = t.ord_clean_a,
-                                required_clean_a       = t.required_clean_a
-                            FROM player_ratings.w_t20_bbb_clean t
-                            WHERE a.id = t.id_clean_a
-                              AND a.id_clean_a IS NULL;  -- skip already-updated rows"""))
-
-        trans.commit()
-
-    except Exception as e:
-        # Rollback the transaction in case of an error
-        trans.rollback()
-        print(f"An error occurred: {e}")
-
-    finally:
-        # Close the session
-        connection.close()
+        connection.execute(text("""
+            UPDATE match_data.w_t20_bbb a
+            SET ballsremaining         = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
+                score                  = COALESCE(t.score_clean_a, a.score),
+                target                 = COALESCE(t.target_clean_a, a.target),
+                ord                    = COALESCE(t.ord_clean_a, a.ord),
+                id_clean_a             = t.id_clean_a,
+                ball2_clean_a          = t.ball2_clean_a,
+                score_clean_a          = t.score_clean_a,
+                ballsremaining_clean_a = t.ballsremaining_clean_a,
+                wickets_clean_a        = t.wickets_clean_a,
+                target_clean_a         = t.target_clean_a,
+                ord_clean_a            = t.ord_clean_a,
+                required_clean_a       = t.required_clean_a
+            FROM player_ratings.w_t20_bbb_clean t
+            WHERE a.id = t.id_clean_a
+              AND a.id_clean_a IS NULL  -- skip already-updated rows
+        """))
 
 else:
     sqlupload = raw_data.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]
     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a']
 
-    sqlupload.to_sql("w_t20_bbb_clean_temp", con=connection, schema="player_ratings", if_exists='replace', index=False)
-    connection.commit()
-    print("6")
-
-    try:
-
-        trans = connection.begin()
+    with connection.begin():
+        sqlupload.to_sql(
+            "w_t20_bbb_clean_temp",
+            con=connection,
+            schema="player_ratings",
+            if_exists='replace',
+            index=False
+        )
 
         connection.execute(text("""
-        INSERT INTO player_ratings.w_t20_bbb_clean (id_clean_a, ball2_clean_a, score_clean_a, ballsremaining_clean_a, wickets_clean_a, target_clean_a, ord_clean_a, required_clean_a)
-        SELECT *
-        FROM player_ratings.w_t20_bbb_clean_temp t
-        WHERE NOT EXISTS (
-            SELECT 1 FROM player_ratings.w_t20_bbb_clean c
-            WHERE c.id_clean_a = t.id_clean_a
-        );
-
-        UPDATE match_data.w_t20_bbb a
-        SET ballsremaining         = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
-            score                  = COALESCE(t.score_clean_a, a.score),
-            target                 = COALESCE(t.target_clean_a, a.target),
-            ord                    = COALESCE(t.ord_clean_a, a.ord),
-            id_clean_a             = t.id_clean_a,
-            ball2_clean_a          = t.ball2_clean_a,
-            score_clean_a          = t.score_clean_a,
-            ballsremaining_clean_a = t.ballsremaining_clean_a,
-            wickets_clean_a        = t.wickets_clean_a,
-            target_clean_a         = t.target_clean_a,
-            ord_clean_a            = t.ord_clean_a,
-            required_clean_a       = t.required_clean_a
-        FROM player_ratings.w_t20_bbb_clean_temp t
-        WHERE a.id = t.id_clean_a
-          AND a.id_clean_a IS NULL;
-
-        DROP TABLE player_ratings.w_t20_bbb_clean_temp;
+            INSERT INTO player_ratings.w_t20_bbb_clean (id_clean_a, ball2_clean_a, score_clean_a, ballsremaining_clean_a, wickets_clean_a, target_clean_a, ord_clean_a, required_clean_a)
+            SELECT *
+            FROM player_ratings.w_t20_bbb_clean_temp t
+            WHERE NOT EXISTS (
+                SELECT 1 FROM player_ratings.w_t20_bbb_clean c
+                WHERE c.id_clean_a = t.id_clean_a
+            )
         """))
 
-        trans.commit()
+        connection.execute(text("""
+            UPDATE match_data.w_t20_bbb a
+            SET ballsremaining         = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
+                score                  = COALESCE(t.score_clean_a, a.score),
+                target                 = COALESCE(t.target_clean_a, a.target),
+                ord                    = COALESCE(t.ord_clean_a, a.ord),
+                id_clean_a             = t.id_clean_a,
+                ball2_clean_a          = t.ball2_clean_a,
+                score_clean_a          = t.score_clean_a,
+                ballsremaining_clean_a = t.ballsremaining_clean_a,
+                wickets_clean_a        = t.wickets_clean_a,
+                target_clean_a         = t.target_clean_a,
+                ord_clean_a            = t.ord_clean_a,
+                required_clean_a       = t.required_clean_a
+            FROM player_ratings.w_t20_bbb_clean_temp t
+            WHERE a.id = t.id_clean_a
+              AND a.id_clean_a IS NULL
+        """))
 
-    except Exception as e:
-        # Rollback the transaction in case of an error
-        trans.rollback()
-        print(f"An error occurred: {e}")
-
-    finally:
-        # Close the session
-        connection.close()
+        connection.execute(text("DROP TABLE player_ratings.w_t20_bbb_clean_temp"))
 
     raw_data = raw_data.sort_values(by='date', ascending=False)
     date = raw_data.head(1)
@@ -254,3 +239,5 @@ else:
     subprocess.run(['git', 'add', str(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv')])
     subprocess.run(['git', 'commit', '-m', 'update csv files'])
     subprocess.run(['git', 'push'])
+
+connection.close()
