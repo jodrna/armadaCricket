@@ -14,7 +14,10 @@ from datetime import date
 
 connection = engine.connect()
 raw_data_og = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', parse_dates=['date'])
-raw_data_og = raw_data_og[raw_data_og.competition == 'The Hundred (Women\'s Comp)']
+# raw_data_og['runs_to_come'] = raw_data_og['t_runs'] - raw_data_og['score']
+# raw_data_og = raw_data_og[raw_data_og.competition == 'The Hundred (Women\'s Comp)']
+# test = raw_data_og.groupby(['ballsremaining'])['runs_to_come'].mean().reset_index()
+# raw_data_og = raw_data_og[raw_data_og.competition == 'The Hundred (Women\'s Comp)'] #for testing only
 # raw_data_og_max_date = raw_data_og['date'].max()
 raw_data_og = raw_data_og.drop_duplicates(subset=['id'])
 # # raw_data_og = raw_data_og[raw_data_og.matchid == 1233979]
@@ -405,7 +408,7 @@ raw_data_for_hundredAdjusts = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat'
 
 raw_data_for_hundredAdjusts.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w_2.csv', index=False)
 
-new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum'] + new_data['rar_bbl_sum'] + new_data['raw_bbl_sum'] + new_data['rar_hundred_sum']
+# new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum'] + new_data['rar_bbl_sum'] + new_data['raw_bbl_sum'] + new_data['rar_hundred_sum']
 
 # raw_data_final = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum', 'rar_hundred_sum', 'RA_sum']], on='id', how='left')
 #
