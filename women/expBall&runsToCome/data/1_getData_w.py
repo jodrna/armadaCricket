@@ -68,7 +68,9 @@ raw_data = raw_data.drop(labels=['target_x'], axis=1)
 # # # take out big bash after 2019 season because of the power surge
 # raw_data = raw_data[(raw_data['competition'] != 'Women\'s Big Bash League') | (raw_data['date'] < date(2020, 6, 6))]
 # take out the 100
-raw_data = raw_data[(raw_data['competition'] != 'The Hundred (Women\'s Comp)')]
+# raw_data = raw_data[(raw_data['competition'] != 'The Hundred (Women\'s Comp)')]
+hundred = raw_data[(raw_data['competition'] == 'The Hundred (Women\'s Comp)')]
+
 # # for t20i only include the major nations
 # raw_data = raw_data[(raw_data['competition'] != 'WT20I') |
 #                     (raw_data.home.isin(['England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']) &
@@ -108,6 +110,12 @@ pivot = pd.concat([pivot_1, pivot_2], axis=0)
 raw_data = raw_data.merge(pivot.loc[:, ['matchid', 'innings', 'remove']], how='left', on=['matchid', 'innings'])
 raw_data = raw_data[raw_data['remove'] == 0]
 raw_data = raw_data.drop(labels=['reduced', 'remove', 'max_balls'], axis=1)  # same as dropping columns
+
+
+hundred.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/hundredData.csv', index=False)
+
+raw_data = pd.concat([raw_data, hundred], axis=0)
+
 
 # fix the ball
 raw_data['extra'] = np.where(raw_data['wide'] + raw_data['noball'] > 0, 1, 0)
@@ -149,6 +157,7 @@ raw_data = raw_data.merge(wkt_value_sum, how='left')
 raw_data = raw_data.drop_duplicates(subset=['id'])
 
 print("5")
+
 
 ## export
 if run_type == 1:

@@ -10,7 +10,7 @@ from sklearn.pipeline import Pipeline
 # import cleaned ball-by-ball data
 trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
 
-# import master lookup table from previous modelling step
+# import master lookup table from previous modeling step
 masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/4_masterLookup.csv')
 
 # only use first innings data

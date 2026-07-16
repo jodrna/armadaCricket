@@ -1,14 +1,22 @@
 import pandas as pd
-from sklearn.neural_network import MLPClassifier
+import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.ensemble import HistGradientBoostingRegressor, HistGradientBoostingClassifier
+from sklearn.neural_network import MLPRegressor, MLPClassifier
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_predict, KFold
+from sklearn.metrics import log_loss
 from paths import PROJECT_ROOT
-
 
 # import
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
 chaseSituations = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/auxiliaries/chaseSituationBuilder_w.csv')
-chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookupLive_w.csv')
+# chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookupLive_w.csv')
 
 
 
@@ -67,6 +75,12 @@ chaseLookup['daysGroup'] = 13
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSplineYear']).reset_index(drop=True)
 chaseLookup['in'] = 1
 
+
+#
+medians = pd.pivot_table(trainData, index=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], values=['daysGroup'], aggfunc='median').reset_index()
+medians = medians.rename(columns={'daysGroup': 'daysGroupMedian'})
+chaseLookup = chaseLookup.merge(medians, how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
+chaseLookup['daysGroup'] = chaseLookup['daysGroupMedian'].fillna(12)
 
 # remove chases which are effectively lost
 trainData = trainData.merge(chaseLookup.loc[:, ['in', 'totalInningWickets', 'runsRequired', 'inningBallNumber']], how='left', on=['totalInningWickets', 'runsRequired', 'inningBallNumber'])
@@ -166,11 +180,11 @@ bias = pd.pivot_table(trainData, values=['m_chaseWin%', 'chaseWin', 'sample'], a
 bias['bias'] = bias['m_chaseWin%'] / bias['chaseWin']
 bias['win%'] = bias['chaseWin'] / bias['sample']
 
-# compare
-chaseLookup = chaseLookup.merge(chaseLookupLive.loc[:, ['m_chaseWin%old', 'm_chaseWin%', 'totalInningWickets', 'runsRequired', 'inningBallsRemaining']],
-                                how='left', on=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], suffixes=('', 'Live'))
-chaseLookup['m_diff'] = chaseLookup['m_chaseWin%'] - chaseLookup['m_chaseWin%Live']
-chaseLookup['m_diff_old'] = chaseLookup['m_chaseWin%'] - chaseLookup['m_chaseWin%old']
+# # compare
+# chaseLookup = chaseLookup.merge(chaseLookupLive.loc[:, ['m_chaseWin%old', 'm_chaseWin%', 'totalInningWickets', 'runsRequired', 'inningBallsRemaining']],
+#                                 how='left', on=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], suffixes=('', 'Live'))
+# chaseLookup['m_diff'] = chaseLookup['m_chaseWin%'] - chaseLookup['m_chaseWin%Live']
+# chaseLookup['m_diff_old'] = chaseLookup['m_chaseWin%'] - chaseLookup['m_chaseWin%old']
 
 
 # chase win % year
@@ -217,12 +231,115 @@ chaseLookup.insert(col_position, 'lookup', (chaseLookup['totalInningWickets'] + 
 # plt.tight_layout()
 # plt.show()
 
+# over/under performance heatmap
+# x = daysGroup, split into 0.04-year steps
+# y = balls remaining
+# colour = actual chase win% - expected chase win%
+
+
+heat_data = trainData.copy()
+heat_data = heat_data.drop(columns=['m_chaseWin%'])
+heat_data = heat_data.merge(chaseLookup.loc[:, ['inningBallsRemaining', 'totalInningWickets', 'runsRequired', 'm_chaseWin%']], how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
+
+
+# medians = pd.pivot_table(trainData, index=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], values=['daysGroup'], aggfunc='median').reset_index()
+# medians = medians.rename(columns={'daysGroup': 'daysGroupMedian'})
+# heat_data = heat_data.merge(medians, how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
+heat_data = heat_data.dropna(
+    subset=[
+        'daysGroup',
+        'inningBallsRemaining',
+        'chaseWin',
+        'm_chaseWin%'
+    ]
+)
+
+year_centres = np.arange(
+    np.floor(heat_data['daysGroup'].min()),
+    np.ceil(heat_data['daysGroup'].max()) + 0.04,
+    0.04
+)
+
+ball_centres = np.arange(1, 121, 1)
+
+rows = []
+
+for yc in year_centres:
+    for bc in ball_centres:
+        mask = (
+            (heat_data['daysGroup'].sub(yc).abs() <= 0.5) &
+            (heat_data['inningBallsRemaining'].sub(bc).abs() <= 10)
+        )
+
+        cell = heat_data.loc[mask]
+
+        sample = len(cell)
+
+        if sample < 100:
+            actual = np.nan
+            expected = np.nan
+            over_under = np.nan
+        else:
+            actual = cell['chaseWin'].mean()
+            expected = cell['m_chaseWin%'].mean()
+            over_under = actual - expected
+
+        rows.append({
+            'daysGroupCentre': yc,
+            'yearLabel': 2015 + yc,
+            'inningBallsRemaining': bc,
+            'sample': sample,
+            'actual_chaseWin%': actual,
+            'expected_chaseWin%': expected,
+            'over_under': over_under
+        })
+
+heatmap_df = pd.DataFrame(rows)
+
+heatmap_pivot = heatmap_df.pivot(
+    index='inningBallsRemaining',
+    columns='daysGroupCentre',
+    values='over_under'
+)
+
+plt.figure(figsize=(16, 10))
+
+sns.heatmap(
+    heatmap_pivot,
+    cmap='PiYG',
+    center=0,
+    vmin=-0.2,
+    vmax=0.2,
+    linewidths=0,
+    cbar_kws={'label': 'Actual chase win% - expected chase win%'}
+)
+
+plt.title('Women chasing over/under performance by year and balls remaining')
+plt.xlabel('Year')
+plt.ylabel('Balls remaining')
+
+xtick_positions = np.arange(0, len(year_centres), 25)
+xtick_labels = [
+    str(int(2015 + year_centres[pos]))
+    for pos in xtick_positions
+]
+
+plt.xticks(
+    xtick_positions,
+    xtick_labels,
+    rotation=0
+)
+
+plt.gca().invert_yaxis()
+
+plt.tight_layout()
+plt.show()
+
+
+
 
 
 # exports
 chaseLookup.to_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w.csv', index=False)
-
-comparison = chaseLookup[(chaseLookup.totalInningWickets == 0) & (chaseLookup.inningBallsRemaining == 120)]
-comparison = comparison.loc[:,['runsRequired', 'm_chaseWin%', 'm_chaseWin%Live', 'm_chaseWin%old', 'm_diff', 'm_diff_old']]
 
 

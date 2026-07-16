@@ -393,16 +393,16 @@ Balwinder Singh,11205394,India,1990-03-12,Right-hand bat,Right-arm medium,912782
 Waseem Ahmed,11512126,India,2001-05-24,Right-hand bat,Right-arm medium,126119
 Arya Mone,11531970,India,2008-04-03,,,3019454
 Kaynat Hafeez,7504804,Pakistan,1996-06-17,Right-hand bat,Right-arm offbreak,941785
-Dominic Goodman,3005165,England,2000-10-23,Right-hand bat,Right-arm medium,1194967
 Sherry Butt,900065,Belgium,1982-01-14,Right-hand bat,Right-arm offbreak,520127
+Dominic Goodman,3005165,England,2000-10-23,Right-hand bat,Right-arm medium,1194967
 Aniket Porwal,11509259,India,1998-06-21,Right-hand bat,,6325250
 Anwar Arudin,6000231,Malaysia,1984-07-09,Left-hand bat,Right-arm medium-fast,320755
 Abhishek Sharma,4500048,India,2000-09-04,Left-hand bat,Slow left-arm orthodox,1070183
 Ranjit Kumar,11507354,Nepal,2006-04-07,Left-hand bat,Slow left-arm orthodox,9998939
 Nayan Wani,11531971,India,2007-03-13,,,405065
 Samina Aftab,11532095,Pakistan,2003-02-23,Right-hand bat,,4125933
-Tom Price,3004461,England,2000-01-02,Right-hand bat,Right-arm medium,905969
 Roshni Seth,11507533,Singapore,1999-08-09,Right-hand bat,Right-arm medium,6541254
+Tom Price,3004461,England,2000-01-02,Right-hand bat,Right-arm medium,905969
 Sara Merican,11507531,Singapore,1996-04-19,Right-hand bat,Right-arm medium,6541252
 Ali Ahmad,101103,Afghanistan,1999-01-01,Right-hand bat,Right-arm medium,1109167
 Kasun Sandaruwan,9503451,Sri Lanka,1997-05-27,Right-hand bat,,843887
@@ -414,8 +414,8 @@ Adarsh Chavan,11531972,India,2007-09-28,,,2591690
 Sabbir Ahmed,801643,Bangladesh,2000-02-19,Right-hand bat,Right-arm medium,1012179
 Sania Rasheed,11532096,Pakistan,2006-11-17,Right-hand bat,,9063935
 Absar Alam,11203331,Pakistan,1992-08-01,Right-hand bat,Right-arm medium,556102
-Jack Leaning,3007823,England,1993-10-18,Right-hand bat,Right-arm medium-fast,517249
 Saeed Ahmad,11501629,Sweden,2000-04-18,Left-hand bat,Right-arm fast,129372574
+Jack Leaning,3007823,England,1993-10-18,Right-hand bat,Right-arm medium-fast,517249
 Sarabjeet Singh,11206293,India,1991-07-28,Right-hand bat,Slow left-arm orthodox,104900
 Sardar Abbasi,11512418,Pakistan,2003-11-10,Right-hand bat,Right-arm medium,194416
 Waheed Ahmad,11511232,United Arab Emirates,2001-10-14,Right-hand bat,Right-arm medium,170695
@@ -556,9 +556,9 @@ Bharath Gaddam,11512165,Hungary,1993-08-15,Right-hand bat,Right-arm medium,97892
 Muhammad Khaliq,11510996,Cyprus,1995-02-02,Right-hand bat,Right-arm slow,127365
 Sompal Kami,6800381,Nepal,1996-02-02,Right-hand bat,Right-arm fast-medium,701215
 Yuvraj Zagade,11531985,India,1993-03-04,,,9823710
-Jordan Thompson,11532134,England,1996-10-09,Left-hand bat,Right-arm medium-fast,6631660
 Samruddhi Rawool,11507672,India,1999-02-15,Right-hand bat,,129374534
 Richie Berrington,8600072,Scotland,1987-04-03,Right-hand bat,Right-arm medium-fast,25490
+Jordan Thompson,11532134,England,1996-10-09,Left-hand bat,Right-arm medium-fast,6631660
 Haseeb Ur Rehman,10603816,United Arab Emirates,1994-10-05,Right-hand bat,,96038
 Mahad Shinwari,11512662,Malaysia,2004-02-14,Right-hand bat,,910699
 Munna Hasan,11510997,Cyprus,2001-10-10,Right-hand bat,Right-arm slow,123766
@@ -686,6 +686,7 @@ Faiz Sheikh,11531998,India,2001-11-03,,,2614182
 Riquelmi Nascimento,11532145,Brazil,2007-06-12,Right-hand bat,Right-arm medium,5244500
 Divyaansh Saxena,4508649,India,2001-02-13,Left-hand bat,,1175425
 Priyam Sarkar,11511363,India,1993-12-21,,,473108
+Thivagar Gopal,11203828,India,1994-11-02,Right-hand bat,Right-arm medium-fast,420211
 Andile Simelane,9203538,South Africa,2003-06-03,Right-hand bat,Right-arm fast,1070754
 Shakhawat Hossain,11511011,Cyprus,1993-06-17,Right-hand bat,Right-arm slow,78252
 Imran Kiyani,11508807,United Arab Emirates,1995-04-25,Right-hand bat,Right-arm medium-fast,6321590
@@ -693,7 +694,6 @@ Praveen Gusain,11502602,Hungary,1992-02-03,Right-hand bat,Right-arm slow,3201637
 Safeer Ahmed,11501219,Bulgaria,1992-01-07,Right-hand bat,Right-arm medium,129372347
 Vijay Raj,11529274,India,1999-05-27,Right-hand bat,Legbreak,4137411
 Premprakash Yadav,11511524,India,1976-08-18,Right-hand bat,Right-arm fast,148622
-Thivagar Gopal,11203828,India,1994-11-02,Right-hand bat,Right-arm medium-fast,420211
 Irshad Basheer,11512904,Bulgaria,1995-01-13,Right-hand bat,Right-arm fast,125501
 Subha Paul,11529544,India,2002-11-06,,,41501940
 Akshat Naresh,11531999,India,2003-09-05,,,631337
@@ -1037,10 +1037,10 @@ Kazim Hussain,11513439,Pakistan,1996-08-24,Right-hand bat,Right-arm fast,126100
 Mohammad Ibtisam,11512331,Malaysia,2005-09-24,Right-hand bat,Right-arm medium-fast,162921
 Robert Lungu,11511904,Zambia,2006-10-30,Left-hand bat,,112141
 Mitch Doolan,11502633,Australia,2002-03-13,Right-hand bat,Right-arm medium-fast,100215
+Sheraz Ali,7502587,Pakistan,1990-02-27,Left-hand bat,Right-arm bowler,884541
 Aviral Singh,11511560,India,2000-01-01,Right-hand bat,Right-arm fast,416093
 Muhammad Hamza,3006181,England,1995-12-14,Right-hand bat,Right-arm offbreak,1153479
 Umar Shah,10602409,United Arab Emirates,1998-04-11,Right-hand bat,Right-arm medium,1116230
-Sheraz Ali,7502587,Pakistan,1990-02-27,Left-hand bat,Right-arm bowler,884541
 Karan Singh,4503678,India,1995-12-18,Left-hand bat,Right-arm offbreak,714531
 Ritwik Roy Chowdhury,4509910,India,1995-11-20,Right-hand bat,Right-arm medium,849751
 Ravinder Brar,11511306,India,1994-01-26,,,171465
@@ -1670,6 +1670,7 @@ Paul Philomina,11506130,Malta,1987-05-26,Right-hand bat,Left-arm slow,101351
 Christy Thankachan,11506120,Malta,1996-06-20,Right-hand bat,Right-arm medium,101341
 Tony Thomas,11506133,Malta,1996-04-29,Right-hand bat,Right-arm fast,101354
 Gurpriar Singh,11532365,Australia,1990-06-18,Right-hand bat,Right-arm medium-fast,1377679516
+Arif Khan,11515806,Nepal,2009-12-26,Right-hand bat,,6772390
 Benjamin Embleton,11517769,England,1986-03-06,Right-hand bat,Right-arm slow,9755667
 Mohammad Zahedul Islam,11515194,Qatar,1999-07-25,Right-hand bat,Right-arm offbreak,8642245
 Eric Mukasa,11517935,Uganda,2003-12-04,Right-hand bat,Right-arm fast-medium,4177701
@@ -1677,7 +1678,6 @@ Ghulam Murtaza,10603790,United Arab Emirates,1988-03-04,Right-hand bat,Right-arm
 Jagdeep Singh,11515536,Spain,1996-12-09,Right-hand bat,,6980662
 Amritpal Sidhu,11515612,India,1996-03-17,Right-hand bat,Right-arm slow,3035294
 Asif Khan,11529820,Eswatini,1992-02-11,Right-hand bat,Right-arm medium,3388813
-Arif Khan,11515806,Nepal,2009-12-26,Right-hand bat,,6772390
 Amol Doshi,11530087,India,1985-07-02,,,4531795
 P Murugan,11516569,India,1983-07-02,Right-hand bat,Legbreak,9505486
 Lucky Khatun,11516711,Bangladesh,2006-06-10,Right-hand bat,Legbreak,1187274
@@ -1761,6 +1761,7 @@ Jalat Khan,7503335,Pakistan,1986-02-03,Left-hand bat,Slow left-arm orthodox,4093
 Jack Hillier,11532371,Australia,1995-01-01,Right-hand bat,,1377679522
 Kranti Gaud,11517236,India,2003-08-11,Right-hand bat,Right-arm medium-fast,1464471
 Pippa Sproul,11516717,Scotland,2008-02-12,Right-hand bat,,6388757
+Johnny Connell,11514842,England,2002-08-22,Right-hand bat,Right-arm slow,671114
 Govinth G,11516232,India,2004-01-26,Right-hand bat,Right-arm medium,8426851
 Deepu Viswambharan,11515201,Qatar,1990-10-29,Right-hand bat,Legbreak,6266838
 Tajinder Padda,11515543,India,1991-01-15,Right-hand bat,Right-arm medium,149502
@@ -1769,7 +1770,6 @@ Seenuvasamurthi,11516576,India,1981-03-25,Right-hand bat,,9747753
 Sunilkumar Patel,11517021,India,1984-05-22,Right-hand bat,Right-arm offbreak,1997071
 Muhammad Hamza,11529827,Eswatini,1996-07-21,Right-hand bat,Right-arm fast,693042
 Muqeem Ali,11517292,Saudi Arabia,1984-04-10,Left-hand bat,Right-arm offbreak,4542343
-Johnny Connell,11514842,England,2002-08-22,Right-hand bat,Right-arm slow,671114
 Rahul Kengar,11530094,India,1993-01-10,,,2824049
 Ajeesh A Kn,11517942,India,1998-09-05,Right-hand bat,Right-arm offbreak,1728644
 Jafar Ahmed,11518595,Bangladesh,1999-01-04,Left-hand bat,Left-arm slow,597633
@@ -1915,6 +1915,7 @@ Naiel Mohammed,11517784,West Indies,2005-07-23,Left-hand bat,Right-arm medium,35
 Mohammed Aslam,11518604,Bangladesh,1998-12-26,Right-hand bat,Right-arm medium,8388052
 Sreejith Subash,11519042,Kuwait,1974-01-18,Right-hand bat,Right-arm offbreak,6106689
 Ranga Gammampila,11519219,Malaysia,1997-12-23,Left-hand bat,,808060
+Logesh Prabagaran,4511049,India,2000-02-12,Right-hand bat,Right-arm medium,1273887
 Muhammed Alamgir,11529837,Eswatini,1991-04-20,Right-hand bat,Right-arm medium-fast,3974091
 Sourabh Kadam,11530104,India,2002-03-23,,,1566617
 Adeel Raza,11515628,Pakistan,1994-12-13,Right-hand bat,Right-arm fast,7837930
@@ -1926,7 +1927,6 @@ Andile Tshaka,9205365,South Africa,2000-10-16,Right-hand bat,Slow left-arm ortho
 Stephen Shaddick,11517785,West Indies,1988-03-27,Left-hand bat,Left-arm slow,5155870
 Noore Azman,11518605,Bangladesh,1989-11-07,Right-hand bat,Right-arm fast-medium,8428441
 Sujith Subhash,11519043,Kuwait,1975-05-01,Right-hand bat,Right-arm medium,9685537
-Logesh Prabagaran,4511049,India,2000-02-12,Right-hand bat,Right-arm medium,1273887
 Shakkir Kassim,11515211,Qatar,1992-06-24,Right-hand bat,Right-arm medium,1771105
 Skanda Sharma,11517416,United States Of America,2003-03-28,Right-hand bat,Right-arm offbreak,358873
 Ritesh Chikane,11517786,India,2002-04-26,Right-hand bat,Right-arm fast,7307128
@@ -2110,6 +2110,7 @@ Anand Kaul,11518617,India,1979-11-07,Right-hand bat,Right-arm slow,5892831
 Neev Dayal,11519055,Kuwait,2012-06-02,Right-hand bat,Right-arm fast-medium,1826652
 Maria Luiza Garcia,11532393,Brazil,2005-06-09,Right-hand bat,Right-arm medium,1377679542
 Danish Shaikh,11517795,India,1997-07-13,Right-hand bat,Right-arm fast-medium,7118250
+Rajaram S,4510878,India,2000-10-13,Right-hand bat,Right-arm medium,1890036
 Taha Badar,11520062,United States Of America,1992-06-08,Right-hand bat,Legbreak,2055065
 Xavier Bell,11515219,New Zealand,2006-07-31,Right-hand bat,Right-arm medium,1478777
 Chaitanya Sharma,11518618,India,1990-03-14,Right-hand bat,Right-arm fast,1348557
@@ -2118,7 +2119,6 @@ Aditya Venkatesh,11516254,India,2000-02-19,Right-hand bat,,20965812
 Ch Jnaneswar Dev,11516599,India,1983-05-06,Right-hand bat,,4753656
 Marcus Thurgate,5300021,Japan,2001-01-07,Right-hand bat,Legbreak,1063434
 Het Kishorebhai,11519056,Kuwait,2007-05-20,Right-hand bat,,8662731
-Rajaram S,4510878,India,2000-10-13,Right-hand bat,Right-arm medium,1890036
 Maxwell Swaminathan,11517796,India,1999-01-18,Right-hand bat,Right-arm offbreak,9448963
 Dost Muhammad,11520122,Afghanistan,2001-04-05,Left-hand bat,Slow left-arm orthodox,2059318
 Krishnakumar S,11501257,India,1990-02-01,Left-hand bat,Right-arm medium-fast,135804
@@ -2194,8 +2194,8 @@ Mohammad Aqif Farooq,11519062,Kuwait,2008-01-25,Right-hand bat,Right-arm medium,
 Sandeep Sunar,6800368,Nepal,1998-09-14,Right-hand bat,Legbreak googly,794721
 Uzair Khan,11517802,India,2000-12-15,Right-hand bat,Right-arm fast,7981882
 Manjeet Singh,11517045,India,1996-11-12,Right-hand bat,Right-arm offbreak,7634843
-Rahul R,11511682,India,2004-10-31,Right-hand bat,Right-arm medium-fast,757195
 Raja Zain,11515644,Pakistan,1999-10-31,Right-hand bat,Right-arm slow,1693447
+Rahul R,11511682,India,2004-10-31,Right-hand bat,Right-arm medium-fast,757195
 Paul Johnson,11516261,India,1995-10-25,Right-hand bat,Right-arm medium,327839171
 Imran Mohsin,11517315,Saudi Arabia,1986-02-15,Right-hand bat,,4472603
 Naseerullah Khan,11517968,Pakistan,1998-04-15,Right-hand bat,,71159502
@@ -2356,10 +2356,10 @@ Imran Khan,4506229,India,1984-11-24,Left-hand bat,Slow left-arm orthodox,374682
 Arsalan Ahsan,11517327,Saudi Arabia,1990-02-02,Right-hand bat,Right-arm fast-medium,7831077
 Kristoff Lewis,11517812,West Indies,1998-10-04,Right-hand bat,Right-arm offbreak,1290021
 Irene Alumo,10500222,Uganda,2001-12-12,Left-hand bat,Slow left-arm orthodox,99618
+Tazeem Ali,11517979,England,2006-06-13,Right-hand bat,Legbreak,91487586
 Muhammad Saghir,11529867,United Arab Emirates,1999-02-18,Right-hand bat,Right-arm medium-fast,878621
 Faizan Tahir,11517328,Saudi Arabia,1998-11-13,Right-hand bat,Legbreak,2582954
 Akhila Thulaseedharan,11520139,Malta,1994-05-25,Right-hand bat,,8778917
-Tazeem Ali,11517979,England,2006-06-13,Right-hand bat,Legbreak,91487586
 Ariuntsetseg Tsendsuren,11514873,Mongolia,2004-07-27,Right-hand bat,Right-arm medium-fast,406909
 Shrimant Kadam,11530137,India,1984-03-07,,,7512651
 Mohammad Faysal,11519252,Malaysia,1988-08-25,Right-hand bat,,2954145
@@ -2929,9 +2929,9 @@ Mohammad Rizwan Jr,11518032,Pakistan,1999-07-02,Left-hand bat,Slow left-arm orth
 Aryan Mhase,11517868,India,2006-09-10,Right-hand bat,,2296642
 Kevin Gassie,11202322,West Indies,2005-07-31,Right-hand bat,Right-arm medium,1269010
 Raj Kumar,11518695,Portugal,1980-07-24,Right-hand bat,Right-arm medium,268925
+Tiaan Louw,11519128,England,2006-04-16,Left-hand bat,Left-arm fast-medium,288636
 Mohammad Zahid,7500889,Pakistan,2002-02-08,Left-hand bat,Slow left-arm orthodox,41991
 Shahrukh Shaikh,11529926,India,1995-10-27,,,77208824
-Tiaan Louw,11519128,England,2006-04-16,Left-hand bat,Left-arm fast-medium,288636
 Neha Shenoy,11520168,India,2009-07-02,Right-hand bat,Right-arm medium-fast,649688
 Rahmat Ali,11516327,Bangladesh,1997-09-03,Right-hand bat,Right-arm medium,9819164
 Chirag Modak,11517869,India,2007-06-10,Left-hand bat,Slow left-arm orthodox,9737345
@@ -4010,6 +4010,7 @@ Shailendra Yadav,4511511,India,2004-06-13,Right-hand bat,Right-arm medium,110001
 Hemant Punde,11522099,India,1998-03-09,Left-hand bat,Slow left-arm orthodox,8040442
 Chamali Lokuge,11520662,Estonia,1989-01-18,Left-hand bat,Left-arm medium,8657176
 Henil Patel,11522100,India,2007-02-28,Right-hand bat,Right-arm medium,2652879
+Danny Lamb,3007421,England,1995-09-07,Right-hand bat,Right-arm medium,637151
 Sadham Hussain A,11516447,India,1993-04-15,,,355633864
 Rohan Qadri,11518146,Pakistan,1992-06-10,Right-hand bat,Legbreak,8301486
 Ishtiaq Muhammad,4200043,Hong Kong,1992-12-31,Right-hand bat,Right-arm offbreak,919495
@@ -4017,7 +4018,6 @@ Samiurahman Ahmadzai,11519430,Afghanistan,1998-12-31,Left-hand bat,Right-arm med
 Mompiya Das,4511642,India,2005-02-28,Right-hand bat,Right-arm medium,21000391
 Mohsin Saeed,11520638,Pakistan,1995-04-27,Right-hand bat,Right-arm medium,3147958
 Abishek Krishna P M,11206265,India,2003-09-13,Right-hand bat,,565301
-Danny Lamb,3007421,England,1995-09-07,Right-hand bat,Right-arm medium,637151
 Oliver Walker,11521087,West Indies,1989-01-15,Right-hand bat,Right-arm offbreak,1173634
 Neel Vats,11521398,India,1995-11-24,Right-hand bat,Right-arm fast,2659262
 Smit Rathva,11522073,India,2007-03-13,Right-hand bat,Right-arm medium,2584001
@@ -4491,8 +4491,8 @@ Amaya Rajapaksha,11519470,Sri Lanka,2010-05-24,Right-hand bat,Right-arm fast,429
 Hassan Ahmed,11521131,Bangladesh,1994-11-06,Right-hand bat,Right-arm slow,6010263
 Catherine Dalton,11521439,Ireland,1992-10-24,Right-hand bat,Right-arm fast,8931350
 Zubair Khan,11522141,Ireland,2002-07-24,Right-hand bat,Right-arm medium,1140450
-Tim Pringle,7100345,New Zealand,2002-08-29,Right-hand bat,Slow left-arm orthodox,1193548
 Shaundel Emmons,11518187,West Indies,2001-05-17,Left-hand bat,Right-arm offbreak,6730693
+Timothy Pringle,7100345,New Zealand,2002-08-29,Right-hand bat,Slow left-arm orthodox,1193548
 Daniela Scalia,11519471,Italy,1975-11-09,Right-hand bat,,885193
 Mafaz Khan,11518858,Pakistan,1992-11-02,Right-hand bat,Left-arm fast,523329
 Jaganathan MR,11520698,India,2003-07-23,Right-hand bat,Right-arm medium,4812800
@@ -4776,21 +4776,21 @@ Sol Bennett,11520412,Scotland,2008-12-10,Right-hand bat,Right-arm offbreak,78857
 Rajkumar Yadav,11531116,India,1997-07-01,Right-hand bat,Right-arm offbreak,8958127
 Vishwas Saroha,11531117,India,2003-10-21,,Left-arm slow,1368840
 Kamran Atta,10603388,United Arab Emirates,1994-10-07,Right-hand bat,Right-arm medium,1290309
+Nantes Oosthuizen,11520947,England,2006-01-04,Right-hand bat,Right-arm fast-medium,1164233
 Mohammed Shemu,11519494,Spain,1989-12-30,Right-hand bat,Right-arm medium,652302
 Ismail Kolayath,11518884,Pakistan,1981-05-22,Right-hand bat,,632315
 Shyamsunder Krishnashriram,11520717,Sri Lanka,2001-03-25,Right-hand bat,Right-arm offbreak,4634742
 Leo Sultanescu,11520862,Romania,1976-05-15,Right-hand bat,Right-arm medium,5734544
-Nantes Oosthuizen,11520947,England,2006-01-04,Right-hand bat,Right-arm fast-medium,1164233
 Laeeq Akhtar,11521158,England,1975-04-03,Right-hand bat,Right-arm medium,3571819
 Angela Green,11521464,England,1976-07-20,Right-hand bat,Right-arm slow,9339423
 Vijay Khairnar,11522165,India,1987-01-01,Right-hand bat,Right-arm medium,1402800
 Anjali Ketan,11532558,England,2006-02-28,Right-hand bat,Legbreak,1377679706
 Ajay Kumar,11520413,United Arab Emirates,1997-04-01,Left-hand bat,Left-arm medium-fast,8874162
+Troy Henry,11520948,England,2004-06-27,Left-hand bat,Slow left-arm orthodox,9870859
 Kevin Holder,11518214,West Indies,1998-10-21,Right-hand bat,,4420533
 Jaffar Shaik,11518885,Pakistan,1980-04-10,Right-hand bat,Right-arm fast-medium,672407
 Nabid Hasan,11519495,Bangladesh,1992-12-20,Right-hand bat,Right-arm medium,372992
 Tharana Wimaladharma,11520718,Sri Lanka,2005-01-06,Right-hand bat,Legbreak,8731456
-Troy Henry,11520948,England,2004-06-27,Left-hand bat,Slow left-arm orthodox,9870859
 Om Thakeria,11521159,England,2003-12-01,Left-hand bat,Left-arm slow,8712063
 Beth Libby,11521465,England,2009-10-23,Right-hand bat,Right-arm medium,256257
 Zaheer Balti,11522166,Pakistan,1998-01-01,Right-hand bat,Right-arm fast,5915330
@@ -4818,22 +4818,22 @@ Dani Cox,11521467,England,1991-01-31,Left-hand bat,Left-arm slow,5987882
 Bhatnagar Kushagra,11522168,India,1987-07-31,Right-hand bat,Right-arm slow,2877094
 Lakshay Malik,11531120,India,1999-08-12,Right-hand bat,,4946938
 Vishwa Teja Nettem,11518888,Pakistan,2010-05-15,Right-hand bat,Right-arm medium-fast,340707
+Raheem Ahmed,11520951,England,2003-05-26,Left-hand bat,Left-arm medium,2120593
 Sabbir Hossain,11519498,Bangladesh,1994-10-16,Right-hand bat,Right-arm slow,519561
 Gayan Maneeshan,9503265,Sri Lanka,1991-02-25,Left-hand bat,Legbreak,362892
 Subhani Mahmood,11520866,Pakistan,1984-05-10,Right-hand bat,Right-arm medium,392319
-Raheem Ahmed,11520951,England,2003-05-26,Left-hand bat,Left-arm medium,2120593
 Safi Butt,11521162,Afghanistan,2003-01-01,Right-hand bat,Left-arm fast,9021523
 Emma Noller,11521468,England,1981-07-30,Right-hand bat,Right-arm slow,4884656
 Bilal Samad,11522169,Pakistan,1985-07-23,Right-hand bat,Right-arm medium,949893
 Ankur Sangwan,10603598,United Arab Emirates,1997-11-18,Left-hand bat,Slow left-arm orthodox,1256222
 Kuldeep,11531121,India,1997-06-10,Right-hand bat,,9705265
 Rebecca Duckworth,3004061,England,2000-10-30,Right-hand bat,,1095847
+Aadi Sharma,11520952,England,2006-02-23,Right-hand bat,Legbreak googly,6322071
 Shakeem Prince,11518218,West Indies,1997-07-09,Left-hand bat,Right-arm offbreak,3722232
 Daksh Nair,11518889,Pakistan,2010-10-05,Left-hand bat,,416490
 Safkat Zaman,11519499,Bangladesh,2006-10-10,Right-hand bat,,438635
 Sachindu Colombage,11520720,Sri Lanka,2002-06-03,Left-hand bat,Left-arm medium,7758830
 Talha Babar,11520867,Pakistan,1998-09-20,Right-hand bat,Right-arm medium,8968321
-Aadi Sharma,11520952,England,2006-02-23,Right-hand bat,Legbreak googly,6322071
 Salman Khan,11521163,England,1979-08-03,Left-hand bat,Legbreak,6351436
 Georgia Hayes,11521469,England,2003-01-13,Right-hand bat,Right-arm slow,2665535
 Birendra Kumar,11522170,India,1984-07-13,Right-hand bat,Right-arm fast,7355643
@@ -4850,11 +4850,11 @@ Divyesh Gowda,11522171,India,1997-09-11,Right-hand bat,Right-arm medium,7552692
 Abhinav Tiwari,11531123,India,1995-08-15,,,9880855
 Biprasan KC,11518220,Nepal,2007-04-08,Right-hand bat,Right-arm offbreak,4813862
 Gaurav Salwan,11522172,India,1989-01-14,Right-hand bat,Right-arm offbreak,5564332
+Arush Buchake,11520953,England,2006-07-24,Right-hand bat,,762162
 Vihaan Jitesh,11518891,India,2009-11-09,Right-hand bat,,349702
 Taher Aziz,11519501,Bangladesh,2004-01-08,Right-hand bat,Right-arm slow,797969
 Atta Rahman,11520415,United Arab Emirates,2009-09-20,Right-hand bat,Legbreak,1836346
 Zafran Imtiaz,11520869,Pakistan,1995-10-01,Right-hand bat,Right-arm fast,3713306
-Arush Buchake,11520953,England,2006-07-24,Right-hand bat,,762162
 Shahid Mushtaq,11521165,England,1985-07-20,Right-hand bat,Right-arm slow,7933596
 Holly Minney,11521471,England,1983-10-22,Right-hand bat,Right-arm slow,557972
 Shubham,11531124,India,2002-07-15,Right-hand bat,,9602216
@@ -4942,8 +4942,8 @@ Toni Woodgate,11521480,England,1975-01-14,Right-hand bat,Right-arm offbreak,4029
 Pravin Karkera,11522181,India,1981-10-31,Right-hand bat,Right-arm slow,8107978
 Mohammad Ali,11518230,Bangladesh,1999-10-08,Right-hand bat,Right-arm fast-medium,3566034
 Ritu Moni,11518901,Bangladesh,1993-02-05,Right-hand bat,Right-arm medium,8637275
-Viranjan Kularathna,11520879,Sri Lanka,1982-06-20,Right-hand bat,Right-arm medium,7298166
 Sam Seecharan,11520963,England,2006-08-16,Right-hand bat,Right-arm medium,8594266
+Viranjan Kularathna,11520879,Sri Lanka,1982-06-20,Right-hand bat,Right-arm medium,7298166
 Zoe Quested,11521481,England,1994-02-13,Right-hand bat,Left-arm slow,575686
 Deep Borah,11519511,India,1972-01-10,Right-hand bat,Right-arm slow,959571
 Ashraful Islam,11521175,Bangladesh,1986-01-01,Right-hand bat,Right-arm offbreak,5025059
@@ -4957,10 +4957,10 @@ Vithusan Vinayagamoorthy,11520880,Sri Lanka,1995-11-26,Right-hand bat,Right-arm 
 Tom Giles,11520964,England,2006-05-17,Right-hand bat,Right-arm fast-medium,9227337
 Ben Little,11521176,England,2002-08-21,Right-hand bat,Right-arm medium,549003
 Praveen Pilla,11522183,India,1989-06-28,Right-hand bat,Right-arm medium,7669625
+Travis Holland,11520965,England,2006-01-21,Right-hand bat,,4047527
 Sabit Anik,11518232,Bangladesh,1993-12-30,Right-hand bat,Right-arm medium,6929693
 Nazrul Islam,11518903,Bangladesh,1992-10-10,Right-hand bat,Right-arm fast,863281
 Justin John,11520423,West Indies,2006-10-25,Right-hand bat,Right-arm offbreak,6252001
-Travis Holland,11520965,England,2006-01-21,Right-hand bat,,4047527
 Biren Patel,11521177,England,1993-06-18,Left-hand bat,Left-arm slow,1291674
 Tilly Callaghan,3006739,England,1998-05-05,Right-hand bat,Right-arm medium,886141
 Al Hasan,11522184,Bangladesh,2000-10-13,Right-hand bat,Right-arm slow,4445966
@@ -4998,8 +4998,8 @@ Gambir Ahmad,11520884,Pakistan,1998-03-17,Right-hand bat,Right-arm slow,8851658
 Irteza Sakib,11521182,Bangladesh,2002-03-01,Right-hand bat,Right-arm medium,4812774
 Charlotte Roberts,11521485,England,2006-10-26,Right-hand bat,Right-arm medium-fast,2845645
 Arpit Khare,11522189,India,2002-10-25,Right-hand bat,,3975406
-Gurjinder Singh,11518238,India,1991-03-15,Right-hand bat,Right-arm medium,6314779
 Muhammad Tahir,11520885,Pakistan,1999-02-24,Right-hand bat,Right-arm slow,559882
+Gurjinder Singh,11518238,India,1991-03-15,Right-hand bat,Right-arm medium,6314779
 Junayed Hossain,11521183,Bangladesh,2001-03-21,Right-hand bat,Right-arm fast,9586552
 Samadhi Samarakoon,11521486,England,2005-11-22,Right-hand bat,Right-arm bowler,7303933
 Redowan Ahmed,11522190,Bangladesh,2004-07-10,Right-hand bat,Right-arm fast,2343750
@@ -5369,6 +5369,7 @@ Vani Rana,11520777,India,1987-08-06,Left-hand bat,Right-arm medium,9232608
 Sunil Thakur,11522236,India,1985-05-05,Right-hand bat,,2409300
 Rajalingam G,11521528,India,1998-05-10,Right-hand bat,Right-arm medium,9371812
 Rehman Dar,10700318,United States of America,2002-12-24,Left-hand bat,Right-arm medium,1193307
+Aman Khan,4511575,India,1996-11-23,Right-hand bat,Right-arm offbreak,1254269
 Shaik Sikandar,11518952,Kuwait,1980-03-16,Right-hand bat,Right-arm fast,9954013
 Amit Karel,11520454,India,1989-08-09,Right-hand bat,Right-arm medium,7101855
 Petra Wickberg,11520778,Sweden,1992-02-14,Right-hand bat,Right-arm slow,7626914
@@ -5376,7 +5377,6 @@ Rohith Suthar,11521529,India,2003-10-22,Left-hand bat,Left-arm fast,7174911
 Sunil Kumar,11518284,India,2002-05-22,Right-hand bat,Slow left-arm orthodox,6412826
 Tarun Sharma,11522237,Finland,1975-09-10,Right-hand bat,Right-arm medium,3093850
 Antony Nishantha,11519565,Kuwait,1988-12-28,Right-hand bat,Right-arm medium,7466943
-Aman Khan,4511575,India,1996-11-23,Right-hand bat,Right-arm offbreak,1254269
 Umair Mir,7505508,Pakistan,1990-01-27,Left-hand bat,Right-arm medium-fast,323953
 Awais Khan,11521229,India,2005-11-25,Right-hand bat,Legbreak,6698672
 Varandeep,11518285,India,1996-06-20,Right-hand bat,Right-arm medium,3603575
@@ -5680,12 +5680,12 @@ Metty Fernandes,11521052,Switzerland,1980-04-28,Right-hand bat,Right-arm medium,
 Elsa Barnfather,3000620,England,2003-07-23,Right-hand bat,Right-arm medium-fast,1184085
 Karthick Manikandan,11500287,India,2005-01-22,Right-hand bat,Legbreak,1320762
 Joycelyn Ahama,11531866,Ghana,2009-11-01,Right-hand bat,,7575335
+Adam Sylvester,11521266,England,2000-05-18,Right-hand bat,Right-arm medium,2631731
 Mohammad Rizwan,11518317,India,1996-03-09,Right-hand bat,,7547930
 Zeena Bilal,11519601,England,2006-10-12,Right-hand bat,Right-arm medium-fast,673753
 Millie Holmes,11521053,Switzerland,2009-02-13,Right-hand bat,Right-arm medium,2756300
 Dylan Lues,11522274,Ireland,2001-03-15,Right-hand bat,Right-arm offbreak,7839546
 Muhammad Azmat Ali,11520486,Kuwait,1982-03-01,Right-hand bat,Right-arm medium-fast,9736798
-Adam Sylvester,11521266,England,2000-05-18,Right-hand bat,Right-arm medium,2631731
 Rebecca Adotei,11531867,Ghana,2010-10-07,Right-hand bat,Right-arm medium,3320835
 Muskan Subba,11518318,India,1998-05-15,Right-hand bat,Right-arm offbreak,5423297
 Nasir Iqbal,11520487,Kuwait,1978-01-01,Right-hand bat,,5842276
@@ -5730,10 +5730,10 @@ Aakaash Sharma,11521570,India,2000-01-09,Right-hand bat,Right-arm medium,8029764
 Osum Chettri,11522280,India,2011-11-13,Left-hand bat,Left-arm medium,4185590
 Mohamed Jameel,11520491,Kuwait,1995-01-23,Right-hand bat,Right-arm medium-fast,205816
 Bhaskar Yadram,11200535,West Indies,1999-09-18,Right-hand bat,Right-arm medium,1078699
+Olivia Kibler,11519608,England,2001-11-30,Right-hand bat,,314426
 Nigel Tamang,11518324,India,1991-07-27,Right-hand bat,Right-arm medium-fast,1963690
 Riyaz Manaf,11520492,Kuwait,1981-05-30,Right-hand bat,,239943
 Anisha Dissanayake,11521060,England,2003-04-26,Right-hand bat,Legbreak,1380078
-Olivia Kibler,11519608,England,2001-11-30,Right-hand bat,,314426
 Karan More,11521571,India,1987-04-05,,,692705
 Siddharth Prasad,11522281,India,2005-08-21,Right-hand bat,Right-arm offbreak,9619406
 Jenifer Kimaro,11521272,Tanzania,2007-04-30,Right-hand bat,,3675012
@@ -6056,6 +6056,7 @@ Ayaz Mohammed,11512064,Zambia,1998-06-12,Right-hand bat,Right-arm medium,182984
 Vasimakram Chand,11512065,Zambia,1989-09-17,Right-hand bat,Right-arm offbreak,111880
 Milton Shumba,11400376,Zimbabwe,2000-10-19,Left-hand bat,Slow left-arm orthodox,951781
 Yusaf Mohammed,11520506,Kuwait,1995-12-04,Right-hand bat,Right-arm medium-fast,2410163
+Indrajeet Kumar,11511757,India,1999-10-15,Right-hand bat,Right-arm medium-fast,171902
 Harshit Takkar,11511260,India,2001-12-03,Right-hand bat,Right-arm medium,1356672
 Sohail Khan,101679,Afghanistan,2007-02-22,Right-hand bat,,103709
 Rashmika Sewwandi,9505915,Sri Lanka,2006-10-21,Left-hand bat,Right-arm medium,5213105
@@ -6082,7 +6083,6 @@ Dilhara Polgampala,9504608,Sri Lanka,1999-10-10,Left-hand bat,,1057273
 Sudesh Wickramasekara,2600007,Czech Republic,1982-07-21,Right-hand bat,Right-arm medium,1156473
 Sangay Wangmo,11511923,Bhutan,2006-02-23,Right-hand bat,Right-arm offbreak,1318458
 Abul Farhad,11511996,Bangladesh,1990-01-20,Right-hand bat,Right-arm medium,773533
-Indrajeet Kumar,11511757,India,1999-10-15,Right-hand bat,Right-arm medium-fast,171902
 Mazhar Hussain,4509255,India,1995-11-09,Right-hand bat,Right-arm fast,31499
 Kelvin Thuchila,5900072,Malawi,2004-10-29,Left-hand bat,Slow left-arm orthodox,68197
 Beston Masauko,5900073,Malawi,2004-08-18,Right-hand bat,,68198
@@ -6092,6 +6092,7 @@ Nethma Karunarathne,11501341,SriLanka,2003-07-12,Left-hand bat,Right-arm medium-
 Clement Marcellin,11500541,West Indies,1984-04-27,Right-hand bat,Right-arm medium,1269069
 Angeliki Ionna,11511984,Greece,2006-09-20,Left-hand bat,,97880
 Shoaib Malik,7505420,Pakistan,1982-02-01,Right-hand bat,Right-arm offbreak,42657
+Theo Wylie,11511924,England,2006-01-17,Right-hand bat,Slow left-arm orthodox,492408
 Danushka Gunathilaka,9501685,Sri Lanka,1991-03-17,Left-hand bat,Right-arm offbreak,345821
 Prabath Jayasuriya,9503793,Sri Lanka,1991-11-05,Right-hand bat,Slow left-arm orthodox,422871
 Sangay Zangmo,11512048,Bhutan,2006-02-23,Right-hand bat,Right-arm offbreak,95387
@@ -6110,7 +6111,6 @@ Abhishek Tanwar,4505430,India,1991-10-17,Right-hand bat,Right-arm medium,714479
 Ramesh Nimantha,9505257,Sri Lanka,1997-04-25,Right-hand bat,Right-arm offbreak,1130923
 Kunwarjeet Ballagan,11511261,India,1999-09-21,Left-hand bat,,847229
 Hasitha Perera,9504725,Sri Lanka,1987-07-03,Right-hand bat,,1213099
-Theo Wylie,11511924,England,2006-01-17,Right-hand bat,Slow left-arm orthodox,492408
 Teshawon Castro,11512067,West Indies,1992-02-29,Right-hand bat,Right-arm fast-medium,148145
 Satyajit Sengupta,2600122,Czech Republic,1989-04-01,Right-hand bat,Right-arm medium,1263719
 Manuj Kapil,11511115,United Arab Emirates,2006-12-12,Left-hand bat,Left-arm medium-fast,170600
@@ -6223,6 +6223,7 @@ Keshan Wanniarachchi,9504876,Sri Lanka,1998-07-07,Left-hand bat,,1027853
 Nyazwali Zargul,11520510,Sweden,2001-10-28,Right-hand bat,Right-arm fast,9384184
 Romario Shepherd,11201845,West Indies,1994-11-26,Right-hand bat,Right-arm medium-fast,677077
 Sachin Thakur,11502952,Japan,1986-10-25,,,5563247
+Che Simmons,11501139,England,2003-12-18,Right-hand bat,Right-arm medium-fast,129372290
 Rohit Jaiswal,11518346,India,2006-07-11,Right-hand bat,Right-arm medium,8956628
 Ankush Rajbhar,11529497,India,2005-10-23,,,11636233
 Rajashree Doddamani,11511988,Czech Republic,1989-05-14,Right-hand bat,Right-arm medium-fast,172368
@@ -6241,7 +6242,6 @@ Sema Kucuksucu,11505996,India,1987-08-08,Right-hand bat,Right-arm slow,129373996
 Yevheniia Korniienko,11505997,India,1990-02-09,Right-hand bat,Right-arm medium,129373997
 Brad Haddin,401878,Australia,1977-10-23,Right-hand bat,,5560
 Salman Randhawa,7505318,Pakistan,1987-05-05,Right-hand bat,Right-arm medium-fast,1122038
-Che Simmons,11501139,England,2003-12-18,Right-hand bat,Right-arm medium-fast,129372290
 Jatin Saxena,4500881,India,1982-08-04,Right-hand bat,Legbreak,34349
 Sabbir Hossain,800340,Bangladesh,1997-03-15,Right-hand bat,Right-arm medium,932405
 Balaji Ramdas,11511719,Czechia,1995-07-12,Right-hand bat,Right-arm medium,124413
@@ -6508,6 +6508,7 @@ Zacheo Jansen van Vuuren,11504692,Namibia,2005-02-12,Right-hand bat,Right-arm me
 Ryshon Williams,11500668,West Indies,2000-02-28,Right-hand bat,Slow left-arm orthodox,912803
 Sonam Pelden,11512121,Bhutan,2007-09-29,,,172453
 Jayden Kent,11506460,West Indies,2006-12-03,Left-hand bat,Left-arm medium,8659639
+Murugaiyan Sivamurugan,11512118,India,1997-05-25,Right-hand bat,,165725
 Jeremy Martins,9204176,South Africa,2001-06-11,Right-hand bat,Right-arm fast,1071016
 Nithiyananda Raman,11512120,India,2005-01-07,Left-hand bat,Slow left-arm orthodox,172584
 Wahab Riaz,7502701,Pakistan,1985-06-28,Right-hand bat,Left-arm fast,43590
@@ -6523,7 +6524,6 @@ Arsalan Moazzam,11512411,Malaysia,1987-10-07,,,174090
 Mani Shailaja,4503871,India,1991-01-12,Right-hand bat,Legbreak,961121
 Rishitha Rajith,10604052,United Arab Emirates,2007-05-16,Right-hand bat,Right-arm medium,1306441
 Rajendra Pisal,8200022,Romania,1998-11-27,Right-hand bat,Right-arm offbreak,1198951
-M Sivamurugan,11512118,India,1997-05-25,Right-hand bat,Right-arm medium,165725
 Harsh Vaishnav,11512116,India,2002-05-10,Right-hand bat,Right-arm medium,160878
 Uthirasamy Sasidev,4510518,India,1993-04-29,Left-hand bat,Legbreak,1048741
 Mikkel Govia,11202856,West Indies,2002-01-25,Right-hand bat,Right-arm offbreak,129372087
@@ -6657,6 +6657,7 @@ Ruwan Kumara,11520521,Sri Lanka,1986-05-10,Left-hand bat,Right-arm medium,521846
 Rahmanullah Gurbaz,100629,Afghanistan,2001-11-28,Right-hand bat,Right-arm medium,974087
 Khalid Ahmadi,900079,Belgium,1995-01-01,Right-hand bat,Right-arm medium-fast,1230629
 Abhiprai Biswas,11511442,India,1993-11-13,Right-hand bat,,617935
+Sabhay Chadha,11511441,India,1998-05-07,Right-hand bat,Right-arm medium-fast,171661
 Ramkrishna Murmu,11518358,India,2005-10-19,Right-hand bat,Right-arm medium,1916923
 Hekmat Khogiyani,11503396,Switzerland,2001-12-01,Left-hand bat,Left-arm fast,8563206
 Matty Ainsworth,11512416,Hungary,2008-10-09,Right-hand bat,Right-arm medium,196724
@@ -6677,7 +6678,6 @@ Devendra Kumar,11529511,India,2001-12-02,,,63254317
 Shoaib Siddiqui,9100022,Slovenia,1991-04-03,Left-hand bat,Right-arm medium-fast,5212310
 Muzamil Qasim,10604190,United Arab Emirates,1986-01-01,Right-hand bat,Legbreak,90884
 Aritharan Vaseekaran,3700328,Germany,1987-04-22,Right-hand bat,Right-arm medium,5200102
-Sabhay Chadha,11511441,India,1998-05-07,Right-hand bat,Right-arm medium-fast,171661
 Yogesh Dongare,11511093,India,2000-12-31,Right-hand bat,Right-arm fast,170734
 Rajinder Kumar,4507093,India,1992-01-24,Right-hand bat,Right-arm medium,33512
 Sayed M Saqlain,10603538,United Arab Emirates,1992-04-08,Right-hand bat,Right-arm medium,21000298
@@ -6731,6 +6731,7 @@ Nijuraj Pullikkal,11511502,India,1994-06-21,Right-hand bat,Right-arm slow,93148
 Isitha Wijesundara,9501913,Sri Lanka,1997-05-11,Left-hand bat,Right-arm medium-fast,1075869
 Khalid Zahid,9900047,Sweden,1991-02-12,Right-hand bat,Right-arm medium,1156608
 Vivek Singh,4507977,India,1993-11-01,Left-hand bat,Right-arm medium,604573
+Pooviarasan Manogaran,4511050,India,2001-07-26,Right-hand bat,Right-arm medium-fast,1273915
 Ankit Kaushik,4505596,India,1991-09-05,Right-hand bat,Legbreak googly,604532
 Pramod Sharma,3700409,Germany,1971-01-07,Right-hand bat,Right-arm medium,96822
 Sami Ullah,8200010,Romania,1990-03-25,Right-hand bat,Right-arm medium,1236052
@@ -6748,7 +6749,6 @@ Jayasinghe Thilina Thilakarathna,11512377,Malaysia,1989-08-25,Right-hand bat,Rig
 Junior Henry,11202065,West Indies,1994-06-10,Right-hand bat,,78056
 Basheer Ahmad,100792,Afghanistan,2002-03-11,,,1076445
 Ankit Bawne,4505594,India,1992-12-17,Right-hand bat,Right-arm offbreak,327123
-Pooviarasan Manogaran,4511050,India,2001-07-26,Right-hand bat,Right-arm medium-fast,1273915
 Bharat Rawat,11512114,India,2003-02-13,Right-hand bat,Right-arm offbreak,172977
 Dhananjaya Lakshan,9501704,Sri Lanka,1998-10-05,Left-hand bat,Right-arm bowler,792519
 Share Ali,9900266,Sweden,2000-04-22,Right-hand bat,Right-arm medium,96086
@@ -6874,12 +6874,12 @@ Deep Sengupta,11518363,India,2002-12-13,Right-hand bat,Right-arm offbreak,374062
 Nimir Joshi,11511138,India,2004-11-13,,,226526
 Gaurav Chauhan,11511445,India,1999-12-27,Right-hand bat,Right-arm medium,499820
 M Vamsi Krishna,11512028,India,2001-07-17,Right-hand bat,,51522
+Tejveer Singh,11500044,India,2000-11-08,Right-hand bat,Right-arm fast-medium,94737
 Spike Strang,11502109,Romania,1991-10-28,Right-hand bat,,98901
 Pappu Sunar,11502105,Romania,1988-07-04,Right-hand bat,,98897
 Kraigg Brathwaite,11201234,West Indies,1992-12-01,Right-hand bat,Right-arm offbreak,348024
 Sharmin Akhter,800814,Bangladesh,1995-12-31,Right-hand bat,,535868
 Suraiya Azmin,801745,Bangladesh,1999-05-29,Right-hand bat,Right-arm medium,1051217
-Tejveer Singh,11500044,India,2000-11-08,Right-hand bat,Right-arm fast-medium,94737
 Harshal Mishra,11511136,India,2007-05-23,Right-hand bat,,124036
 Ibrahim Sikder,11511739,Czechia,2000-05-21,Right-hand bat,Right-arm medium,124427
 Sahan Arachchige,9501074,Sri Lanka,1996-05-13,Left-hand bat,Right-arm offbreak,693975
@@ -7043,16 +7043,16 @@ Kalandar Mydeen,11520532,Kuwait,1986-04-12,Right-hand bat,Right-arm medium,29747
 Tanzid Hasan,800838,Bangladesh,2000-12-01,Left-hand bat,,990023
 Ishan Porel,4500848,India,1998-09-05,Right-hand bat,Right-arm medium,967603
 Sumit Sharma,11502895,India,2000-07-09,Right-hand bat,,8632111
+Haaris Maraicar,11513003,India,2008-07-17,Right-hand bat,Left-arm medium-fast,409348
+Rob Lord,3008685,England,2001-05-04,Right-hand bat,Right-arm medium,1181709
 Naga Venkat Nikhil,11513000,India,2008-12-24,Right-hand bat,Right-arm medium-fast,528503
 Mark Jayasinghe,11513013,Italy,2002-02-16,Right-hand bat,Right-arm medium,83786
 Alex Ross,400040,Australia,1992-04-17,Right-hand bat,Right-arm offbreak,333624
 Shaik Kamil,11503869,India,2003-10-16,Right-hand bat,Right-arm medium,129373453
 Alen Magdalenic,11505060,Croatia,1991-04-16,Right-hand bat,Right-arm medium,101073
 Abdul Faseeh,7505665,Pakistan,2003-08-02,Left-hand bat,,1241112
-Robert Lord,3008685,England,2001-05-04,Right-hand bat,Right-arm medium,1181709
 Ollie Sutton,3008492,England,2000-01-25,Left-hand bat,Left-arm medium-fast,1183267
 Karanpal Singh,11512838,Bulgaria,2003-07-21,Right-hand bat,Right-arm offbreak,125524
-Haaris Maraicar,11513003,India,2008-07-17,Right-hand bat,Left-arm medium-fast,409348
 Avishka Iroshan,11511975,Romania,1997-09-07,Right-hand bat,Right-arm fast-medium,1124837
 Aushik Srinivas,4505726,India,1993-03-16,Right-hand bat,Slow left-arm orthodox,423815
 Loysten Sebastian,11512232,India,1990-11-20,Right-hand bat,Right-arm medium,80532
@@ -7076,13 +7076,13 @@ Akash Pougajendy,11512976,India,2003-11-28,Left-hand bat,,98134
 Jainulabdeen Jiyavudheen,11519650,Kuwait,2001-04-17,Right-hand bat,Legbreak,501015
 Ciril Marsel,11520533,Kuwait,1984-04-30,Left-hand bat,Right-arm offbreak,8823367
 Christian Munoz-Mills,9400064,Spain,1991-05-08,Right-hand bat,Right-arm offbreak,520120
+Siddharth Naidu,11206689,India,1999-10-21,Right-hand bat,Right-arm offbreak,1269096
 Ajinkya Rahane,4500103,India,1988-06-06,Right-hand bat,Right-arm medium,277916
 Mark Watt,8600143,Scotland,1996-07-29,Left-hand bat,Slow left-arm orthodox,659081
 Kaushik Maity,4506384,India,1999-10-14,Left-hand bat,Slow left-arm orthodox,926639
 Uahab Yusufazay,11512949,Croatia,2003-04-20,Right-hand bat,Right-arm medium,1125479
 Tyler Van Luin,11513012,Australia,1999-02-25,,,725262
 Kaladi Nagur Babu,11204131,India,1997-07-14,Right-hand bat,Slow left-arm orthodox,409753
-Siddharth Naidu,11206689,India,1999-10-21,Right-hand bat,Right-arm offbreak,1269096
 Ganga Sridhar Raju,4503354,India,1993-04-25,Left-hand bat,Legbreak googly,477074
 Navneet Dhaliwal,1800361,Canada,1988-10-10,Right-hand bat,Right-arm medium-fast,817069
 Raf MacMillan,11504235,Australia,2005-02-01,Right-hand bat,Right-arm offbreak,23750
@@ -7114,10 +7114,10 @@ Dhananjaya de Silva,9503151,Sri Lanka,1991-09-06,Right-hand bat,Right-arm offbre
 Farzam Alam,7506021,Pakistan,1997-06-02,Right-hand bat,,88451
 Valentin Geshev,11512840,Bulgaria,2007-10-31,Right-hand bat,Right-arm medium,125527
 Vasil Ivanov,11512841,Bulgaria,2007-01-14,Right-hand bat,Right-arm medium,125528
+Farhan Ahmed,11504285,England,2008-02-22,Right-hand bat,Right-arm offbreak,1318270
 Giyas Uddin,11512928,Bulgaria,1999-11-19,Right-hand bat,Right-arm fast,125701
 Azmatullah Omarzai,101131,Afghanistan,2000-03-24,Right-hand bat,Right-arm medium-fast,819429
 Sandeep Kumar Tomar,4507353,India,1998-08-23,Left-hand bat,,1133809
-Farhan Ahmed,11504285,England,2008-02-22,Right-hand bat,Right-arm offbreak,1318270
 Omair Yousuf,7501025,Pakistan,1998-12-27,Right-hand bat,,1126059
 Bojana Ercegovcevic,11512950,Croatia,2005-06-14,Right-hand bat,,125732
 Vinay,11512808,India,2006-03-01,,,163679
@@ -7180,6 +7180,7 @@ Kamal Gupta,11518372,Nepal,1994-07-21,Right-hand bat,Right-arm medium,5973388
 Kusal Mendis,9500608,Sri Lanka,1995-02-02,Right-hand bat,Legbreak,629074
 Murad Ali,9400159,Spain,1997-12-27,Right-hand bat,Right-arm medium,134606
 Priya Punia,4509697,India,1996-08-06,Right-hand bat,Right-arm medium,883391
+Calvin Harrison,3002673,England,1998-04-29,Right-hand bat,Legbreak googly,859899
 Jennifer Jackson,4900546,Ireland,2005-12-15,Left-hand bat,Left-arm fast-medium,1293410
 Waqas Rehmat,11507948,Bangladesh,1983-12-04,Right-hand bat,Right-arm medium,129374699
 Tasin Shah,802154,Bangladesh,2000-02-02,Right-hand bat,Right-arm medium,104931
@@ -7207,7 +7208,6 @@ Raja Adeel Iqbal,9400014,Spain,1987-10-02,Right-hand bat,Right-arm fast,937669
 Abhay Brar,11512843,Bulgaria,1993-05-18,Right-hand bat,Right-arm medium,125471
 Kieran Elliott,402191,Australia,1995-09-12,Right-hand bat,Right-arm medium,772359
 Yazh Arun Mozhi,4501242,India,2000-03-20,Right-hand bat,Right-arm offbreak,1048819
-Calvin Harrison,3002673,England,1998-04-29,Right-hand bat,Legbreak googly,859899
 Faisal Younas,11512664,Malaysia,1997-04-15,Right-hand bat,Right-arm medium-fast,288002
 Bashrat Hussain,11512890,Bulgaria,1978-09-05,Right-hand bat,Right-arm medium,125483
 Sujuth Vadakkootil,11519654,Kuwait,1985-05-25,Right-hand bat,Right-arm medium-fast,5505185
@@ -7655,6 +7655,7 @@ Hettiarachchi Kalana Dulanjaya,11512374,Malaysia,1997-11-11,Right-hand bat,,1572
 Samrat Sarkar,11518386,India,2003-03-22,Right-hand bat,Right-arm offbreak,7222909
 Arab Hamad,11519666,Pakistan,2000-08-26,Right-hand bat,,4796249
 Wen Sinan,11521328,China,2006-02-25,Right-hand bat,Right-arm medium,4814057
+Lawrence Jawaharraj,4510847,India,1997-11-14,Right-hand bat,Right-arm offbreak,1890005
 Dipendra Singh Airee,6800036,Nepal,2000-01-24,Right-hand bat,Right-arm medium,794707
 Athukorala Nalaka,11512373,Malaysia,1992-12-13,Left-hand bat,Right-arm medium-fast,197402
 Tom Wayman,11512182,Hungary,1989-07-23,Right-hand bat,Right-arm slow,1250009
@@ -7667,7 +7668,6 @@ Mehmet Cinar,11508580,Turkey,2006-03-10,Right-hand bat,Right-arm fast,6332159
 Anjana Baggam,11512296,India,2009-11-07,,,100044
 Muhammad Celiktas,11508582,Turkey,2006-01-03,Left-hand bat,Right-arm slow,6332161
 Salih Eliz,11508583,Turkey,2002-02-02,Right-hand bat,Right-arm fast,6332162
-Lawrence Jawaharraj,4510847,India,1997-11-14,Right-hand bat,Right-arm offbreak,1890005
 Shoyeb Shoyeb,11512989,Bulgaria,1999-02-05,Right-hand bat,Right-arm slow,494220
 Wan Mohamad Azmi,11512825,Malaysia,2004-09-25,Right-hand bat,Left-arm fast,109602
 Shadrack Descarte,11202613,West Indies,1997-10-19,Right-hand bat,Right-arm medium,78041
@@ -7989,6 +7989,7 @@ Muhammad Ali,11519676,Pakistan,1997-09-20,Right-hand bat,Right-arm medium,610195
 Muhammad Akshaf,11520558,Denmark,2010-01-25,Left-hand bat,Right-arm medium,2186013
 Jake Fraser-McGurk,400403,Australia,2002-04-11,Right-hand bat,Legbreak googly,1168049
 Rajkumar Rajendran,6000639,Malaysia,1989-05-22,Right-hand bat,Right-arm medium,375152
+Shibu Omanakuttan,11513613,Kuwait,1993-01-01,Right-hand bat,Right-arm medium-fast,143680
 Dheeraj Bairagi,11529557,India,2007-06-02,,,69709407
 Sahel Ahmadzai,11513415,Austria,1993-05-05,Right-hand bat,Right-arm fast,79521
 Ramesh Deka,11513253,India,2003-03-22,Right-hand bat,Legbreak,263747
@@ -7998,7 +7999,6 @@ Stella Arooja,11506500,Malta,1989-01-01,Left-hand bat,Right-arm slow,8683245
 Anupama Rameshan,11503606,Malta,1988-09-20,Right-hand bat,Legbreak,129373346
 Tracy Calingin,11503618,Malta,1989-06-13,Right-hand bat,Right-arm medium,129373356
 Shamla Cholasseri,11503615,Malta,1992-11-17,Right-hand bat,Right-arm medium,129373353
-Shibu Omanakuttan,11513613,Kuwait,1993-01-01,Right-hand bat,Right-arm medium-fast,143680
 Madha Deepak,11500114,India,2003-06-09,Left-hand bat,Left-arm fast,95829
 Aslam Khan,6000344,Malaysia,2001-11-01,Right-hand bat,,1037535
 Sadam Hussain,11512549,Malaysia,1985-01-01,Right-hand bat,Right-arm medium,270007
@@ -8154,8 +8154,8 @@ Ali Haider,11511830,Romania,2000-01-09,Right-hand bat,Right-arm medium,124766
 Sany Barh,11518401,India,2004-12-19,Right-hand bat,Right-arm offbreak,3651911
 Michael Bracewell,7100640,New Zealand,1991-02-14,Left-hand bat,Right-arm offbreak,326968
 Syed Haider,10600750,United Arab Emirates,2001-04-26,Right-hand bat,,1126010
-Abdul Samad Khan,11512499,Malaysia,1995-01-01,Right-hand bat,Right-arm medium,160969
 Kai Smith,10601198,United Arab Emirates,2004-11-28,Right-hand bat,,1178645
+Abdul Samad Khan,11512499,Malaysia,1995-01-01,Right-hand bat,Right-arm medium,160969
 Jemimah Rodrigues,4506295,India,2000-09-05,Right-hand bat,Right-arm offbreak,883405
 Pratay Das,11513180,India,2004-09-09,Right-hand bat,Slow left-arm orthodox,174763
 Jagrit Keshan,11529563,India,1999-10-22,,,18388892
@@ -8186,6 +8186,7 @@ Manpreet Singh,11513498,India,1984-10-18,Right-hand bat,Right-arm medium,126122
 Shoumik Shee,11518402,India,1999-01-21,Right-hand bat,Right-arm offbreak,9903218
 Dheeraj Kumar,4508621,India,1999-09-04,Right-hand bat,Right-arm offbreak,1246430
 Vishal Kumar,11513620,Kuwait,2001-08-24,Right-hand bat,Right-arm medium-fast,174863
+Clayton Floyd,6900016,Netherlands,1996-08-07,Right-hand bat,Slow left-arm orthodox,1200616
 Saiful Islam,11513045,Bangladesh,2003-10-24,Right-hand bat,Right-arm medium,112070
 Vamsi Krishna,4512242,India,2001-07-17,Right-hand bat,,1268828
 Wahadat Omari,11513528,Afghanistan,2008-05-05,Right-hand bat,Right-arm fast,126109
@@ -8201,7 +8202,6 @@ Wahab Hassan,10603892,United Arab Emirates,2002-09-01,Left-hand bat,Slow left-ar
 Saghir Khan,11500845,United Arab Emirates,1999-02-18,Right-hand bat,Right-arm medium,129372185
 Rafiullah Stanekzai,11513499,Australia,1989-01-01,Right-hand bat,Right-arm medium,126121
 Saachi Grover,11513887,India,2007-07-03,Right-hand bat,Legbreak,733765
-Clayton Floyd,6900016,Netherlands,1996-08-07,Right-hand bat,Slow left-arm orthodox,1200616
 Nano Janjua,11512199,Hungary,1998-03-27,Right-hand bat,Right-arm medium,124990
 Liston Augustine,4510997,India,1998-01-26,Right-hand bat,Right-arm fast-medium,87284
 Jorigala Venkatesh,11512557,India,1982-01-21,,,225026
@@ -9472,12 +9472,12 @@ Rohit Gulati,11516500,New Zealand,1998-11-02,Right-hand bat,Right-arm offbreak,4
 Shahan Akram,7503906,Pakistan,1994-05-20,Right-hand bat,Right-arm fast,547082
 Himanshu Mantri,4503484,India,1994-02-09,Left-hand bat,,1210085
 Kelly Ndiraya,11515554,Zimbabwe,2005-05-09,Right-hand bat,Right-arm bowler,750132
+Joe Weatherley,3007968,England,1997-01-19,Right-hand bat,Right-arm offbreak,748793
 Vishwas S,11515986,India,2002-03-21,Right-hand bat,,9549740
 Harmandeep Singh,11513691,Kuwait,1993-04-10,Right-hand bat,Legbreak,174933
 Naveen Jayan,11516158,Kuwait,1975-09-02,Right-hand bat,Right-arm offbreak,1132295
 Almas Ayub,11515457,Pakistan,1994-05-09,Right-hand bat,Right-arm medium-fast,1460589
 Shaveer Khan,9201486,South Africa,2002-06-01,Right-hand bat,Left-arm fast,946301
-Joe Weatherley,3007968,England,1997-01-19,Right-hand bat,Right-arm offbreak,748793
 Vangapally Pradeep,11512628,India,1997-09-19,,,411516
 Bilal Akbar,11500815,United Arab Emirates,1993-01-05,Left-hand bat,Slow left-arm orthodox,129372178
 Krishna Martand,11514897,India,2001-12-21,Right-hand bat,Right-arm fast,508410
@@ -9543,7 +9543,6 @@ Faizal A,11515988,India,1997-04-03,Right-hand bat,Right-arm offbreak,5173940
 Nirmal Singh,11516159,Kuwait,1985-02-15,Right-hand bat,Right-arm medium,1605437
 Shahbaz Javed,11516142,Pakistan,1996-04-03,Right-hand bat,,5732733
 P Mathavan,11516502,India,1979-03-02,Right-hand bat,Right-arm medium,622453
-Abdul Basit,11514160,Pakistan,2002-06-19,Right-hand bat,Right-arm fast,717968
 Vivek Shelar,11509269,India,2000-03-11,Right-hand bat,Right-arm fast-medium,6325260
 Eve Wolland,11516154,New Zealand,2006-07-07,Right-hand bat,Right-arm medium,1345478
 Zahid Fazal,6000525,Malaysia,1989-01-01,Right-hand bat,Right-arm medium,11508391
@@ -9565,6 +9564,7 @@ Chrystian Machado,11515885,Brazil,2004-02-28,Right-hand bat,,6437011
 Asmut Fayaz,11515945,India,1999-10-22,Right-hand bat,Right-arm offbreak,4891151
 Irfan Kaleem,11515989,India,1990-01-19,Left-hand bat,Slow left-arm orthodox,6514016
 Adam Lynch,400920,Australia,1980-02-13,Right-hand bat,,6410
+Abdul Basit,11514160,Pakistan,2002-06-19,Right-hand bat,Right-arm fast,717968
 Suliman Arabzai,11514781,Afghanistan,2005-08-06,,,932272
 Sujith Gowda,11514780,United States Of America,1996-10-23,Right-hand bat,Right-arm offbreak,207299
 Justin Greaves,11201204,West Indies,1994-02-26,Right-hand bat,Right-arm medium,510823
@@ -9767,6 +9767,7 @@ Mikayla Wrigley,11514562,Australia,2004-02-12,Right-hand bat,Right-arm medium,78
 Kevlon Anderson,11200259,West Indies,2000-09-28,Right-hand bat,Right-arm fast-medium,1209188
 Nikhil Kumar,11515752,India,2006-08-04,Right-hand bat,Right-arm medium,3359205
 Shivaraj S,11513115,India,1993-07-10,Right-hand bat,Right-arm medium,151170
+Muhammad Shoaib,10600471,United Arab Emirates,1975-01-23,Right-hand bat,Right-arm offbreak,1106421
 Jayakrishnan Srambikkal,11506027,Malta,1989-07-01,Right-hand bat,Right-arm fast,101300
 Sujith Sukumaran,11506029,Malta,1997-05-09,Right-hand bat,Right-arm fast,101302
 Vishnu Thulaseedharan,11506030,Malta,1993-03-21,Right-hand bat,Right-arm medium,101303
@@ -9793,7 +9794,6 @@ Fitzroy Hunter,11516759,West Indies,2002-10-16,,,591354586
 Aman Regmi,11514971,Nepal,1996-03-12,Right-hand bat,Right-arm fast,5733647
 Alwin John,11506025,Malta,1992-10-27,Right-hand bat,,101298
 Raju Rai,11515056,Nepal,1992-11-02,Right-hand bat,Right-arm fast,7742011
-Muhammad Shoaib,10600471,United Arab Emirates,1975-01-23,Right-hand bat,Right-arm offbreak,1106421
 Rickel Walker,11515890,Cayman Islands,1990-08-16,Right-hand bat,Right-arm offbreak,9714406
 Khary Pierre,11201712,West Indies,1991-09-22,Left-hand bat,Slow left-arm orthodox,581160
 Sarah Glenn,3008783,England,1999-08-27,Right-hand bat,Legbreak,885837
@@ -10076,9 +10076,9 @@ Faham-Ul-Haq,11515759,Pakistan,2005-12-02,Right-hand bat,Right-arm medium,167953
 Rekha Tamang,11516739,Nepal,1995-07-04,Right-hand bat,Right-arm medium,603893121
 Benjamin Hansen,11516813,South Africa,2006-06-27,Right-hand bat,,600772126
 Pramod Bisht,11519745,India,1989-06-08,Right-hand bat,Right-arm slow,3435419
-Louis Kimber,3003645,England,1997-02-24,Right-hand bat,,868843
 Abdul Rahman,101083,Afghanistan,2001-11-22,Right-hand bat,Right-arm medium-fast,819507
 Duanne Olivier,9202172,South Africa,1992-05-09,Right-hand bat,Right-arm fast-medium,486679
+Louis Kimber,3003645,England,1997-02-24,Right-hand bat,,868843
 Pravesh KM,11516828,India,2006-06-01,Right-hand bat,Right-arm offbreak,5320447
 Saiful Islam,11515012,Bangladesh,1997-01-01,Right-hand bat,Right-arm fast,5788659
 Imran Arif,8500157,Saudi Arabia,1989-06-15,Right-hand bat,Legbreak googly,1093672
@@ -10803,13 +10803,13 @@ Stian Smith,11518479,Kenya,2007-10-05,Right-hand bat,Legbreak,454417
 Ihsanullah,11531428,Pakistan,2002-10-11,Right-hand bat,Right-arm fast,6169271
 Bodhala Vinay Kumar,11515776,India,1998-11-30,Left-hand bat,Slow left-arm orthodox,4416124
 Gyanendra Shrestha,11517376,Nepal,2000-07-13,Right-hand bat,Right-arm medium-fast,6394670
+Shobhit Chaudhary,11517479,India,2004-11-19,Right-hand bat,Legbreak,300931
 Elyza Wall,11519170,Philippines,2010-10-23,Right-hand bat,Right-arm medium,312048
 Marsya Abdullah,11516034,Malaysia,2009-03-23,Right-hand bat,Left-arm fast-medium,3093245
 Nithin Samuel,11516193,Kuwait,1989-07-23,Left-hand bat,Right-arm offbreak,3579610
 Rangajyoti Khargoria,11506308,India,2005-06-09,Left-hand bat,Left-arm slow,129374087
 Sarthak Kudule,11530290,India,2006-09-18,,,5348441
 Tilakaratne Dilshan,11531431,Sri Lanka,1976-10-14,Right-hand bat,Right-arm offbreak,7699783
-Shobhit Chaudhary,11517479,India,2004-11-19,Right-hand bat,Legbreak,300931
 Ashleigh Katoa,11518995,Cook Islands,1992-07-10,Right-hand bat,Right-arm medium,881015
 Ebbin Bobby,11515083,India,1985-03-18,Right-hand bat,Right-arm offbreak,5009882
 Gayan Buddika,11515165,Qatar,1994-04-21,Left-hand bat,Right-arm offbreak,8541976
@@ -11470,6 +11470,7 @@ Jaffer Ochaya,11517931,Uganda,2004-08-31,Right-hand bat,Legbreak,8332178
 Renil Raj,11519024,Kuwait,1985-11-24,Right-hand bat,Legbreak,2509338
 Khuzaima Tanveer,11510030,United Arab Emirates,1999-12-20,Right-hand bat,Right-arm medium,1460551
 Trit Raj Das,6800391,Nepal,2002-10-18,Right-hand bat,,1161021
+Sudip Aryal,11515805,Nepal,2006-11-06,Right-hand bat,Right-arm medium-fast,4978841
 Dayal Joy,11517765,India,1988-10-06,Right-hand bat,,3288481
 Daveian Barnum,11518586,West Indies,1992-09-12,Right-hand bat,Right-arm medium,1761183
 Jishnu Vellapparakunnil,11519022,Kuwait,1996-02-09,Right-hand bat,Legbreak,2536322
@@ -11490,7 +11491,6 @@ Lubwama Conrad,11517932,Uganda,2007-11-11,Right-hand bat,Right-arm medium,445804
 Rickford Walker,11202031,West Indies,1992-10-12,Right-hand bat,,1268619
 Jaydev Patel,11520042,United States Of America,1993-03-13,Right-hand bat,Right-arm medium,1618629
 Adnan Shinwari,11520096,Afghanistan,2005-03-31,Right-hand bat,Left-arm medium,8491932
-Sudip Aryal,11515805,Nepal,2006-11-06,Right-hand bat,Right-arm medium-fast,4978841
 Tarani Sa,4507796,India,1996-09-14,Right-hand bat,Right-arm medium,1246463
 Lucy Forrester Smith,11516063,Scotland,2006-12-04,Right-hand bat,,3557998
 Usman Margha,11529818,Eswatini,1987-07-27,Right-hand bat,,2254298
@@ -11502,9 +11502,10 @@ Sachin Bhutkar,11530321,India,1982-05-23,,,3439284
 Etienne Beukes,6700083,Namibia,2002-04-10,Right-hand bat,Right-arm medium,1071482
 Rahulkumar Hashu,11517017,Portugal,2001-02-12,Right-hand bat,Right-arm fast,4343666
 Ashok Dhami,11518589,Nepal,2007-02-17,Right-hand bat,,341463
-Richard Sohera,11517934,Uganda,2008-10-10,Right-hand bat,Right-arm medium,5893926
+Zen Malik,3006909,England,1998-04-09,Right-hand bat,Legbreak,910361
 Prithvi Madhu,11505346,United Arab Emirates,2007-08-23,Right-hand bat,Legbreak,101237
 Asghar Ali Khan,11517768,Luxembourg,1986-09-30,Right-hand bat,Right-arm medium-fast,7561158
+Richard Sohera,11517934,Uganda,2008-10-10,Right-hand bat,Right-arm medium,5893926
 Yuvraj Singh,11517230,India,2007-01-18,Left-hand bat,Slow left-arm orthodox,3919394
 Sangeeth Vijayan,11506131,Malta,1999-10-13,Right-hand bat,Right-arm fast,101352
 Mohammad Jakaria,11515193,Qatar,1992-05-07,Right-hand bat,Right-arm fast-medium,8678296
@@ -11527,7 +11528,6 @@ Shayaan Saad,11520043,United States Of America,2005-08-07,Right-hand bat,Right-a
 Vikram Ghorpade,11530322,India,1996-02-17,,,4983669
 Faraz Khan,11520098,Pakistan,1986-08-07,Right-hand bat,Right-arm medium,6529644
 Vivek Sathyan,11516225,Kuwait,1998-04-05,Right-hand bat,Right-arm medium-fast,4298609
-Zen Malik,3006909,England,1998-04-09,Right-hand bat,Legbreak,910361
 Ashish Doshi,11530086,India,1984-07-22,,Right-arm medium,393791
 Muddasir Farooqi,11517286,Saudi Arabia,1984-02-01,Right-hand bat,Legbreak,8131064
 Sammez Ranade,11530323,India,1980-08-06,,,6643921
@@ -11543,6 +11543,7 @@ Shoma Sugaya-Slater,11520101,Japan,2006-05-08,Right-hand bat,,5873724
 Rakitha Nimesh,11523001,Sri Lanka,1997-09-05,Right-hand bat,Right-arm offbreak,9540428
 Sherzai Hairan,11519787,Afghanistan,1997-07-14,Right-hand bat,Right-arm fast,6211260
 Shrikaran A,11517526,India,1996-04-04,Left-hand bat,Right-arm medium,3986057
+Aahil Kachru,11517528,India,2009-06-09,Right-hand bat,Legbreak,3108880
 Niko Davin,6700047,Namibia,1997-12-19,Right-hand bat,Legbreak,595790
 Wasim Ahmed,11517626,India,1987-01-25,Right-hand bat,Right-arm fast-medium,6376479
 P Praveen,11516570,India,1984-01-04,Right-hand bat,,6759123
@@ -11568,7 +11569,6 @@ Sudhakar Tevar,11530089,India,1989-04-21,,,9351418
 Siddharth Bobade,11530325,India,1998-10-19,,,9571760
 Eddla Srujana,11529435,India,2005-09-17,Right-hand bat,Right-arm medium,9378545
 Nipun Pandita,11517234,India,1998-08-02,Right-hand bat,Right-arm medium-fast,6783039
-Aahil Kachru,11517528,India,2009-06-09,Right-hand bat,Legbreak,3108880
 Vamsidhar Reddy,11516572,India,1984-06-15,Left-hand bat,Left-arm fast-medium,837006
 Ali Hassan,11517235,Pakistan,2008-11-21,Right-hand bat,Right-arm medium,729917273
 Supun Navarathna,11520102,Sri Lanka,1992-04-25,Right-hand bat,,3893637
@@ -12137,6 +12137,7 @@ Darcy Sturt,11521671,England,2010-10-14,Right-hand bat,Right-arm medium,4736676
 Madeline Penna,402235,Australia,2000-08-30,Right-hand bat,Legbreak,1201476
 Kris Ali,11521370,England,1996-06-20,Right-hand bat,Right-arm medium,9770308
 Shams Ur Rahman,11522404,Afghanistan,2001-02-28,Right-hand bat,Right-arm offbreak,961497
+James Hayes,3009249,England,2001-06-27,Right-hand bat,Right-arm medium,125878
 Rachel Pearce,11521672,England,2009-06-01,Right-hand bat,Right-arm slow,7091373
 Nishith Singh,11522382,India,1986-03-04,Right-hand bat,Right-arm slow,9485255
 Eirette Richards,11510154,West Indies,2007-10-05,Right-hand bat,,1672576
@@ -12144,7 +12145,6 @@ Mo Bhola,11521371,England,1996-05-29,Right-hand bat,Slow left-arm orthodox,62516
 Mussa Chaudhry,11521372,Germany,2003-03-26,Left-hand bat,Right-arm fast,9966577
 Sunilkumar Mohandas,11522389,India,1991-10-04,Right-hand bat,Right-arm fast,6482851
 Ahmed Khalid Hafiz,11519710,Kuwait,1999-09-15,Left-hand bat,Right-arm medium-fast,6611287
-James Hayes,3009249,England,2001-06-27,Right-hand bat,Right-arm medium,125878
 Nathan Weekes,11521373,England,2000-08-02,Right-hand bat,Right-arm medium,6591639
 Vignesh Neelagandan,11522390,India,1996-08-08,Right-hand bat,Right-arm medium,6294167
 Tayyab Farrukh Butt,11519712,Kuwait,1993-12-14,Right-hand bat,Right-arm offbreak,2588326
@@ -12544,8 +12544,8 @@ Sithan Madivanane,11522965,India,1990-01-05,Right-hand bat,Right-arm slow,801825
 Simba Mbaki,11524119,Tanzania,2006-09-30,Right-hand bat,Right-arm medium,6288723
 Runyararo Pasipanodya,11505193,Zimbabwe,2007-06-13,Right-hand bat,,4154544
 Gaurav Farde,11521727,India,2004-09-16,Right-hand bat,Left-arm fast,3702917
-Sundar Dakshnamurthy,11522966,India,1993-06-27,Right-hand bat,Right-arm fast,3535771
 Kithma Withanapathirana,11521720,Sri Lanka,2008-04-01,Right-hand bat,Right-arm offbreak,2718517
+Sundar Dakshnamurthy,11522966,India,1993-06-27,Right-hand bat,Right-arm fast,3535771
 Bawantha Jayasinghe,11521721,Sri Lanka,2002-11-10,Right-hand bat,Right-arm medium,2448459
 Suresh Raju,11522967,India,1987-07-12,Right-hand bat,Right-arm slow,5827769
 Rohid Bangash,11518469,International,2002-09-29,Right-hand bat,Left-arm medium-fast,811950
@@ -14034,10 +14034,10 @@ Saliha Ozkunduz,11524138,Turkiye,2008-05-09,Right-hand bat,Right-arm medium,2583
 Aritharan Thivakaran,11524503,Germany,1984-12-19,Right-hand bat,Right-arm medium,6460206
 Umair Muzammal,11524613,Pakistan,1999-12-03,Right-hand bat,Right-arm offbreak,1531843
 Tamash Raaj,11524670,England,2009-05-07,Right-hand bat,Right-arm offbreak,1033931
-Robert Owili,11528487,Uganda,2007-08-20,Right-hand bat,,4822498
 Nabam Takar,11526003,India,2006-05-12,Right-hand bat,,3695482
 Karthik Shivakumar,11524615,India,1996-02-01,Right-hand bat,Slow left-arm orthodox,1142997
 Hasan Mahmud,800561,Bangladesh,1999-10-12,Right-hand bat,Right-arm medium,926629
+Robert Owili,11528487,Uganda,2007-08-20,Right-hand bat,,4822498
 Andul Basit Habib,11528486,Uganda,1995-04-25,Right-hand bat,Right-arm medium,5299152
 Rahul,11526045,India,1994-06-04,Right-hand bat,Right-arm medium,2883125
 Muhammad Ammar,11528670,Pakistan,2006-02-02,Left-hand bat,Legbreak,5123677
@@ -14086,8 +14086,8 @@ Jamie Southgate,11524675,England,1990-09-14,Right-hand bat,Right-arm offbreak,12
 Conrad Lubwama,11528493,Uganda,1991-09-22,Right-hand bat,,2665476
 Prats Chougule,11524620,India,1992-08-08,Right-hand bat,Right-arm medium,8331235
 Mustakim Aslam,11525081,Denmark,2008-01-12,Right-hand bat,Right-arm medium,2340332
-Usman Zafar,11526935,Pakistan,1998-10-28,Right-hand bat,Right-arm medium-fast,5005995
 George Scrimshaw,3007640,England,1998-02-10,Right-hand bat,Right-arm medium-fast,857979
+Usman Zafar,11526935,Pakistan,1998-10-28,Right-hand bat,Right-arm medium-fast,5005995
 Brian Kimaleni,11528491,Uganda,2010-01-01,Right-hand bat,Right-arm medium,4885980
 Sudeshika Ranawaka,11528612,Bahrain,1995-06-21,Right-hand bat,Right-arm offbreak,3486610
 Kumar Kusharga,11528675,India,2004-10-23,Right-hand bat,,2166968
@@ -14192,9 +14192,9 @@ Nabam India,11526018,India,2005-11-27,Right-hand bat,Right-arm fast-medium,18896
 Enock Kasaija,11528501,Uganda,2002-11-22,Right-hand bat,Right-arm medium,6864217
 Elliot Seddon,11528618,New Zealand,2004-02-06,Right-hand bat,Slow left-arm orthodox,7084275
 Jagmohan Gupta,11521878,India,2006-12-01,Right-hand bat,,7881874
+Robert Arjuna,11528502,Uganda,1999-05-04,Right-hand bat,,852057
 Yodsak Saranonnakkun,10200129,Thailand,2004-03-03,Right-hand bat,Right-arm offbreak,1167815
 Sakthi Seelan,11521847,Indonesia,1992-05-27,Right-hand bat,Right-arm medium-fast,5457640
-Robert Ajuna,11528502,Uganda,1999-05-04,Right-hand bat,,852057
 Ehsan Vicky,11524154,Belgium,1989-11-13,Right-hand bat,Right-arm fast,1666463
 Aaiza Waqas,11524516,Sweden,2009-11-11,Right-hand bat,Right-arm slow,530440
 Archie Macpherson,11524686,England,1997-06-22,Right-hand bat,Right-arm slow,3511292
@@ -14372,10 +14372,10 @@ Sacchin Cepal,11523972,West Indies,2004-11-27,Right-hand bat,Right-arm offbreak,
 Michael Rae,7100647,New Zealand,1995-06-13,Right-hand bat,Right-arm medium-fast,622772
 Shawazir Stanikzai,11519912,Afghanistan,2008-04-21,Right-hand bat,Right-arm fast,1440003
 Nur Qaireen Syakira,11526745,Malaysia,2009-01-06,Right-hand bat,,1861325
+Oluka Samil,11528519,Uganda,2006-09-20,Right-hand bat,,901310
 Katy Young,11523993,India,1976-12-29,Right-hand bat,Right-arm slow,7201630
 Tayum Niare,11526036,India,2004-10-22,Right-hand bat,Right-arm medium,1028205
 Jayadhanyha Gunasekar,11526743,Oman,2001-11-30,Right-hand bat,Right-arm offbreak,2485782
-Oluka Samil,11528519,Uganda,2006-09-20,Right-hand bat,,901310
 Venkatesh Rajan,11525116,Kuwait,1999-12-19,Left-hand bat,Legbreak googly,6516356
 Zohaib Ashraf,11526964,Pakistan,1988-10-15,Right-hand bat,Right-arm fast,8491028
 Nur Alia Natijah,11526744,Malaysia,2010-02-09,Right-hand bat,Right-arm fast-medium,8721035
@@ -14464,11 +14464,13 @@ Vaibhav Baisla,11525136,India,2004-10-03,Right-hand bat,,5775745
 Sosar Kakum,11526046,India,2007-08-02,Right-hand bat,Right-arm medium,5768269
 Lujaina Syed Ali,11526753,Oman,2008-12-16,Left-hand bat,Right-arm medium,1517566
 Leo Francisco,11528789,Sri Lanka,1994-10-31,Left-hand bat,,8756964
+Himanshu Sahani,11524182,India,2003-11-28,Left-hand bat,Right-arm offbreak,7668454
+Siva Murugan M,11524183,India,1997-05-25,Right-hand bat,Right-arm medium,2532542
+Kishan Kumar S,11524181,India,2000-02-06,Left-hand bat,Left-arm slow,3885730
 Ankush Tyagi,11521873,India,1998-10-13,,,8536504
 Mira Saastamoinen,11523980,Finland,1988-04-09,Right-hand bat,Right-arm medium,389660
 Abdul Qadeer Jabarkhil,11519916,Afghanistan,2007-12-11,Right-hand bat,Right-arm offbreak,7517903
 Rana Ahmad,11519901,Belgium,2004-03-05,Right-hand bat,Right-arm medium,3730893
-Kishan Kumar S,11524181,India,2000-02-06,Left-hand bat,Left-arm slow,3885730
 Sam Foster,11524544,Cayman Islands,1989-05-11,Right-hand bat,Slow left-arm orthodox,6474485
 Jahnabi Paswan,11521890,India,2007-08-14,Right-hand bat,Right-arm medium,5765078
 Rashmika Hirushan,11524712,Sri Lanka,2004-09-06,Right-hand bat,Legbreak,760331
@@ -14482,7 +14484,6 @@ Tabitha Le Grange,11528530,South Africa,2005-01-19,Right-hand bat,Right-arm medi
 Sandeep Saila,11519902,India,1991-06-07,Right-hand bat,Right-arm offbreak,484736
 Lokesh Gait,11521874,India,2000-09-29,Left-hand bat,,1387914
 Moona Into,11523981,Finland,2002-02-23,Right-hand bat,Right-arm offbreak,4100273
-Himanshu Sahani,11524182,India,2003-11-28,Left-hand bat,Right-arm offbreak,7668454
 Mohammad Naseem,11524545,Oman,1982-08-11,Right-hand bat,,9944155
 Aarnav Koul,11525140,India,2007-04-06,Left-hand bat,,6249163
 Aaryavir Sehwag,11525141,India,2007-10-19,Right-hand bat,Legbreak,235320
@@ -14494,7 +14495,6 @@ Asjad Khan,11526974,Pakistan,2002-07-13,Right-hand bat,Right-arm medium,9699617
 Nurhasyimah Tajuddin,11526755,Malaysia,2005-04-27,Right-hand bat,,1624243
 Getrude Candiru,11528531,Qatar,1994-08-30,Right-hand bat,Right-arm medium,7046615
 Moeez Ghani,11528713,Pakistan,1998-12-11,Left-hand bat,Slow left-arm orthodox,2166502
-Siva Murugan M,11524183,India,1997-05-25,Right-hand bat,Right-arm medium,2532542
 Mohammad Naseem,11524546,Oman,1982-08-11,Right-hand bat,,6515836
 Abubakar Ahmad,11524714,Afghanistan,2004-10-24,Right-hand bat,Left-arm fast,4879764
 Yamit Sehrawat,11525144,India,2005-10-07,Right-hand bat,Left-arm medium,1867998
@@ -14502,6 +14502,7 @@ Sachin Yadav,11521875,India,2008-11-10,Right-hand bat,Right-arm offbreak,1441498
 Pranjal,11526049,India,1997-05-12,Right-hand bat,Right-arm medium,5211044
 Aishik Patel,11521877,India,1999-10-25,Left-hand bat,,1833093
 Nikhil Malik,11525145,India,2006-12-24,Right-hand bat,,4754443
+Rajdeep Nayak,11524184,India,2005-02-26,Right-hand bat,Right-arm medium,7461769
 Arun Pundir,11525146,India,1999-01-12,Right-hand bat,,2225346
 Gavnish Khurana,11525147,India,1999-09-15,Left-hand bat,Left-arm fast,421743
 Rushil Shrivastava,11528158,India,2003-07-22,Right-hand bat,Legbreak,8380362
@@ -14510,7 +14511,6 @@ Yahya Rehman,11528714,Pakistan,2006-05-24,Right-hand bat,Right-arm medium,320468
 Sharif Salarzai,11519904,Afghanistan,2004-10-31,Right-hand bat,Right-arm medium,9678123
 Shivamm Bharati,11521876,India,2007-11-21,Right-hand bat,Right-arm medium-fast,2377834
 Rhea Khullar,11523983,Finland,2007-06-14,Right-hand bat,Right-arm medium-fast,7071941
-Rajdeep Nayak,11524184,India,2005-02-26,Right-hand bat,Right-arm medium,7461769
 Chirag Shivakumar,11524547,Singapore,1999-06-16,Right-hand bat,,8889193
 Aqib Mehmood,11524715,England,2004-06-20,Right-hand bat,Right-arm fast,5653072
 Dhanya Nakra,11525149,India,2007-12-12,Right-hand bat,Legbreak,6236708
@@ -14939,6 +14939,7 @@ Cameron Cunningham,11510592,England,2000-08-01,Right-hand bat,Left-arm slow,1235
 James Coles,3009166,England,2004-04-02,Right-hand bat,Slow left-arm orthodox,1231590
 Nick Heater,11532901,Spain,1967-04-11,Right-hand bat,Right-arm medium,1377680025
 Khalid Alam,11510832,Bangladesh,1999-11-26,Right-hand bat,Right-arm medium,1895660
+Sean Hunt,3008803,England,2001-12-07,Right-hand bat,Left-arm medium-fast,1182418
 Divija Unhale,11524015,Finland,1985-12-13,Right-hand bat,Right-arm offbreak,5125979
 Imran Riaz,11524216,Kuwait,1991-02-28,Right-hand bat,Right-arm fast,1436017
 Nangeh Diom,11524575,Cameroon,2003-06-15,Right-hand bat,Right-arm medium,196135
@@ -14948,7 +14949,6 @@ Smriti Bar,11521908,India,2007-12-17,Right-hand bat,Right-arm medium,9551137
 Krishan Kumar,11510731,Portugal,1990-10-10,Right-hand bat,Right-arm medium,85187
 Cameron Kerr,11510593,England,2006-04-20,Right-hand bat,Right-arm slow,123561
 Neelesh Yadav,11510532,Estonia,1992-08-07,Right-hand bat,Right-arm medium-fast,840957
-Sean Hunt,3008803,England,2001-12-07,Right-hand bat,Left-arm medium-fast,1182418
 Waseem Ahmad,11510732,Pakistan,2003-01-03,Right-hand bat,Left-arm fast,121310
 Tillakaratne Sampath,9501339,Sri Lanka,1982-06-23,Right-hand bat,Right-arm offbreak,50737
 Cameron Ponsonby,11510594,England,1995-08-04,Right-hand bat,Right-arm slow,123542
@@ -14988,8 +14988,10 @@ Narayan Joshi,6800467,Nepal,2001-01-29,Right-hand bat,Right-arm medium,1090621
 Hemant Dhami,11501564,Nepal,2006-04-14,Right-hand bat,Right-arm medium-fast,1248189
 Mohammad Amir,7504927,Pakistan,1992-04-13,Left-hand bat,Left-arm fast-medium,290948
 Rohain Mahmood,11532903,Spain,2005-03-27,Right-hand bat,Right-arm medium,1377680027
+Michael Booth,9206391,South Africa,2001-02-12,Right-hand bat,Right-arm fast,1071011
 Jake Lintott,3003257,England,1993-04-22,Right-hand bat,Slow left-arm unorthodox,463668
 Roushan Singh,11205393,India,1993-04-28,Right-hand bat,Slow left-arm orthodox,9127819
+George Garton,3003073,England,1997-04-15,Left-hand bat,Left-arm fast,643433
 Manash Bhowali,11519936,India,2005-10-14,Right-hand bat,Right-arm medium,1603625
 Priti Mahato,11521910,India,2009-02-16,,,9750686
 Leah Martin,11524017,Finland,1991-04-12,Right-hand bat,Right-arm medium,5723105
@@ -15008,9 +15010,7 @@ Gurjinder Singh,900231,Belgium,1991-03-15,Right-hand bat,Right-arm medium,127082
 Pasindu Pathum,11510533,Sri Lanka,2002-04-20,Right-hand bat,Right-arm medium,6321221
 Daniel Adams,11510596,England,2002-03-05,Left-hand bat,Right-arm slow,123537
 Nqaba Peter,9204683,South Africa,2002-09-12,Right-hand bat,Legbreak,946483
-Michael Booth,9206391,South Africa,2001-02-12,Right-hand bat,Right-arm fast,1071011
 Gaviru Senhas,11510535,Sri Lanka,2004-12-27,Right-hand bat,,6321223
-George Garton,3003073,England,1997-04-15,Left-hand bat,Left-arm fast,643433
 Dev Khanal,6800523,Nepal,2005-05-29,Right-hand bat,,1248357
 Shahid Bhutta,11501412,United Arab Emirates,1994-11-30,Right-hand bat,Right-arm medium-fast,137012
 Ariana Dowse,3000196,England,2001-02-08,Right-hand bat,,1095860
@@ -15023,6 +15023,7 @@ Sajawal Ahmad,11532904,Spain,2008-12-03,Right-hand bat,Right-arm medium,13776800
 Vandit Joshi,11524219,India,2001-04-23,Left-hand bat,Slow left-arm orthodox,4507800
 Mohammed Malik,11528190,India,2007-07-25,Right-hand bat,Right-arm medium,5307191
 Tanuja Sarkar,11521911,India,2001-04-16,,,8316394
+Fletcha Middleton,3007581,England,2002-01-21,Right-hand bat,Right-arm offbreak,1148476
 Mahulima Mukherjee,11524018,India,1989-04-25,Right-hand bat,Right-arm slow,3872234
 Zac Grundmann,11524750,England,1998-04-08,Right-hand bat,Right-arm slow,9785917
 Hayshvvan Susindran,11525242,Malaysia,2004-12-29,Right-hand bat,Right-arm medium-fast,6222293
@@ -15033,7 +15034,6 @@ Alex Horton,3006988,England,2004-01-07,Right-hand bat,,1147983
 Martel Evans,11510605,West Indies,1993-10-14,Right-hand bat,Right-arm fast,123549
 Ed Middleton,3002954,England,2000-12-28,Right-hand bat,Legbreak,1158590
 Ollie Greenhow,11510606,England,2003-07-24,Right-hand bat,Right-arm medium,123569
-Fletcha Middleton,3007581,England,2002-01-21,Right-hand bat,Right-arm offbreak,1148476
 Edwige Guehoada,11510878,Cameroon,2000-10-15,Right-hand bat,Left-arm medium,129375507
 Nellie Gamaliyele,11510879,Malawi,2001-06-02,Right-hand bat,Right-arm medium,129375508
 Samuel Harris,11510608,England,1993-05-13,Right-hand bat,Right-arm slow,123540
@@ -15050,6 +15050,7 @@ Mohammad Abbas,7500753,Pakistan,1990-03-10,Right-hand bat,Right-arm medium-fast,
 Yaseen Muntasir,11519938,Bangladesh,2004-11-26,Right-hand bat,Legbreak,8460745
 Stuart Anderson,11532905,Spain,1963-05-28,Right-hand bat,Right-arm slow,1377680029
 Firdosh Ansari,6800433,Nepal,2000-01-30,Right-hand bat,Right-arm medium,1098916
+Raphael Weatherall,11506357,England,2004-10-24,Right-hand bat,Right-arm medium,129374128
 Jhilik Das,11521912,India,2010-09-24,Right-hand bat,Right-arm fast,5341725
 Malyun Hassan,11524019,Finland,1991-09-19,Right-hand bat,Right-arm medium,4528893
 Aahaan Srivastav,11524751,England,2008-05-04,Right-hand bat,Right-arm slow,6592819
@@ -15069,16 +15070,15 @@ Phillip Miller,11510607,England,1992-12-29,Right-hand bat,Left-arm slow,123543
 Beyers Swanepoel,9203625,South Africa,1998-05-06,Left-hand bat,Right-arm fast,698319
 Tanmayee Behera,11203212,India,2005-05-06,Right-hand bat,Right-arm medium,83131
 David Smith,3007457,England,1989-09-13,Right-hand bat,Right-arm medium,399652
-Raphael Weatherall,11506357,England,2004-10-24,Right-hand bat,Right-arm medium,129374128
 Dileepa Jayalath,9503165,Sri Lanka,1997-09-07,Right-hand bat,Slow left-arm orthodox,790645
 Sohail Ahmed,11510951,Cyprus,1991-03-15,Right-hand bat,Right-arm fast,89347
 Freddie Freeman,11510614,England,2005-08-24,Right-hand bat,Right-arm fast,123606
 Salma Khatun,11521913,India,2000-08-19,Right-hand bat,,9831087
+Liam Patterson-White,3008166,England,1998-11-08,Left-hand bat,Slow left-arm orthodox,1023361
 Mari Kojo,11524020,Finland,2010-09-09,Right-hand bat,Right-arm medium,8122789
 Adwaaith Sundharam,11524752,England,2010-02-23,Right-hand bat,Right-arm medium,6307401
 Tyler Hogan,11532906,Spain,1997-09-27,Right-hand bat,,1377680030
 Ben Dawkins,11510613,England,2006-10-19,Right-hand bat,Legbreak,123595
-Liam Patterson-White,3008166,England,1998-11-08,Left-hand bat,Slow left-arm orthodox,1023361
 Kyle Klein,6900167,Netherlands,2001-07-03,Right-hand bat,Right-arm medium,1195670
 Tuan Muhammad Fatihah,11525244,Malaysia,2007-08-08,Right-hand bat,Right-arm medium-fast,9564314
 Wafi Kachchhi,11528192,India,2006-12-11,Right-hand bat,Legbreak googly,618954
@@ -15276,11 +15276,11 @@ Sameer Khan,6800492,Nepal,1995-07-31,Right-hand bat,Right-arm medium,1129992
 Claudia Green,7101221,New Zealand,1997-12-06,Right-hand bat,Right-arm medium,1170056
 Chloe Hill,3007274,England,1997-01-03,Right-hand bat,,886197
 Ami Campbell,3007022,England,1991-06-06,Left-hand bat,Right-arm medium-fast,1007861
-Oliver Hannon-Dalby,3003963,England,1989-06-20,Left-hand bat,Right-arm medium-fast,297483
 Preet Raval,11524032,England,2004-03-07,Right-hand bat,Right-arm medium,1428296
 Bilal Mir,11524234,South Korea,1993-05-07,Right-hand bat,Right-arm medium,8132051
 Jamil Syed,11519952,Belgium,1993-10-20,Right-hand bat,Legbreak,1405007
 Yasir Shah,7505563,Pakistan,1986-05-02,Right-hand bat,Legbreak googly,43685
+Oliver Hannon-Dalby,3003963,England,1989-06-20,Left-hand bat,Right-arm medium-fast,297483
 Ethan Sanjay,11528205,Kuwait,2006-09-10,Right-hand bat,Right-arm medium,4073872
 Muhamad Nurhanif,11525256,Malaysia,2010-11-22,Right-hand bat,,614919
 Elise Good,3002979,England,1996-09-23,,,874243
@@ -15316,6 +15316,7 @@ Ian Mclean,3009186,England,1997-09-17,Right-hand bat,Right-arm medium,912401
 Matthew D Fisher,3003743,England,1997-11-09,Right-hand bat,Right-arm fast-medium,639080
 Sachin Chauhan,4300021,Hungary,1989-10-21,Right-hand bat,Right-arm medium-fast,96103
 Binod Bhandari,6800288,Nepal,1990-01-25,Right-hand bat,Right-arm bowler,437005
+Ed Barnard,3000582,England,1995-11-20,Right-hand bat,Right-arm fast-medium,578769
 Noah,11519954,Belgium,1986-05-09,Right-hand bat,Right-arm medium,5966389
 Vikas Sharma,11521928,India,2004-12-08,,,2235593
 Rudra Shah,11524034,England,2003-08-09,Right-hand bat,Right-arm medium,1567774
@@ -15330,7 +15331,6 @@ Adithya Shetty,10603670,United Arab Emirates,2004-07-05,Right-hand bat,Legbreak,
 Lovepreet,10603357,United Arab Emirates,1994-11-16,Right-hand bat,Right-arm medium,1290282
 Ripon,801785,Bangladesh,2003-03-21,Right-hand bat,Right-arm medium,1276980
 Furqan Khalil,10603360,United Arab Emirates,1993-10-12,Right-hand bat,,1290284
-Ed Barnard,3000582,England,1995-11-20,Right-hand bat,Right-arm fast-medium,578769
 Daisy Mullan,3009149,England,2002-11-29,Right-hand bat,Right-arm medium,1230754
 Bibek Yadav,6800532,Nepal,2003-10-07,Right-hand bat,Right-arm medium,185233
 Qasim Anwar,2500044,Cyprus,1989-10-05,Right-hand bat,Right-arm medium-fast,1281564
@@ -15680,6 +15680,7 @@ Dom Bess,3002925,England,1997-07-22,Right-hand bat,Right-arm offbreak,646847
 Jordan Thompson,3008029,England,1996-10-09,Left-hand bat,Right-arm medium,766809
 Dilip Nath,6800292,Nepal,1997-12-19,Left-hand bat,,1058516
 Shariz Ahmad,6900438,Netherlands,2003-04-21,Left-hand bat,Legbreak googly,1278252
+Dominic Leech,3002929,England,2001-01-10,Right-hand bat,Right-arm medium,1146769
 Saikat Das,11521943,India,1994-08-19,Right-hand bat,,9546776
 Aneeq Azad,11524048,England,2002-12-12,Left-hand bat,Left-arm fast,3463391
 Tiron Viranga,11524251,Sri Lanka,1995-02-17,Right-hand bat,Right-arm medium-fast,7304509
@@ -15696,7 +15697,6 @@ Jonny Bairstow,3003489,England,1989-09-26,Right-hand bat,Right-arm medium,297433
 Matthew Revis,3006058,England,2001-11-15,Right-hand bat,Right-arm medium,1150021
 Habib ur Rehman,11506363,United Arab Emirates,2002-08-15,,,422057
 Amy Edgar,400044,Australia,1997-12-27,Right-hand bat,Right-arm offbreak,1160200
-Dominic Leech,3002929,England,2001-01-10,Right-hand bat,Right-arm medium,1146769
 Adil Rashid,3004624,England,1988-02-17,Right-hand bat,Legbreak,244497
 Tom Weston,11510854,England,1997-01-03,Right-hand bat,Left-arm medium,239705
 Shahbaz Ahamad,11521944,India,1994-12-11,Left-hand bat,Slow left-arm orthodox,1272910
@@ -15968,8 +15968,8 @@ Akhtar Shahzad,10604046,United Arab Emirates,1994-04-07,,,62746
 Rijan Dhakal,6800548,Nepal,1999-05-06,Left-hand bat,Slow left-arm chinaman,87997
 Kia McCartney,4900511,Ireland,2005-03-16,Right-hand bat,Right-arm offbreak,96551
 Zahidullah Kamal,3400013,Finland,1987-08-19,Right-hand bat,Right-arm slow,520036
-Sonu Singh,4510280,India,1995-12-29,Left-hand bat,Slow left-arm orthodox,943033
 Anneke Bosch,9201871,South Africa,1993-08-17,Right-hand bat,Right-arm medium,482506
+Sonu Singh,4510280,India,1995-12-29,Left-hand bat,Slow left-arm orthodox,943033
 Arpita Bhowmik,11521954,India,2011-02-22,,,7466631
 Mohammad Nabi,11524263,Afghanistan,2001-04-28,Right-hand bat,Right-arm fast,695850
 Sainudheen Karimbanakkal,11524790,India,1981-10-26,Right-hand bat,Right-arm fast,3323129
@@ -16220,6 +16220,7 @@ Advaith Krishna,11526139,United States Of America,2006-10-13,Right-hand bat,Righ
 Lucas Matthews,400561,Australia,1986-01-03,Right-hand bat,,6891
 Mark Stewart,400581,Australia,1983-01-16,Right-hand bat,Right-arm medium,233675
 Liam Scott,400550,Australia,2000-12-12,Right-hand bat,Right-arm fast-medium,1076376
+Liam Guthrie,400548,Australia,1997-04-09,Left-hand bat,Left-arm fast,858435
 Riya Kumari Mahato,11521965,India,2007-07-10,Right-hand bat,Right-arm fast,8210463
 Daniel Gumusenge,11524071,Rwanda,2003-09-10,Left-hand bat,Right-arm fast,7573452
 Mustafa Atmaca,11524274,Turkey,2008-06-20,Right-hand bat,Right-arm medium,5857928
@@ -16228,7 +16229,6 @@ Muhammad Ahnaf,11525296,Malaysia,2009-09-18,Right-hand bat,,4649419
 Chitra Singh,11527062,India,2001-12-12,Right-hand bat,Right-arm medium-fast,4871392
 Matthew Armstrong,400589,Australia,1979-12-11,Right-hand bat,,4064
 Shweta Sawant,4512050,India,2004-04-05,Left-hand bat,Right-arm offbreak,82755
-Liam Guthrie,400548,Australia,1997-04-09,Left-hand bat,Left-arm fast,858435
 Liam Hatcher,400549,Australia,1996-09-17,Right-hand bat,Right-arm fast,901155
 Sushmita Pal,11521966,India,2006-04-07,Right-hand bat,Right-arm medium-fast,1169143
 Mustafa Balkis,11524275,Turkey,2008-10-17,Right-hand bat,Right-arm medium,1080697
@@ -16328,6 +16328,7 @@ Chris Laker,3000385,England,1996-09-15,Left-hand bat,Right-arm fast,1036261
 Mukul Negi,11504721,India,1997-09-28,,,8964201
 Mohammad Waseem Khan,11504830,Pakistan,1996-03-20,,,8963447
 Mohammad Wasim Khan,11504831,Pakistan,1997-10-25,,,8963448
+Eddie Jack,11504284,England,2005-09-09,Left-hand bat,Right-arm medium-fast,129373566
 Usman Tariq,11508546,Pakistan,1998-01-01,Right-hand bat,Right-arm offbreak,1333415
 Javelle Gallimore,11521969,Bahamas,2004-12-09,Left-hand bat,Right-arm medium,1101761
 Jinu Poulose,11524075,India,1990-06-13,Right-hand bat,Right-arm fast,726048
@@ -16336,7 +16337,6 @@ Gulam Mohammad,11524806,Kuwait,1988-04-12,Left-hand bat,,5774383
 Mohamed Fawazudeen,11525301,Malaysia,2010-05-09,Left-hand bat,Right-arm medium-fast,1319034
 Daksh Arora,11526851,India,2006-03-09,Left-hand bat,,7101528
 Kamran Ali,11508547,United Arab Emirates,1997-09-28,,,162419
-Eddie Jack,11504284,England,2005-09-09,Left-hand bat,Right-arm medium-fast,129373566
 Komal Kumari,11203497,India,2005-08-19,Right-hand bat,Right-arm bowler,56581
 Anandita Kishor,11203488,India,2006-03-17,Right-hand bat,Right-arm bowler,56572
 Catherine Messina,11510876,Cameroon,2002-01-02,Right-hand bat,,129375505
@@ -17489,9 +17489,9 @@ Sarka Kolcunova,11506008,India,2009-05-05,Right-hand bat,Right-arm medium-fast,1
 Sowjanya Talamarla,11506018,Czechia,1985-03-17,Right-hand bat,Right-arm medium-fast,129374018
 Farwa Baber,11506006,India,1994-07-19,Right-hand bat,Right-arm fast,129374006
 Umar Arshad,10603726,United Arab Emirates,1992-11-20,Right-hand bat,,1241272
+Joe Pocklington,11525353,England,2000-11-14,Left-hand bat,Slow left-arm orthodox,8538613
 Mayank Patel,11522021,India,1993-12-06,Right-hand bat,Right-arm medium,1032310
 Hisham Zahid,11524333,Pakistan,1994-08-08,Right-hand bat,Right-arm slow,2543485
-Joe Pocklington,11525353,England,2000-11-14,Left-hand bat,Slow left-arm orthodox,8538613
 Purvaja P Verlekar,11527116,India,2001-07-04,,,4294862
 Ananthakumar Ganesamoorthy,11522022,India,2000-04-29,Right-hand bat,Right-arm medium,3998548
 Humaira Kazi,4500822,India,1993-10-05,Right-hand bat,Right-arm medium,799373
@@ -18909,6 +18909,7 @@ Adrian Rollins,3000049,England,1972-02-08,Right-hand bat,Right-arm medium,19466
 Alan Gough,3000072,England,1972-04-30,Right-hand bat,,13953
 Adam Rouse,3000032,England,1992-06-30,Right-hand bat,,352893
 Akshat Agarwal,3000068,England,1993-05-20,,,877781
+Alex Davies,3000083,England,1994-08-23,Right-hand bat,,516039
 Monikarna Sarma,11524389,India,2004-06-15,Right-hand bat,Right-arm offbreak,7333600
 Adanya Baugh,11524921,West Indies,2008-11-07,Right-hand bat,,7713465
 Sarah Barber,11527158,South Africa,2003-10-02,Right-hand bat,Right-arm medium,2912736
@@ -18926,7 +18927,6 @@ Adnan Saleem,3000045,England,1976-12-18,,,21410
 Adam Syddall,3000035,England,1980-06-10,Right-hand bat,Left-arm fast-medium,20490
 Ajay Khunti,3000062,England,2000-10-30,,,1190981
 Aitizaz Khan,3000061,England,1994-01-04,Right-hand bat,Right-arm offbreak,745769
-Alex Davies,3000083,England,1994-08-23,Right-hand bat,,516039
 Rajesh Ray,11524390,India,2003-12-26,Left-hand bat,Slow left-arm orthodox,4032410
 Shivam Kulthe,11525416,India,2001-08-21,Right-hand bat,Right-arm medium,3770875
 Umar Shah,10602408,United Arab Emirates,1986-01-01,,,1109579
@@ -18987,6 +18987,7 @@ Andrew Miller,3000155,England,1987-09-27,Right-hand bat,Right-arm fast-medium,17
 Andrew Fear,3000144,England,1972-01-21,Right-hand bat,Right-arm medium-fast,296765
 Andrew Jones,3000151,England,1977-11-30,Right-hand bat,Right-arm fast-medium,15585
 Raheel Kano,5300085,Japan,1993-02-16,Right-hand bat,Right-arm medium,302865
+Andrew Neal,3000156,England,1999-10-11,Right-hand bat,Left-arm medium,589887
 Utpal Gayari,11524392,India,1982-03-06,Right-hand bat,Right-arm medium,3468882
 Kaela George,11524924,West Indies,2008-02-25,Right-hand bat,,8702995
 Andrew Fowkes,3000146,England,1976-03-24,Right-hand bat,Slow left-arm orthodox,210293
@@ -18994,7 +18995,6 @@ Andy Laws,3000167,England,1991-09-21,Right-hand bat,Right-arm offbreak,416717
 Andrew Mason,3000153,England,1979-03-16,Right-hand bat,Right-arm offbreak,17810
 Aqsad Ali,3000189,England,1979-10-07,Left-hand bat,Slow left-arm orthodox,765625
 Andrew Davies,3000143,England,1976-11-07,Left-hand bat,Right-arm medium,11810
-Andrew Neal,3000156,England,1999-10-11,Right-hand bat,Left-arm medium,589887
 Benjamin Smith,3000242,England,1984-10-11,Right-hand bat,,300188
 Ashley Close,3000200,England,1981-06-03,Right-hand bat,Right-arm medium,11558
 Ben Harvey,3000230,England,1988-09-15,Right-hand bat,,409022
@@ -19550,6 +19550,7 @@ Krishana Singh,3001295,England,1982-12-19,Right-hand bat,Right-arm offbreak,2140
 Latoya Providence,3001305,England,1989-01-10,Right-hand bat,Right-arm offbreak,578107
 Kunal Khanna,3001300,England,1983-06-05,Right-hand bat,Legbreak,16119
 Sree Sreesanth,4510302,India,1983-02-06,Right-hand bat,Right-arm fast-medium,34274
+Lewis McManus,3001339,England,1994-10-09,Right-hand bat,,521170
 Zashid Malik,11524413,Bangladesh,1984-12-31,Right-hand bat,Right-arm medium,7128219
 Imran Ilyas Raghu,11526281,Oman,1997-04-11,Right-hand bat,Right-arm medium-fast,250356
 Kieron Waterson,3001282,England,1990-05-04,Right-hand bat,Right-arm fast-medium,524877
@@ -19568,7 +19569,6 @@ Kellie Williams,3001264,England,1998-04-27,,,886345
 Kelvin Locke,3001267,England,1980-10-04,Right-hand bat,Slow left-arm orthodox,16326
 Kelvin Snell,3001268,England,1988-01-07,Right-hand bat,Right-arm medium-fast,251975
 Jas Singh,3001224,England,2002-09-19,Right-hand bat,Right-arm medium,1185571
-Lewis McManus,3001339,England,1994-10-09,Right-hand bat,,521170
 Lauren Onojaife,3001313,England,1991-12-28,Right-hand bat,,424811
 Lee Caldicott,3001321,England,1969-06-26,Right-hand bat,Left-arm fast-medium,10640
 Lian Wharton,3001354,England,1977-02-21,Left-hand bat,Slow left-arm orthodox,22313
@@ -20077,6 +20077,7 @@ Stuart Felstead,3002136,England,1970-06-11,Right-hand bat,Legbreak,354867
 Stewart Walters,3002129,England,1983-06-25,Right-hand bat,Legbreak,211752
 Thomas Cotterell,3002171,England,1977-03-09,Left-hand bat,Slow left-arm orthodox,10826
 Thomas Hughes,3002176,England,1991-04-05,Right-hand bat,,576378
+Tom Clark,3002215,England,2001-02-27,Left-hand bat,Right-arm medium,1107572
 Vanani Hetal,11524433,India,1980-04-18,Right-hand bat,Right-arm medium,3756474
 Satya Sai Sathwik,11525459,India,2005-11-11,Right-hand bat,Right-arm medium,8508531
 Tom Geeson-Brown,3002226,England,1991-09-09,Right-hand bat,Right-arm medium-fast,468203
@@ -20087,7 +20088,6 @@ Tom Barber,3002212,England,1995-08-08,Right-hand bat,Left-arm fast-medium,597655
 Tom Baxter,3002213,England,1990-02-28,Right-hand bat,Slow left-arm orthodox,529253
 Toby Radford,3002207,England,1971-12-03,Right-hand bat,Right-arm offbreak,19315
 Tim Graham,3002192,England,1994-11-11,Right-hand bat,Right-arm medium,526836
-Tom Clark,3002215,England,2001-02-27,Left-hand bat,Right-arm medium,1107572
 Tom Davis,3002220,England,2000-12-14,Right-hand bat,Right-arm medium,1149910
 Tim Mitzman,3002196,England,1980-03-14,Right-hand bat,Right-arm medium,17806
 Tim Rees,3002201,England,1984-09-04,Right-hand bat,,20013
@@ -21581,6 +21581,7 @@ Sandeep Chandel,4502013,India,1973-09-01,,,27782
 Sadashiv Iyer,4501972,India,1972-12-29,Right-hand bat,,29549
 Salim Veragi,4502000,India,1986-07-28,Right-hand bat,Right-arm medium,329164
 Sameer Ali,4502004,India,1986-01-09,Right-hand bat,Right-arm medium-fast,227723
+Sakibul Gani,4501991,India,1999-09-02,Right-hand bat,Right-arm medium-fast,1202786
 Asif Hasan,11525020,India,1990-11-02,Right-hand bat,Right-arm fast,7950522
 Hossin Md Riyad,11525509,Bangladesh,2002-02-21,Left-hand bat,Right-arm medium,765275
 Farhan,11527834,Pakistan,1994-11-06,Right-hand bat,Left-arm slow,8393546
@@ -21612,7 +21613,6 @@ Sanjay Limbachia,4502044,India,1971-10-02,Right-hand bat,Right-arm medium-fast,3
 Santosh Chaphe,4502065,India,1982-11-27,Right-hand bat,,27596
 Sanjay Patel,4502049,India,1979-07-16,Right-hand bat,Legbreak,32232
 Sahim Hasan,4501982,India,1996-12-03,Left-hand bat,,1169611
-Sakibul Gani,4501991,India,1999-09-02,Right-hand bat,Right-arm medium-fast,1202786
 Sanidhya Hurkat,4502032,India,1999-07-31,Right-hand bat,Right-arm offbreak,1135345
 Jawaad Bokhari,11525021,England,1979-12-19,Right-hand bat,Right-arm medium,9340744
 Muhamedali Mundaramabth,11525510,India,1989-12-01,Right-hand bat,Right-arm medium,4583439
@@ -22960,6 +22960,7 @@ Maribasava Chandrashekhar Gowda,11525556,India,2001-12-12,Right-hand bat,,193099
 Zeeshan Rana,11526402,Oman,1983-03-10,Right-hand bat,Right-arm medium-fast,4260041
 Ashiq Ali,7500237,Pakistan,1995-05-01,Right-hand bat,Right-arm offbreak,802425
 Ayush Patel,11527304,India,2007-06-16,Right-hand bat,Right-arm medium,9299470
+Asif Raza,7500254,Pakistan,1978-11-08,Right-hand bat,Right-arm offbreak,39247
 Asad Raza,7500225,Pakistan,1997-12-25,Right-hand bat,,1094579
 Asim Ali,7500263,Pakistan,1980-08-08,Right-hand bat,Right-arm fast-medium,39251
 Asha Khan,7500233,Pakistan,1994-09-30,Right-hand bat,Right-arm fast-medium,500736
@@ -22967,7 +22968,6 @@ Asghar Khan,7500231,Pakistan,1978-04-16,Left-hand bat,Left-arm medium,39222
 Ashar Zaidi,7500234,Pakistan,1981-07-13,Left-hand bat,Slow left-arm orthodox,39028
 Asad Baig,7500222,Pakistan,1988-11-26,Right-hand bat,Right-arm offbreak,315231
 Asghar Ali,7500229,Pakistan,1975-06-10,Right-hand bat,Right-arm medium,39589
-Asif Raza,7500254,Pakistan,1978-11-08,Right-hand bat,Right-arm offbreak,39247
 Asif Baloch,7500244,Pakistan,1975-09-05,Right-hand bat,Right-arm offbreak,339046
 Ashraf Bashir,7500240,Pakistan,1976-01-01,Left-hand bat,Slow left-arm orthodox,39228
 Asif Yaqoob,7500261,Pakistan,1973-11-11,,,681417
@@ -23059,10 +23059,10 @@ Farrukh Hayat,7500398,Pakistan,1983-07-10,Right-hand bat,Legbreak,40179
 Fiaz Ahmed,7500418,Pakistan,1989-08-24,Right-hand bat,Right-arm fast-medium,486387
 Faraz Ahmed,7500385,Pakistan,1984-10-16,Right-hand bat,Slow left-arm orthodox,370835
 Kian Roberts,11525560,England,2006-09-25,Right-hand bat,Right-arm medium,1657140
+Faizan Khan,7500379,Pakistan,1992-08-27,Right-hand bat,,348151
 Aneermon Rahman,11526406,Oman,1983-05-30,Right-hand bat,Right-arm medium-fast,449905
 Malay Shah,11527308,India,2007-01-08,Left-hand bat,Slow left-arm chinaman,2137514
 Faraz Ali,7500386,Pakistan,1993-04-25,Right-hand bat,Right-arm offbreak,424235
-Faizan Khan,7500379,Pakistan,1992-08-27,Right-hand bat,,348151
 Fawad Khan,7500408,Pakistan,1992-10-10,Right-hand bat,Left-arm bowler,484167
 Faizan Riaz,7500380,Pakistan,1988-07-02,Right-hand bat,Legbreak,260038
 Haider Rameez,7500456,Pakistan,1988-11-13,Right-hand bat,,1163201
@@ -23205,8 +23205,8 @@ Malik Bashir,7500707,Pakistan,1974-12-25,Right-hand bat,Right-arm offbreak,41352
 Marina Iqbal,7500720,Pakistan,1987-03-07,Right-hand bat,Right-arm medium-fast,361850
 Maryam Butt,7500721,Pakistan,1985-04-26,Right-hand bat,Left-arm medium-fast,55024
 Mohammad Ali,7500764,Pakistan,1975-08-20,Left-hand bat,Right-arm fast-medium,41707
-Muslim Musa,11527315,Afghanistan,1997-01-15,Right-hand bat,Right-arm medium,3009464
 MR Jayanth,11525565,India,2002-07-25,Right-hand bat,Right-arm medium-fast,5555676
+Muslim Musa,11527315,Afghanistan,1997-01-15,Right-hand bat,Right-arm medium,3009464
 Md Shahobuddin,11527892,Kuwait,1988-02-03,Left-hand bat,Left-arm fast,7764634
 Mansoor Ali,7500711,Pakistan,1985-01-01,Right-hand bat,Right-arm offbreak,325526
 Majid Khan,7500700,Pakistan,1988-08-20,Right-hand bat,Right-arm fast-medium,387169
@@ -24393,12 +24393,12 @@ Johan Smal,9200772,South Africa,2001-02-09,Right-hand bat,,1070951
 Joshua Walden,9200800,South Africa,2003-04-30,Right-hand bat,Right-arm medium,1070751
 Jodie Ringrose,11525601,Australia,1981-03-04,Right-hand bat,Right-arm slow,8259030
 Nurathika Husna Hafiz,11527356,Malaysia,2005-05-21,Right-hand bat,Right-arm medium-fast,9428706
+Joshua Brown,9200795,South Africa,2000-08-09,Right-hand bat,Right-arm fast,596068
 Keagan Whitten,9200849,South Africa,1999-01-02,Right-hand bat,Right-arm medium,595314
 Kevin Lawrence,9200863,South Africa,1987-10-18,,,816621
 Justin Kemp,9200823,South Africa,1977-10-02,Right-hand bat,Right-arm fast-medium,45797
 Karbo Nkambule,9200837,South Africa,1997-01-09,Right-hand bat,Right-arm offbreak,595857
 Kade Justus,9200829,South Africa,2000-01-12,Right-hand bat,,695273
-Joshua Brown,9200795,South Africa,2000-08-09,Right-hand bat,Right-arm fast,596068
 Kerwin Mungroo,9200858,South Africa,1994-07-31,Right-hand bat,Right-arm fast,594335
 Joshua Breed,9200794,South Africa,1999-03-20,Right-hand bat,Legbreak,1088083
 Justin Wiggill,9200824,South Africa,1975-06-22,Right-hand bat,Right-arm fast-medium,47895
@@ -28373,7 +28373,6 @@ David Lowe,3002891,England,1979-01-12,Right-hand bat,,16400
 David Hartley,3002884,England,1985-05-09,Right-hand bat,,525742
 Connor Brown,3002793,England,1997-04-28,Right-hand bat,Right-arm offbreak,754297
 David Balcombe,3002872,England,1984-12-24,Right-hand bat,Right-arm medium-fast,10630
-Danny Briggs,3002856,England,1991-04-30,Right-hand bat,Slow left-arm orthodox,310107
 Dawood Aryubi,11525749,Germany,2000-11-09,Right-hand bat,Right-arm medium,7611485
 Lethabo Phahlamhlaka,11526596,South Africa,2006-10-17,Right-hand bat,,7270093
 Danielle Ransley,3002840,England,1995-06-11,,,1100305
@@ -28402,6 +28401,7 @@ Dominic Manthorpe,3002930,England,1997-06-18,Left-hand bat,Left-arm fast-medium,
 Donald Stanley,3002933,England,1972-03-08,Right-hand bat,,20543
 David Sayer,3002900,England,1997-10-18,Left-hand bat,Left-arm medium,995155
 David Mitchell,3002895,England,1980-02-20,Left-hand bat,Right-arm medium-fast,17520
+Danny Briggs,3002856,England,1991-04-30,Right-hand bat,Slow left-arm orthodox,310107
 Imran Khan,11525750,Germany,1988-08-03,Right-hand bat,Left-arm slow,9223985
 David Wigley,3002905,England,1981-10-26,Right-hand bat,Right-arm fast-medium,23311
 David Pennett,3002897,England,1969-10-26,Right-hand bat,Right-arm fast-medium,18495
@@ -28448,11 +28448,11 @@ Ed Smith,3002958,England,1977-07-19,Right-hand bat,Right-arm medium-fast,20242
 Edward Hughes,3002964,England,1973-12-12,Right-hand bat,Right-arm medium,14421
 Eliot Callis,3002977,England,1994-11-08,Right-hand bat,Right-arm offbreak,639078
 Fern Nicholls,3003020,England,1986-02-07,,,915113
-Felix Organ,3003018,England,1999-06-02,Right-hand bat,Right-arm offbreak,862065
 Euan Brock,3003013,England,1991-02-09,Right-hand bat,Slow left-arm orthodox,410525
 Gareth Davies,3003047,England,1992-07-31,Right-hand bat,Right-arm offbreak,654659
 Gagan Bhogal,3003043,England,1993-03-12,Right-hand bat,Right-arm offbreak,1153358
 Florence Wilkinson,3003026,England,1995-05-10,,,879233
+Felix Organ,3003018,England,1999-06-02,Right-hand bat,Right-arm offbreak,862065
 Izatullah Amini,11525752,Germany,1996-08-26,Right-hand bat,,4956374
 Ibrahim Khan,11526599,Oman,1999-02-10,Right-hand bat,Right-arm fast,2230623
 Gary Scott,3003054,England,1984-07-21,Right-hand bat,Right-arm offbreak,21233
@@ -29025,7 +29025,6 @@ Ronnie Irani,3004156,England,1971-10-26,Right-hand bat,Right-arm medium,15403
 Rob Hilliard,3004146,England,1979-08-28,,,591392
 Rob Clements,3004127,England,1989-08-15,Right-hand bat,Right-arm offbreak,347668
 Richard Wilkinson,3004111,England,1977-11-11,Right-hand bat,Right-arm offbreak,22435
-Rob Keogh,3004150,England,1991-10-21,Right-hand bat,Right-arm offbreak,408413
 Richie Jervis,3004114,England,1976-10-12,Right-hand bat,Right-arm fast-medium,15505
 Robert Watson,3004142,England,1990-10-04,Right-hand bat,Right-arm medium-fast,353401
 Rob Brierley,3004126,England,1981-04-20,Right-hand bat,Right-arm offbreak,10611
@@ -29046,6 +29045,7 @@ Robert Cummings,3004134,England,1975-06-09,Right-hand bat,Right-arm medium-fast,
 Rory Hamilton-Brown,3004157,England,1987-09-03,Right-hand bat,Right-arm offbreak,15378
 Robert Clarke,3004131,England,1994-09-04,Right-hand bat,Right-arm medium,763265
 Robert Bruce,3004129,England,1978-04-29,,,589927
+Rob Keogh,3004150,England,1991-10-21,Right-hand bat,Right-arm offbreak,408413
 Rashad Mehmood,11525772,Germany,1982-01-01,Right-hand bat,Right-arm medium,6990486
 Shubham Priyadarshi,11526619,India,2004-09-30,Right-hand bat,Right-arm medium-fast,6235051
 Robert Franklin,3004138,England,1983-07-29,Right-hand bat,Right-arm offbreak,354371
@@ -29687,7 +29687,6 @@ Archan Kothari,4502943,India,2001-09-08,Right-hand bat,Right-arm medium-fast,121
 Ankitkar Jaiswal,4502907,India,2001-07-22,Left-hand bat,Slow left-arm orthodox,1246464
 Ankush Jaiswal,4502916,India,1992-06-16,Right-hand bat,Right-arm offbreak,714465
 Ashish Chaudhary,4502985,India,1998-10-15,Right-hand bat,Legbreak,1201535
-Ankit Dabas,4502905,India,1992-11-14,Right-hand bat,Right-arm offbreak,949855
 Aquib Kureshi,4502938,India,1996-05-20,Right-hand bat,Right-arm medium-fast,1206036
 Arvind Pujara,4502975,India,1950-12-21,,,32945
 Ashish Tibrewala,4502988,India,1984-03-23,Right-hand bat,Right-arm medium-fast,35568
@@ -29696,6 +29695,7 @@ Arun Kumar,4502964,India,1988-01-02,Right-hand bat,Right-arm medium,529437
 Arshad Kawaja,4502960,India,1987-04-22,Right-hand bat,Right-arm offbreak,733231
 Arvind Singh,4502976,India,1977-04-01,Right-hand bat,Right-arm medium,26540
 A Sarath Raj,4502981,India,1997-07-05,Right-hand bat,Right-arm medium,1194939
+Ankit Dabas,4502905,India,1992-11-14,Right-hand bat,Right-arm offbreak,949855
 Lipu Nayak,11526637,India,2004-04-15,Right-hand bat,Right-arm offbreak,9771137
 Ashutosh Das,4502999,India,1997-10-17,Right-hand bat,Right-arm medium,854355
 Ashok Thakur,4502996,India,1977-04-10,Right-hand bat,Left-arm medium,35318
@@ -29858,6 +29858,7 @@ D Prashanth Prabhu,4503296,India,1998-10-17,Right-hand bat,,1048821
 Divyaraj Chauhan,4503284,India,1994-07-01,Right-hand bat,Slow left-arm orthodox,554710
 Fayaz Ahmed,4503333,India,1976-11-26,Right-hand bat,Right-arm medium,28704
 Gaurav Arora,4503358,India,1980-10-14,Right-hand bat,Right-arm medium,26334
+Fabid Ahmed,4503324,India,1995-07-27,Right-hand bat,Right-arm offbreak,796627
 Sameer Chaudhary,11525797,India,1999-12-19,Right-hand bat,Right-arm offbreak,5476977
 Gaurav Pachori,4503361,India,1987-10-04,Right-hand bat,Legbreak,32436
 Ganesh Venkataraman,4503353,India,1985-05-21,Left-hand bat,Right-arm offbreak,35658
@@ -29874,7 +29875,6 @@ Gautam Reddy,4503368,India,1985-10-21,Right-hand bat,Legbreak googly,374675
 Gautam Raghuwanshi,4503367,India,1991-07-03,Left-hand bat,Slow left-arm orthodox,1210197
 Dhruv Shorey,4503266,India,1992-06-05,Right-hand bat,Right-arm offbreak,590327
 Gagan Sodhi,4503345,India,1992-10-03,Right-hand bat,Right-arm medium-fast,1108254
-Fabid Ahmed,4503324,India,1995-07-27,Right-hand bat,Right-arm offbreak,796627
 Ganesh Bhosle,4503351,India,2001-10-04,Right-hand bat,Right-arm offbreak,1216170
 Ganeshan Periyaswamy,4503350,India,1994-03-05,Right-hand bat,Right-arm medium,1194932
 Gourpada Banik,4503409,India,1974-04-03,Right-hand bat,Right-arm medium,26857
@@ -31260,7 +31260,6 @@ Muhammad Hashim,6000170,Malaysia,1999-04-19,Left-hand bat,Slow left-arm orthodox
 Marimuthu Muniandy,6000159,Malaysia,1971-02-28,Right-hand bat,Right-arm fast-medium,26002
 Lake Mariana,6000152,Malaysia,1994-01-12,Right-hand bat,Right-arm medium,486805
 Rahim Khan,6000188,Malaysia,1999-03-11,Right-hand bat,,1037533
-Robbie Bowman,11525841,England,2007-07-14,Right-hand bat,,6442405
 Mohamad Salim,6000163,Malaysia,1994-10-27,Right-hand bat,Right-arm medium-fast,1037531
 Norlida Hamid,6000180,Malaysia,1983-06-16,Left-hand bat,Slow left-arm orthodox,301638
 Mahesan,6000157,Malaysia,1987-02-14,Right-hand bat,Right-arm offbreak,871317
@@ -31289,7 +31288,7 @@ Nur Alliah Asyqin,6000181,Malaysia,2002-11-09,Left-hand bat,Right-arm offbreak,1
 Marzukh Hasnan,6000160,Malaysia,2000-09-07,Right-hand bat,Right-arm medium,1179830
 Mariam Samake,6200006,Mali,1996-12-17,Right-hand bat,,1189322
 Fikri Makram,6000134,Malaysia,1993-06-29,Right-hand bat,Right-arm offbreak,1037553
-Nirvan Ramesh,11525842,England,2008-03-26,Right-hand bat,Right-arm medium,7493444
+Robbie Bowman,11525841,England,2007-07-14,Right-hand bat,,6442405
 Hafsaa Abdhulla,6100032,Maldives,1980-02-18,Right-hand bat,,1208763
 Siswanto Haidi,6000203,Malaysia,1972-02-22,Right-hand bat,Right-arm fast-medium,25999
 Shafizan Shahriman,6000200,Malaysia,1972-07-23,,,522802
@@ -31329,6 +31328,7 @@ Jay Kishan,6400022,Mexico,1983-06-03,,,463054
 Bineesh Vadavathy,6500022,Mozambique,1977-05-19,Right-hand bat,Right-arm medium,352389
 Jessica Sainda,6500027,Mozambique,1999-06-04,Right-hand bat,,1182757
 Maria Matine,6500030,Mozambique,1998-03-27,,,1158407
+Nirvan Ramesh,11525842,England,2008-03-26,Right-hand bat,Right-arm medium,7493444
 Dan Lategan,11525843,England,2006-05-25,Left-hand bat,Right-arm offbreak,6639850
 Luis Canda,6500029,Mozambique,1999-10-17,,,1163162
 Colin Schoonbee,6700073,Namibia,1992-01-06,,,395860
@@ -31464,7 +31464,6 @@ Hans van Arkel,6900149,Netherlands,1969-05-08,Right-hand bat,Left-arm medium,249
 Lotte Egging,6900171,Netherlands,1988-06-08,Right-hand bat,Right-arm medium-fast,216638
 Marc Lefebvre,6900174,Netherlands,1995-03-23,,,470906
 Frank Nijman,6900143,Netherlands,1980-02-01,Right-hand bat,Right-arm medium,25003
-Stuart Van Der Merwe,11525847,England,2005-02-24,Right-hand bat,Right-arm fast-medium,3123574
 Mariska Kornet,6900175,Netherlands,1988-03-04,Right-hand bat,Right-arm medium-fast,472265
 Neil Kruger,6900182,Netherlands,1981-08-15,Right-hand bat,Right-arm medium,355107
 Mahesh Hans,6900173,Netherlands,1994-06-19,Right-hand bat,Right-arm offbreak,643135
@@ -31500,6 +31499,7 @@ Teun Landheer,6900206,Netherlands,2000-11-24,Right-hand bat,Right-arm medium-fas
 Tjade Groot,6900208,Netherlands,1973-01-22,Right-hand bat,Right-arm medium,24906
 Ash Turner,7100399,New Zealand,1975-06-13,Right-hand bat,Right-arm medium-fast,38697
 Navjit Singh,6900181,Netherlands,2000-05-29,Right-hand bat,Right-arm offbreak,1036223
+Stuart Van Der Merwe,11525847,England,2005-02-24,Right-hand bat,Right-arm fast-medium,3123574
 Wesley Barresi,6900212,Netherlands,1984-05-03,Right-hand bat,Right-arm offbreak,44407
 Angela Coyle,7100392,New Zealand,1982-11-10,Right-hand bat,Right-arm medium,54557
 Asmita Rama,7100400,New Zealand,1983-09-25,Right-hand bat,,54343
@@ -31538,7 +31538,6 @@ Ben Rae,7100409,New Zealand,1986-10-22,Right-hand bat,,280859
 Courtney Buckman,7100447,New Zealand,1995-06-13,Right-hand bat,Right-arm medium,598154
 Bradley Rodden,7100414,New Zealand,1989-01-29,Right-hand bat,Right-arm medium,277913
 Carl Cachopa,7100431,New Zealand,1986-05-17,Right-hand bat,Right-arm medium-fast,36822
-Byron Hatton-Lowe,11525849,England,2006-12-13,Right-hand bat,Right-arm fast-medium,4767588
 David Fulton,7100461,New Zealand,1983-05-08,Right-hand bat,,547754
 Dominic Rayner,7100472,New Zealand,1983-08-26,Right-hand bat,Right-arm medium,281602
 Faele O'Connor,7100490,New Zealand,1979-10-15,Right-hand bat,Right-arm slow-medium,54540
@@ -31567,6 +31566,7 @@ Duncan Drew,7100474,New Zealand,1976-11-11,Right-hand bat,,36946
 Gareth Irwin,7100496,New Zealand,1981-03-06,Left-hand bat,Left-arm medium-fast,38943
 Glenn Wilkinson,7100511,New Zealand,1970-04-23,Right-hand bat,Right-arm medium,38771
 Glenn Milnes,7100509,New Zealand,1974-10-15,Right-hand bat,,37722
+Byron Hatton-Lowe,11525849,England,2006-12-13,Right-hand bat,Right-arm fast-medium,4767588
 Joe Moores,11525850,England,2006-12-13,Left-hand bat,,5230389
 Iain O'Brien,7100534,New Zealand,1976-07-10,Right-hand bat,Right-arm fast-medium,38108
 Geetika Kodali,10700145,United States of America,2004-06-07,Right-hand bat,Right-arm medium,1184545
@@ -32340,12 +32340,12 @@ Tariq Sabzwari,7502656,Pakistan,1978-11-02,Right-hand bat,,43341
 Tauqeer Hussain,7502665,Pakistan,1971-11-30,Right-hand bat,Right-arm offbreak,43349
 Umar Farooq,7502678,Pakistan,1997-12-31,Right-hand bat,Right-arm medium,1159911
 Umair Hasan,7502675,Pakistan,1980-11-08,Right-hand bat,Right-arm fast-medium,43495
-Suleman Khan,7502612,Pakistan,1983-06-04,Right-hand bat,Slow left-arm orthodox,43241
 Tariq Khan,7502649,Pakistan,1986-10-07,Left-hand bat,Slow left-arm orthodox,396750
 Umar Khan,7502679,Pakistan,1991-07-13,Right-hand bat,,734521
 Touqeer Riyasat,7502673,Pakistan,1995-07-20,Right-hand bat,,734525
 Taufiq Tirmizi,7502664,Pakistan,1960-08-18,,,43469
 Tanveer Akmal,7502637,Pakistan,1990-10-13,Right-hand bat,Slow left-arm orthodox,734259
+Suleman Khan,7502612,Pakistan,1983-06-04,Right-hand bat,Slow left-arm orthodox,43241
 Tayyab Muhammad,11525878,Pakistan,2001-03-15,Right-hand bat,Right-arm medium,2380654
 Tayyab Abbas,7502670,Pakistan,1994-09-06,Left-hand bat,Left-arm medium-fast,681051
 Tasawwar Hussain,7502660,Pakistan,1974-06-12,Right-hand bat,Right-arm offbreak,43359
@@ -33393,7 +33393,6 @@ Ruan Van der Schyff,9203129,South Africa,1999-04-07,Left-hand bat,,981189
 Ryan Cartwright,9203140,South Africa,1992-01-25,Left-hand bat,Right-arm fast,488873
 Russell Tindale,9203137,South Africa,1984-04-19,Right-hand bat,Right-arm medium-fast,266942
 Rourke Lauryssen,9203116,South Africa,1997-12-12,Right-hand bat,Right-arm medium,833835
-Ricardo Vasconcelos,9203080,South Africa,1997-10-27,Left-hand bat,,696241
 Rudolph Cronje,9203135,South Africa,1993-05-21,Right-hand bat,Right-arm medium,488983
 Ross Garland,9203115,South Africa,1974-06-26,Right-hand bat,Right-arm medium,45217
 Rubin Hermann,9203132,South Africa,1997-01-26,Left-hand bat,,596097
@@ -35465,7 +35464,6 @@ Adam Maher,401787,Australia,1981-11-14,,Right-arm fast-medium,374969
 Bernardo Irigoyen,200063,Argentina,1969-09-03,Right-hand bat,Right-arm medium,23660
 Andrew Pickard,401823,Australia,1983-10-04,Right-hand bat,,7247
 Zahir Shehzad,101055,Afghanistan,1998-09-23,Left-hand bat,Slow left-arm orthodox,633397
-Usman Ghani,101039,Afghanistan,1996-11-20,Right-hand bat,,711559
 Lucas Paterlini,200078,Argentina,1982-06-06,Right-hand bat,Right-arm medium-fast,23663
 Zakiullah Sultani,101057,Afghanistan,2002-09-01,,,1076652
 David Mauro,200068,Argentina,1983-10-31,Left-hand bat,Right-arm medium,379298
@@ -36903,7 +36901,6 @@ James Hammerton,3005578,England,1991-04-05,Right-hand bat,,526953
 James Parslow,3005603,England,1995-06-03,Right-hand bat,Right-arm medium-fast,1186331
 James Logan,3005596,England,1997-10-12,Left-hand bat,Slow left-arm orthodox,767447
 James Smith,3005609,England,1987-01-16,Right-hand bat,Right-arm medium-fast,257845
-Jack Carson,3005524,England,2000-12-03,Right-hand bat,Right-arm offbreak,1145101
 James Hayward,3005582,England,1986-10-03,Right-hand bat,Slow left-arm orthodox,15375
 Jamie Drew,3005621,England,1997-05-02,,,1028747
 Jamie Glasson,3005623,England,1973-05-21,Right-hand bat,Right-arm medium,13383
@@ -37231,7 +37228,6 @@ Nick Phillips,3006239,England,1974-05-10,Right-hand bat,Right-arm offbreak,18523
 Omar Anwar,3006277,England,1983-07-01,Right-hand bat,,8920
 Courtney Gounden,9203771,South Africa,2001-09-01,Left-hand bat,,1216020
 Ned Leonard,3006209,England,2002-08-15,Right-hand bat,Right-arm medium,1144683
-Oli Carter,3006259,England,2001-11-02,Right-hand bat,,1145103
 Ollie Graham,3006274,England,1995-01-03,Right-hand bat,Right-arm slow,562088
 Oliver Clarke,3006261,England,1993-09-18,Left-hand bat,Slow left-arm orthodox,859123
 Oliver Bocking,3006258,England,1996-04-25,Right-hand bat,Right-arm fast-medium,668071
@@ -37245,6 +37241,7 @@ Oliver Soames,3006271,England,1995-10-27,Right-hand bat,Right-arm medium,884075
 Nicole Richards,3006243,England,1992-09-18,Right-hand bat,Legbreak,879243
 Oliver Powell,3006267,England,1987-08-03,Right-hand bat,Right-arm offbreak,406920
 Musa Ahmed,3006183,England,1997-12-10,Left-hand bat,Legbreak,1184439
+Oli Carter,3006259,England,2001-11-02,Right-hand bat,,1145103
 Sarah Ward,3006575,England,1984-03-15,Right-hand bat,Right-arm medium-fast,874207
 Oliver Slipper,3006270,England,1976-03-10,Right-hand bat,Right-arm fast-medium,20210
 Owen Morgan,3006278,England,1994-04-14,Right-hand bat,Slow left-arm orthodox,573904
@@ -37530,7 +37527,6 @@ Tom Collishaw,3006776,England,1984-12-22,Right-hand bat,Right-arm medium,461640
 Tom Maynard,3006792,England,1989-09-05,Right-hand bat,Right-arm fast-medium,514394
 Tom Poynton,3006798,England,1989-11-25,Right-hand bat,,288616
 Tom Underhill,3006804,England,1994-06-04,Left-hand bat,Right-arm medium-fast,529293
-Tom Haines,3006785,England,1998-10-28,Left-hand bat,Right-arm medium,737871
 Tom Simpson,3006802,England,1974-11-07,Right-hand bat,,20487
 Tom Foley,3006781,England,1996-11-28,Right-hand bat,Slow left-arm orthodox,637966
 Tom Hope,3006788,England,1998-05-16,Left-hand bat,Right-arm medium,1042725
@@ -37543,6 +37539,7 @@ Tom Glover,3006782,England,1983-06-19,Right-hand bat,Right-arm medium-fast,13499
 Tom Colverd,3006777,England,1995-11-13,Right-hand bat,Right-arm offbreak,988603
 Kiara Fisher,9204322,South Africa,2002-03-01,Right-hand bat,Right-arm offbreak,1137549
 Tom Clark,3006774,England,1984-01-06,Right-hand bat,Right-arm medium,11760
+Tom Haines,3006785,England,1998-10-28,Left-hand bat,Right-arm medium,737871
 Vince Clarke,3006832,England,1971-11-11,Right-hand bat,Legbreak,10736
 Will Evans,3006861,England,1989-01-08,Left-hand bat,,472097
 Wayne Noon,3006842,England,1971-02-05,Right-hand bat,,18026
@@ -43477,12 +43474,12 @@ Baseer Shinwari,101137,Afghanistan,2002-04-11,Right-hand bat,Right-arm offbreak,
 Asghar Khan,101123,Afghanistan,2001-06-13,,,1076675
 Asghar Hussain,101122,Afghanistan,1989-10-01,Right-hand bat,Right-arm fast,307660
 Ahsanullah,101099,Afghanistan,1997-05-11,Right-hand bat,,1108839
-Ayub Khan,101128,Afghanistan,1990-03-05,Right-hand bat,Right-arm medium-fast,440969
 Asad Khan,101115,Afghanistan,1997-11-06,Right-hand bat,Right-arm offbreak,1109165
 Din Mohammad,101145,Afghanistan,1998-12-23,Right-hand bat,Right-arm offbreak,1015443
 Ahmad Wali,101095,Afghanistan,2002-10-04,,,1076441
 Bahar Shinwari,101132,Afghanistan,2001-03-11,Left-hand bat,Slow left-arm orthodox,1059047
 Elech Ahmed,101146,Afghanistan,1976-01-01,Right-hand bat,Right-arm medium-fast,253603
+Ayub Khan,101128,Afghanistan,1990-03-05,Right-hand bat,Right-arm medium-fast,440969
 Baseer Ahmad,101136,Afghanistan,2001-06-13,,,1076681
 Asadullah Zadran,101121,Afghanistan,2000-04-12,Right-hand bat,Right-arm offbreak,1059061
 Ezatullah,101148,Afghanistan,2001-03-11,,,1076522
@@ -43537,7 +43534,6 @@ Izatullah,101204,Afghanistan,1996-02-15,Right-hand bat,Right-arm offbreak,101630
 Izatullah,101203,Afghanistan,1992-07-25,Right-hand bat,,1015447
 Matiullah Niazai,101242,Afghanistan,1994-02-22,Right-hand bat,Right-arm medium,1049607
 Jafar Khan,101209,Afghanistan,1994-03-19,Right-hand bat,,1015427
-Janat Gul,101211,Afghanistan,1991-12-05,Right-hand bat,Right-arm offbreak,790057
 Mohammad Yousuf,101280,Afghanistan,1999-01-19,Right-hand bat,Right-arm offbreak,1015493
 Nasir Khan,101301,Afghanistan,2002-01-11,,,1076525
 Mohammad Sohail,101268,Afghanistan,2001-11-04,,,1076580
@@ -43556,6 +43552,7 @@ Mohammad Yasir,101278,Afghanistan,2002-03-05,,,1076559
 Nasir Khan,101300,Afghanistan,1998-09-29,Right-hand bat,Right-arm medium,914443
 Mohammadullah,101274,Afghanistan,2003-06-12,Right-hand bat,,1109154
 Mohammad Shahzad,101267,Afghanistan,1987-01-10,Right-hand bat,,419873
+Janat Gul,101211,Afghanistan,1991-12-05,Right-hand bat,Right-arm offbreak,790057
 Mohammad Nabi,101260,Afghanistan,2002-08-03,,,1076655
 Noor-ul-Haq,101321,Afghanistan,1992-04-02,Right-hand bat,Legbreak,307652
 Noorullah,101323,Afghanistan,2002-03-03,Right-hand bat,,1082543
@@ -43607,7 +43604,6 @@ Zabiullah Islam,101442,Afghanistan,1997-03-27,Right-hand bat,Right-arm offbreak,
 Zahaul Rahman,101443,Afghanistan,1999-05-22,Right-hand bat,,1049593
 Zahid Azam,101444,Afghanistan,2002-05-01,,,1076630
 Waris Sahil,101433,Afghanistan,1998-08-21,Right-hand bat,Right-arm offbreak,1054385
-Usman Ghani,101418,Afghanistan,2003-06-11,Right-hand bat,,1082525
 Zia-ul-Haq,101449,Afghanistan,2002-06-03,,,1076653
 Yousaf Jameel,101436,Afghanistan,2002-03-05,,,1076639
 Yousif Khan,101438,Afghanistan,2002-02-03,,,1076434
@@ -45044,7 +45040,6 @@ Harriet Lilwall,3007709,England,1998-11-30,,,885927
 Harsh Kumar,3007730,England,2000-02-24,Right-hand bat,Right-arm fast-medium,1120263
 Harry Fisher,3007718,England,2000-02-01,Right-hand bat,,1153267
 Harry Powell,3007725,England,1995-06-01,Right-hand bat,Right-arm fast-medium,529309
-Gus Miller,3007691,England,2002-01-08,Right-hand bat,Right-arm medium,1153257
 Huw Waters,3007775,England,1986-09-26,Right-hand bat,Right-arm medium,23510
 Ian Richardson,3007791,England,1982-02-11,Right-hand bat,Left-arm fast-medium,19556
 Holly Colvin,3007760,England,1989-09-07,Right-hand bat,Slow left-arm orthodox,215501
@@ -46610,7 +46605,6 @@ Naresh Reddy,4509421,India,1990-01-12,Right-hand bat,Right-arm medium,477379
 Mudi Prajith,4509369,India,1989-09-17,Right-hand bat,,525929
 MS Sanjay,4509364,India,1996-11-28,Right-hand bat,Slow left-arm orthodox,1048811
 Monika Murmu,4509342,India,1994-03-24,Right-hand bat,,960911
-Mohit Kale,4509336,India,1996-11-27,Right-hand bat,Legbreak,1159710
 Murtuja Vahora,4509381,India,1985-12-01,Right-hand bat,Right-arm medium-fast,232304
 Naga Gangadhar,4509401,India,1977-09-30,Right-hand bat,Right-arm offbreak,28777
 M Vipin Lal,4509395,India,1982-01-27,Right-hand bat,,35702
@@ -46623,6 +46617,7 @@ Nagaraj Achar,4509402,India,1985-05-10,Right-hand bat,Legbreak,26175
 Narendra Bharali,4509414,India,1987-03-11,Left-hand bat,Slow left-arm orthodox,27095
 Nani Suresh Babu,4509412,India,1979-11-18,Right-hand bat,Right-arm offbreak,34248
 Naresh Bhati,4509418,India,1984-11-23,Right-hand bat,Legbreak,27123
+Mohit Kale,4509336,India,1996-11-27,Right-hand bat,Legbreak,1159710
 Mushtaq Ahmed,4509388,India,1970-05-05,Right-hand bat,Legbreak,31278
 Nadeemuddin,4509399,India,1982-11-13,Right-hand bat,Right-arm medium,31847
 Munnangi Haribabu,4509380,India,1971-03-09,Right-hand bat,Legbreak googly,29387
@@ -46790,7 +46785,6 @@ Rahul Gupta,4509740,India,1996-02-25,Right-hand bat,Right-arm medium,1106126
 Rahil Sambyal,4509732,India,1987-12-20,Right-hand bat,,482307
 Rahul Sharma,4509748,India,1990-12-30,Left-hand bat,Left-arm medium,714523
 Rahul Kanade,4509741,India,1970-04-08,Right-hand bat,Right-arm medium,30015
-P Surendiran,4509706,India,1998-07-02,Right-hand bat,Right-arm medium,1216223
 Raman Bishnoi,4509804,India,1997-12-24,Right-hand bat,Slow left-arm orthodox,1209160
 Rajat Goel,4509760,India,1993-01-23,Left-hand bat,Slow left-arm unorthodox,1161010
 Rajinder Singh,4509778,India,1975-12-30,Right-hand bat,Right-arm medium,34673
@@ -47918,7 +47912,6 @@ Helen Daly,7101303,New Zealand,1976-05-26,Right-hand bat,Left-arm medium,54351
 Grant Robinson,7101288,New Zealand,1979-07-24,Left-hand bat,,38371
 Jacob Oram,7101315,New Zealand,1978-07-28,Left-hand bat,Right-arm fast-medium,38062
 Harry Boam,7101298,New Zealand,1990-10-15,Right-hand bat,Right-arm medium,331368
-Keemo Paul,11200244,West Indies,1998-02-21,Right-hand bat,Right-arm fast-medium,677081
 Jason Holder,11201647,West Indies,1991-11-05,Right-hand bat,Right-arm medium-fast,391485
 Shane Dowrich,11201871,West Indies,1991-10-30,Right-hand bat,,431905
 Heidi Arndt,7101302,New Zealand,1993-09-13,Right-hand bat,,438269
@@ -47928,6 +47921,7 @@ Chemar Holder,11200082,West Indies,1998-03-03,Right-hand bat,Right-arm fast,9145
 John Campbell,11200700,West Indies,1993-09-21,Left-hand bat,Right-arm offbreak,348026
 Darren Bravo,11200582,West Indies,1989-02-06,Left-hand bat,Right-arm medium,277472
 Fraser Sheat,7101276,New Zealand,1998-04-29,Right-hand bat,Right-arm medium,1124471
+Keemo Paul,11200244,West Indies,1998-02-21,Right-hand bat,Right-arm fast-medium,677081
 Roston Chase,11201853,West Indies,1992-03-22,Right-hand bat,Right-arm offbreak,391832
 Jayden Seales,11200212,West Indies,2001-09-10,Left-hand bat,Right-arm medium,1199304
 Corey Anderson,7101226,New Zealand,1990-12-13,Left-hand bat,Left-arm medium-fast,277662
@@ -48310,7 +48304,6 @@ Asadullah,7504391,Pakistan,1999-03-10,Right-hand bat,Right-arm medium,1073434
 Lara Goodall,9202659,South Africa,1996-04-26,Left-hand bat,Right-arm medium,593936
 Asad Ali,7504387,Pakistan,1988-10-14,Right-hand bat,Right-arm medium-fast,222728
 Charlie Morris,3004941,England,1992-07-06,Right-hand bat,Right-arm medium-fast,522898
-Dillon Pennington,3000553,England,1999-02-26,Right-hand bat,Right-arm medium-fast,1094569
 Nilakshi de Silva,9503706,Sri Lanka,1989-09-27,Right-hand bat,Right-arm slow-medium,557764
 Zeeshan Malik,7505607,Pakistan,1996-12-26,Right-hand bat,Right-arm offbreak,793413
 George Scott,3007639,England,1995-11-06,Right-hand bat,Right-arm medium-fast,526838
@@ -48341,13 +48334,13 @@ Joshua Bishop,11201676,West Indies,2000-05-30,Right-hand bat,Slow left-arm ortho
 Ellyse Perry,402878,Australia,1990-11-03,Right-hand bat,Right-arm fast-medium,275487
 Lauren Filer,3005901,England,2000-12-22,Right-hand bat,Right-arm fast,1146129
 Mohsin Raza,7505052,Pakistan,2007-01-05,Right-hand bat,,41855
-David Willey,3007460,England,1990-02-28,Left-hand bat,Left-arm fast-medium,308251
 Imran Khan,7503277,Pakistan,1987-07-15,Right-hand bat,Right-arm medium-fast,316363
 Abtaha Maqsood,8600260,Scotland,1999-06-11,Right-hand bat,Legbreak,934494
 Gurkeerat Singh Mann,4503429,India,1990-06-29,Right-hand bat,Right-arm offbreak,537124
+David Willey,3007460,England,1990-02-28,Left-hand bat,Left-arm fast-medium,308251
+Dillon Pennington,3000553,England,1999-02-26,Right-hand bat,Right-arm medium-fast,1094569
 Ramaal Lewis,11200367,West Indies,1996-08-18,Right-hand bat,Right-arm offbreak,670037
 Georgia Wareham,400336,Australia,1999-05-26,Right-hand bat,Legbreak,946057
-Chris Wood,3000415,England,1990-06-27,Right-hand bat,Left-arm medium-fast,310525
 Atiq-ur-Rehman,7504438,Pakistan,1972-09-27,Right-hand bat,,39281
 Awais Mahmood,7504445,Pakistan,1970-03-03,Right-hand bat,Right-arm offbreak,39286
 Ayaz Taifi,7504449,Pakistan,1976-06-05,Right-hand bat,Right-arm medium,39290
@@ -48375,6 +48368,7 @@ Zachary McCaskie,11200994,West Indies,1996-11-18,Right-hand bat,Right-arm offbre
 Aldaine Thomas,11200499,West Indies,1994-12-09,Right-hand bat,,593974
 Rahat Ali,7502385,Pakistan,1988-09-12,Right-hand bat,Left-arm fast-medium,323244
 Kirstie Gordon,3001286,Scotland,1997-10-20,Right-hand bat,Slow left-arm orthodox,577317
+Chris Wood,3000415,England,1990-06-27,Right-hand bat,Left-arm medium-fast,310525
 Aziz-ur-Rehman,7504468,Pakistan,1985-09-03,Right-hand bat,Right-arm medium-fast,496745
 Ayaz Ali,7504447,Pakistan,1988-04-01,Left-hand bat,Left-arm medium-fast,395004
 Atif Manzoor,7504435,Pakistan,1989-01-26,Right-hand bat,,437990
@@ -48497,7 +48491,6 @@ Husban Javed,7504656,Pakistan,1991-10-01,Right-hand bat,Right-arm medium-fast,68
 Imran Alam,7504682,Pakistan,1974-05-31,Right-hand bat,Right-arm offbreak,40608
 Ibrahim Qureshi,7504659,Pakistan,1978-12-03,Right-hand bat,,40584
 Hayatullah,7504643,Pakistan,2000-07-28,Right-hand bat,Right-arm offbreak,922975
-Kamaleeshwaran A,4510879,India,2001-08-31,Right-hand bat,Right-arm fast-medium,1890037
 Hazrat Shah,7504645,Pakistan,1995-03-10,Right-hand bat,Right-arm medium-fast,790361
 Iftikhar Ahmed,7504665,Pakistan,1978-04-10,Right-hand bat,,40590
 Huda Ziad,7504650,Pakistan,1983-05-06,Right-hand bat,Legbreak,55023
@@ -48515,6 +48508,7 @@ Husnain Hanif,7504657,Pakistan,1998-01-01,Left-hand bat,,734543
 Hasnain Kazim,7504641,Pakistan,1974-03-11,Right-hand bat,Right-arm medium,40385
 Hidayatullah,7504646,Pakistan,2000-03-10,Right-hand bat,,1072469
 Humayun Farhat,7504653,Pakistan,1981-01-24,Right-hand bat,,40383
+Kamaleeshwaran A,4510879,India,2001-08-31,Right-hand bat,Right-arm fast-medium,1890037
 Imran Amin,7504686,Pakistan,1974-12-31,Right-hand bat,Right-arm fast-medium,40612
 Imtiaz Akram,7504699,Pakistan,1989-07-15,Right-hand bat,Right-arm medium-fast,429366
 Jaffar Aamer,7504731,Pakistan,1980-09-03,Left-hand bat,Slow left-arm orthodox,40922
@@ -50688,7 +50682,6 @@ Muhammad Mohtshim,9400078,Spain,2003-08-30,Right-hand bat,Right-arm medium,12945
 Bamanbha Shangpliang,4511696,India,1997-08-15,Left-hand bat,Right-arm offbreak,1292525
 Nicky Dann,4511697,India,1991-03-07,Right-hand bat,Right-arm medium-fast,129524
 Paul Kemp,4511698,India,1972-09-21,Right-hand bat,Right-arm slow,11122231
-Mehran Khan,7505740,Pakistan,1988-05-24,Right-hand bat,Right-arm offbreak,12815636
 Wahid Hussain,11505568,Tanzania,1981-11-11,,,5462154
 Iresha Chathurani,9504768,Sri Lanka,1998-12-28,Right-hand bat,Right-arm medium-fast,789163
 Priyanka Dutta,4511692,India,2003-11-09,Right-hand bat,Right-arm offbreak,21000336
@@ -50704,6 +50697,7 @@ Scott Austin,2500047,Cyprus,1998-02-22,Right-hand bat,Right-arm medium-fast,1281
 Lakhipriya Chetia,4511688,India,2006-10-27,Right-hand bat,Right-arm medium,21000332
 Vikram Verma,4511701,India,1995-05-04,Right-hand bat,Right-arm medium,12815635
 Jayesh Popat,8000040,Portugal,1967-06-24,Left-hand bat,Left-arm slow,12815646
+Mehran Khan,7505740,Pakistan,1988-05-24,Right-hand bat,Right-arm offbreak,12815636
 Isuru Gunasena,9504789,Sri Lanka,1987-04-02,Right-hand bat,Right-arm medium,320286
 Indika Massalage,9504759,Sri Lanka,1990-02-11,Left-hand bat,Right-arm medium-fast,361387
 Iranga Shashimal,9504767,Sri Lanka,1989-05-07,Left-hand bat,Legbreak,359621
@@ -51644,7 +51638,6 @@ Anahita Arora,10700362,United States of America,1985-10-18,Right-hand bat,Right-
 Arjun Thyagarajan,10700365,United States of America,1982-12-11,Left-hand bat,Right-arm offbreak,772391
 Yodhin Punja,10603283,United Arab Emirates,1999-04-24,Right-hand bat,Right-arm medium,796331
 Adrian Gordon,10700356,United States of America,1987-06-28,Right-hand bat,Right-arm fast-medium,460181
-Harry Petrie,3009279,England,2002-09-06,Right-hand bat,Right-arm medium,1231236
 Abhijit Joshi,10700354,United States of America,1992-10-10,Right-hand bat,Right-arm offbreak,348131
 Aditya Thyagarajan,10700355,United States of America,1978-11-07,Right-hand bat,Legbreak,352313
 Akshatha Rao,10700358,United States of America,1983-12-22,Right-hand bat,Right-arm offbreak,538598
@@ -51679,7 +51672,6 @@ Najam Iqbal,10700410,United States of America,1988-08-10,Left-hand bat,Right-arm
 Ben Johnson,4100138,Guernsey,2004-01-17,Right-hand bat,Left-arm medium-fast,13731
 Charlie Brennan,5400132,Jersey,2005-09-23,Right-hand bat,Right-arm medium-fast,1278236
 Dan Ibrahim,3009255,England,2004-08-09,Right-hand bat,Right-arm medium,1260070
-Ali Orr,3009278,England,2001-04-06,Left-hand bat,Right-arm medium-fast,1260069
 Dennis Evans,10700371,United States of America,1982-01-28,Right-hand bat,Right-arm offbreak,378283
 Kamran Syed,10700403,United States of America,1978-01-18,Right-hand bat,Left-arm medium,770321
 Fahad Babar,10700377,United States of America,1992-02-19,Right-hand bat,Right-arm offbreak,499607
@@ -51690,6 +51682,7 @@ Muhammad Zubair,7505821,Pakistan,1992-06-06,Right-hand bat,,77362
 Shohas Farhad,801809,Bangladesh,1990-01-20,Right-hand bat,Right-arm medium,77353
 Waheed Rehman,7505823,Pakistan,1987-11-06,Right-hand bat,Right-arm medium,77369
 Anirudh Maiya,9900321,Sweden,1992-09-15,Right-hand bat,Right-arm slow,94762
+Ali Orr,3009278,England,2001-04-06,Left-hand bat,Right-arm medium-fast,1260069
 Sameer Maduranga,9505780,Sri Lanka,1986-03-09,Right-hand bat,Right-arm medium,73089
 Harish Easwaraiah,10700385,United States of America,1999-05-19,Left-hand bat,Right-arm offbreak,1111462
 Durga Das,10700375,United States of America,1969-09-17,Right-hand bat,,465602
@@ -51793,7 +51786,6 @@ Akeel Seetal,11201454,West Indies,1997-07-03,Right-hand bat,Right-arm medium-fas
 Ravin Arutam,10800095,Vanuatu,1994-07-20,Right-hand bat,,524278
 Wesley Viraliliu,10800102,Vanuatu,1999-01-16,Right-hand bat,Right-arm medium-fast,1082732
 Ahmed Proverbs,11201451,West Indies,1970-01-28,Right-hand bat,Right-arm medium,52719
-Tonny Staal,6900440,Netherlands,1996-03-30,Right-hand bat,Legbreak,93001
 Hoang Mai Tuan,10900010,Vietnam,1994-11-05,Left-hand bat,Slow left-arm orthodox,1116764
 Jelany Chilia,10800087,Vanuatu,1991-10-29,Right-hand bat,Right-arm offbreak,420508
 Merial Kenni,10800093,Vanuatu,1997-07-10,Right-hand bat,,1093507
@@ -52273,10 +52265,10 @@ Rahul Gowthaman,9900339,Sweden,1995-06-19,Right-hand bat,Right-arm offbreak,1273
 Anicca Benjamin,11500457,West Indies,1986-08-12,Right-hand bat,Right-arm medium,4096006
 Dan Lawrence,3002851,England,1997-07-12,Right-hand bat,Right-arm offbreak,641423
 Ajaz Patel,7100008,New Zealand,1988-10-21,Left-hand bat,Slow left-arm orthodox,595783
-Chris Woakes,3007336,England,1989-03-02,Right-hand bat,Right-arm fast-medium,247235
 Ibrahim Zadran,101186,Afghanistan,2001-12-12,Right-hand bat,Right-arm medium-fast,921509
 Ross Taylor,7101067,New Zealand,1984-03-08,Right-hand bat,Right-arm offbreak,38699
 Martin Guptill,7100243,New Zealand,1986-09-30,Right-hand bat,Right-arm offbreak,226492
+Chris Woakes,3007336,England,1989-03-02,Right-hand bat,Right-arm fast-medium,247235
 Jinnie Auguiste,11500456,West Indies,1991-07-17,Right-hand bat,Right-arm medium,4096007
 Joe Burns,402144,Australia,1989-09-06,Right-hand bat,Right-arm medium,326632
 Nkrumah Bonner,11200337,West Indies,1989-01-23,Right-hand bat,Legbreak,314650
@@ -52289,7 +52281,6 @@ Matt Renshaw,401467,Australia,1996-03-28,Left-hand bat,Right-arm offbreak,722303
 Neil Wagner,7100663,New Zealand,1986-03-13,Left-hand bat,Left-arm medium-fast,233713
 Prince Masvaure,11400398,Zimbabwe,1988-10-07,Left-hand bat,Left-arm fast-medium,232442
 Jason Behrendorff,402998,Australia,1990-04-20,Right-hand bat,Left-arm medium-fast,272477
-Sanaboyina Tarun,11202941,India,1999-03-28,Left-hand bat,Left-arm fast-medium,69832
 Kane Richardson,402179,Australia,1991-02-12,Right-hand bat,Right-arm fast-medium,272262
 Brendan Taylor,11400253,Zimbabwe,1986-02-06,Right-hand bat,Right-arm offbreak,55814
 Alex Carey,402620,Australia,1991-08-27,Left-hand bat,,326434
@@ -52308,10 +52299,11 @@ Mark Chapman,7101004,New Zealand,1994-06-27,Left-hand bat,Slow left-arm orthodox
 Carl Mumba,11400264,Zimbabwe,1995-05-06,Right-hand bat,Right-arm fast-medium,672775
 Billy Stanlake,401870,Australia,1994-11-04,Left-hand bat,Right-arm fast,533042
 Nasir Jamal,100587,Afghanistan,1993-12-21,Right-hand bat,Legbreak googly,524048
-Chris Lynn,401085,Australia,1990-04-10,Right-hand bat,Slow left-arm orthodox,326637
 Karim Janat,100519,Afghanistan,1998-08-11,Right-hand bat,Right-arm medium,793467
 Ikram Alikhil,100487,Afghanistan,2000-09-29,Left-hand bat,,935553
+Sanaboyina Tarun,11202941,India,1999-03-28,Left-hand bat,Left-arm fast-medium,69832
 Rahmat Shah,100630,Afghanistan,1993-07-06,Right-hand bat,Legbreak googly,533956
+Chris Lynn,401085,Australia,1990-04-10,Right-hand bat,Slow left-arm orthodox,326637
 Shimron Hetmyer,11201885,West Indies,1996-12-26,Left-hand bat,,670025
 Ajith Vasudevan,4510927,India,1994-05-20,Left-hand bat,Slow left-arm orthodox,87376
 Syed Salman,11202996,India,1995-08-31,Left-hand bat,Left-arm medium,95771
@@ -52410,7 +52402,6 @@ Sai Kishore,4504531,India,1996-11-06,Left-hand bat,Slow left-arm orthodox,104873
 Harshal Patel,4508805,India,1990-11-23,Right-hand bat,Right-arm medium,390481
 Kedar Jadhav,4500996,India,1985-03-26,Right-hand bat,Right-arm offbreak,290716
 Andile Phehlukwayo,9200066,South Africa,1996-03-03,Left-hand bat,Right-arm medium-fast,540316
-Muhammad Irfan,7505939,Pakistan,1985-12-27,Right-hand bat,Right-arm medium,96198
 Jacques Snyman,9200682,South Africa,1994-05-10,Right-hand bat,Right-arm offbreak,594329
 Dinesh Karthik,4506002,India,1985-06-01,Right-hand bat,Right-arm offbreak,30045
 Rahul P,4510986,India,1992-01-01,Left-hand bat,,87317
@@ -52427,6 +52418,7 @@ Jason Roy,3003224,England,1990-07-21,Right-hand bat,Right-arm medium,298438
 Harbhajan Singh,4500753,India,1980-07-03,Right-hand bat,Right-arm offbreak,29264
 Suresh Raina,4507749,India,1986-11-27,Left-hand bat,Right-arm offbreak,33335
 Narayan Jagadeesan,4506770,India,1995-12-24,Right-hand bat,,1048813
+Muhammad Irfan,7505939,Pakistan,1985-12-27,Right-hand bat,Right-arm medium,96198
 Md Ezajul Hosen,801829,Bangladesh,1991-06-15,Right-hand bat,Right-arm medium,84677
 Mohammed Sowkat,801830,Bangladesh,2004-02-02,Right-hand bat,Right-arm offbreak,96028
 Muhammad Asif,7505961,Pakistan,1979-03-10,Right-hand bat,Right-arm medium,89094
@@ -52622,7 +52614,6 @@ Aaron Finch,401780,Australia,1986-11-17,Right-hand bat,Slow left-arm orthodox,53
 Alex Milton,3006996,England,1996-05-19,Right-hand bat,Legbreak,570243
 BD Birkhead,3007124,England,1998-10-28,,,1015247
 Josh Baraba,403483,Australia,2001-01-01,Right-hand bat,Right-arm medium-fast,8581000
-Brad Wheal,8600184,Scotland,1996-08-28,Right-hand bat,Right-arm fast-medium,807535
 Haris Sohail,7500479,Pakistan,1989-01-09,Left-hand bat,Slow left-arm orthodox,318788
 Gareth Roderick,9202278,South Africa,1991-08-29,Right-hand bat,Right-arm medium,436686
 Josh Inglis,403055,Australia,1995-03-04,Right-hand bat,,662235
@@ -52633,19 +52624,20 @@ Tion Webster,11200961,West Indies,1995-04-21,Right-hand bat,Right-arm medium,109
 Amir Jangoo,11200025,West Indies,1997-07-14,Left-hand bat,,820681
 Richard Levi,9201357,South Africa,1988-01-14,Right-hand bat,Right-arm medium,46148
 Ross Whiteley,3006506,England,1988-09-13,Left-hand bat,Left-arm medium,288617
-Tymal Mills,3006819,England,1992-08-12,Right-hand bat,Left-arm fast,459257
 Usman Shinwari,7501372,Pakistan,1994-01-05,Right-hand bat,Left-arm medium-fast,697279
-Sam Hain,3001999,England,1995-07-16,Right-hand bat,Right-arm offbreak,555850
 Marchant de Lange,9206332,South Africa,1990-10-13,Right-hand bat,Right-arm fast,393279
 Jack White,3002814,England,1992-02-19,Left-hand bat,Right-arm fast-medium,637969
 Dean Brownlie,7101247,New Zealand,1984-07-30,Right-hand bat,Right-arm medium,4493
 Lawrence Neil-Smith,401403,Australia,1999-06-01,Right-hand bat,Right-arm medium-fast,1130755
-Denesh Ramdin,11201538,West Indies,1985-03-13,Right-hand bat,,52917
 Nathan Gilchrist,9201188,South Africa,2000-06-11,Right-hand bat,Right-arm fast-medium,982597
+Denesh Ramdin,11201538,West Indies,1985-03-13,Right-hand bat,,52917
+Sam Hain,3001999,England,1995-07-16,Right-hand bat,Right-arm offbreak,555850
 Veerasammy Permaul,11201923,West Indies,1989-08-11,Right-hand bat,Slow left-arm orthodox,274921
 Joey Evison,3003434,England,2001-11-14,Right-hand bat,Right-arm medium,1115852
 Kesrick Williams,11200742,West Indies,1990-01-17,Right-hand bat,Right-arm fast-medium,450075
 Anderson Phillip,11200027,West Indies,1996-08-22,Right-hand bat,Right-arm fast-medium,914467
+Brad Wheal,8600184,Scotland,1996-08-28,Right-hand bat,Right-arm fast-medium,807535
+Tymal Mills,3006819,England,1992-08-12,Right-hand bat,Left-arm fast,459257
 Liam O'Connor,403108,Australia,1993-06-20,Right-hand bat,Legbreak,334388
 Morne Morkel,9206450,South Africa,1984-10-06,Left-hand bat,Right-arm fast,46538
 Andrew Fletcher,7100802,New Zealand,1993-03-29,Right-hand bat,,1162006
@@ -52776,7 +52768,6 @@ Mohit Mittan,4510867,India,1998-12-19,Right-hand bat,Right-arm medium,1890025
 Mohan Doss R,4510895,India,2002-04-23,Right-hand bat,,1890053
 Abin Mathew,4510896,India,1997-11-05,Right-hand bat,Right-arm medium,1890054
 Faheem Nazir,10000031,Switzerland,1983-07-19,Left-hand bat,Right-arm fast,777966
-Saie Sharan Y,4510889,India,1994-03-01,Right-hand bat,Right-arm fast-medium,1890047
 Naim Daoudzai,3500151,France,2003-05-03,Right-hand bat,Right-arm offbreak,1271988
 SB Sai Chetan,4510913,India,1995-07-10,Right-hand bat,Right-arm fast,1273946
 Sanju Sajeev,4510917,India,1995-01-01,Left-hand bat,Slow left-arm orthodox,82644
@@ -52819,6 +52810,7 @@ Mohmmed Anas,4510969,India,1996-01-01,Right-hand bat,Right-arm medium,87388
 Renjith Raveendran,4510971,India,1993-01-01,Right-hand bat,Right-arm medium,87354
 Sarath Prasad,4510952,India,1995-12-28,Right-hand bat,Right-arm fast,87324
 Arjun AK,4510945,India,1996-02-03,Right-hand bat,Right-arm offbreak,87315
+Saie Sharan Y,4510889,India,1994-03-01,Right-hand bat,Right-arm fast-medium,1890047
 Anoop G,4510976,India,1999-01-01,,,87300
 Abhay Jotin,4510975,India,1996-01-01,Right-hand bat,,87391
 Sreenath K,4510968,India,1996-03-08,Right-hand bat,Legbreak,83553
@@ -52893,7 +52885,6 @@ Sharoon Siraj,7505656,Pakistan,1997-09-14,Right-hand bat,,1278147
 Tul Bahadur Thapa,6800521,Nepal,2006-02-23,Left-hand bat,Slow left-arm unorthodox,1279477
 Techi Sonam,4511038,India,1997-06-05,Right-hand bat,,1252352
 Arun Kumar,11203110,India,1991-04-13,Right-hand bat,Right-arm slow,5312516
-Bharat Sharma,4511051,India,1995-11-15,Right-hand bat,Right-arm offbreak,1273854
 Nitesh Gupta,4504139,India,1993-05-12,Right-hand bat,Right-arm fast-medium,1201335
 Amit,4511054,India,2002-10-26,Right-hand bat,Legbreak,1252346
 Nikhil Kohli,4511044,India,1996-12-05,Right-hand bat,Right-arm medium-fast,1246446
@@ -52912,6 +52903,7 @@ Nazmul Hossain Milon,800277,Bangladesh,1987-09-11,Right-hand bat,Right-arm mediu
 Archie Lenham,3009159,England,2004-07-23,Right-hand bat,Legbreak,1260072
 Sushant Modani,10700467,United States of America,1989-01-05,Right-hand bat,Right-arm offbreak,1276393
 Arjun Kumal,6800525,Nepal,2005-12-11,Right-hand bat,,1247759
+Bharat Sharma,4511051,India,1995-11-15,Right-hand bat,Right-arm offbreak,1273854
 Alex Blake,3000081,England,1989-01-25,Left-hand bat,Right-arm medium-fast,243944
 Andy Carter,3000164,England,1988-08-27,Right-hand bat,Right-arm medium,297595
 Andrew Birch,9205378,South Africa,1985-06-07,Right-hand bat,Right-arm medium-fast,44413
@@ -52930,7 +52922,6 @@ Malusi Siboto,9201009,South Africa,1987-08-20,Left-hand bat,Right-arm medium,230
 Alok Kapali,800027,Bangladesh,1984-01-01,Right-hand bat,Legbreak,56251
 Binny Samual,4511061,India,1999-10-28,Right-hand bat,Right-arm offbreak,1246452
 Mohammad Afzal,7505661,Pakistan,1996-01-22,Right-hand bat,,1278051
-Toby Albert,3009158,England,2001-11-12,Right-hand bat,,1260388
 Aamer Azmat,7505659,Pakistan,1998-11-26,Right-hand bat,Right-arm offbreak,1248374
 Agrim Tiwari,4508136,India,1996-04-14,Right-hand bat,Right-arm medium,1214410
 Steven Mullaney,3008883,England,1986-11-19,Right-hand bat,Right-arm medium-fast,17986
@@ -52955,6 +52946,7 @@ Freddie van den Bergh,3005273,England,1992-06-14,Right-hand bat,Slow left-arm or
 Lochan Gowda,11203261,India,2002-03-19,Right-hand bat,,126281
 Will Bosisto,401762,Australia,1993-09-08,Right-hand bat,Right-arm offbreak,530015
 Monish Reddy,11203235,India,2002-11-28,Right-hand bat,Right-arm medium,126255
+Toby Albert,3009158,England,2001-11-12,Right-hand bat,,1260388
 Josh Poysden,3005786,England,1991-08-08,Left-hand bat,Legbreak,464110
 Gavin Griffiths,3005298,England,1993-11-19,Right-hand bat,Right-arm fast-medium,514612
 Brett Hutton,3004859,England,1993-02-06,Right-hand bat,Right-arm medium,469802
@@ -52986,11 +52978,11 @@ Rob Jones,3006488,England,1995-11-03,Right-hand bat,Legbreak,632173
 Gudakesh Motie,11200170,West Indies,1995-03-29,Left-hand bat,Slow left-arm orthodox,670045
 Al-Amin,800023,Bangladesh,1993-10-05,Right-hand bat,Right-arm offbreak,549947
 Nick Gubbins,3003934,England,1993-12-31,Left-hand bat,Legbreak,572198
-Saif Zaib,3006544,England,1998-05-22,Left-hand bat,Slow left-arm orthodox,663613
 Asif Afridi,7503004,Pakistan,1986-12-25,Left-hand bat,Slow left-arm orthodox,385065
 Kamrul Islam,800159,Bangladesh,1991-12-10,Right-hand bat,Right-arm medium-fast,375724
 Josh Shaw,3008044,England,1996-01-03,Right-hand bat,Right-arm medium-fast,567645
 Calvin Savage,9205536,South Africa,1993-01-04,Right-hand bat,Right-arm fast,450881
+Saif Zaib,3006544,England,1998-05-22,Left-hand bat,Slow left-arm orthodox,663613
 Marques Ackerman,9206347,South Africa,1996-03-01,Left-hand bat,Right-arm offbreak,596436
 Jonathan Tattersall,3003477,England,1994-12-15,Right-hand bat,Legbreak,517247
 Tshepo Moreki,9206951,South Africa,1993-10-07,Right-hand bat,Right-arm fast-medium,594235
@@ -53006,7 +52998,6 @@ Nono Pongolo,9202979,South Africa,1989-08-18,Right-hand bat,Right-arm medium,785
 Josh Finnie,7100955,New Zealand,1996-12-18,Right-hand bat,Right-arm offbreak,707177
 Michael Snedden,7100264,New Zealand,1992-09-20,Right-hand bat,Right-arm medium-fast,707179
 Marcus O'Riordan,3005990,England,1998-01-25,Right-hand bat,Right-arm offbreak,769529
-George Bartlett,3000718,England,1998-03-14,Right-hand bat,Right-arm offbreak,857973
 Sean Solia,7101493,New Zealand,1992-12-15,Left-hand bat,Left-arm medium,707109
 Shoib Akhtar,3700259,Germany,1999-06-17,,,96532
 Akhil Garje,11203093,India,1994-10-06,Right-hand bat,Right-arm slow,5312401
@@ -53020,9 +53011,10 @@ Michael Pepper,3006123,England,1998-06-25,Right-hand bat,,772293
 Matt Milnes,3008309,England,1994-07-29,Right-hand bat,Right-arm medium-fast,639140
 Sam Heazlett,401624,Australia,1995-09-12,Left-hand bat,Slow left-arm orthodox,826679
 Tony de Zorzi,9206937,South Africa,1997-08-28,Left-hand bat,Right-arm offbreak,697183
-Tom Moores,3008991,England,1996-09-04,Left-hand bat,,788101
 Corbin Bosch,9200319,South Africa,1994-09-10,Right-hand bat,Right-arm fast,594322
 Rajvir Wadhwa,11203224,India,2004-01-28,Right-hand bat,Right-arm offbreak,375236
+George Bartlett,3000718,England,1998-03-14,Right-hand bat,Right-arm offbreak,857973
+Tom Moores,3008991,England,1996-09-04,Left-hand bat,,788101
 Conor McKerr,9205617,South Africa,1998-01-19,Right-hand bat,Right-arm fast,807545
 Punith S,11203229,India,1998-09-26,Right-hand bat,Slow left-arm orthodox,375241
 Harris Sullivan,3009293,England,2002-12-17,Left-hand bat,Slow left-arm orthodox,1263697
@@ -53045,7 +53037,6 @@ Ross ter Braak,7100312,New Zealand,1997-06-05,Right-hand bat,Left-arm fast-mediu
 Michael Cohen,9204527,South Africa,1998-08-04,Left-hand bat,Left-arm fast-medium,952729
 Archie Carter,3004757,England,2000-10-15,Right-hand bat,,1110444
 Ryan Stevenson,3004190,England,1992-04-02,Right-hand bat,Right-arm fast-medium,885743
-Harrison Ward,3000821,England,1999-10-25,Left-hand bat,Right-arm offbreak,901657
 Paul Walter,3001763,England,1994-05-28,Left-hand bat,Left-arm medium,909225
 Matt Hammond,403586,Australia,1996-11-15,Right-hand bat,Right-arm offbreak,38738
 Ben Mike,3000248,England,1998-08-24,Right-hand bat,Right-arm medium,1093092
@@ -53060,11 +53051,10 @@ Usman Adil,101417,Afghanistan,1994-10-03,Right-hand bat,Right-arm medium,1109594
 Chris Greaves,8600107,Scotland,1990-10-12,Right-hand bat,Legbreak,873199
 Scott Steel,3006592,England,1999-04-20,Right-hand bat,Right-arm offbreak,1029993
 Ziaur Rahman Sharifi,101450,Afghanistan,1998-10-17,Right-hand bat,Right-arm medium-fast,1015399
-Robert Yates,3001917,England,1999-09-19,Left-hand bat,Right-arm offbreak,1097408
+Harrison Ward,3000821,England,1999-10-25,Left-hand bat,Right-arm offbreak,901657
 Ryan Patel,3008735,England,1997-10-26,Left-hand bat,Right-arm medium,1010307
 Chilika Pradhan,11203269,India,1997-04-22,Right-hand bat,,106286
 Zayan Khan,7505999,Pakistan,2005-08-12,Right-hand bat,Right-arm medium-fast,126295
-Lyndon James,3008217,England,1998-12-27,Right-hand bat,Right-arm medium,1046871
 Luke Doneathy,3008205,England,2002-07-26,Right-hand bat,Right-arm medium,1150572
 Jonathan Cook,401336,Australia,1989-12-14,Right-hand bat,Legbreak,1137279
 Justin Avendano,402171,Australia,1993-08-11,Right-hand bat,,1125715
@@ -53076,7 +53066,6 @@ Sol Budinger,3006602,England,1999-08-21,Left-hand bat,Right-arm offbreak,1030753
 Nadeem Khalil,7505998,Pakistan,1997-01-11,Right-hand bat,,126294
 Jordan Cox,3001188,England,2000-10-21,Right-hand bat,,1112537
 Jacob Bethell,3000952,England,2003-10-23,Left-hand bat,Slow left-arm orthodox,1194959
-Tom Prest,3002239,England,2003-03-24,Right-hand bat,Right-arm offbreak,1181700
 Ollie Robinson,3008489,England,1998-12-01,Right-hand bat,,893955
 Dan Mousley,3002855,England,2001-07-08,Left-hand bat,Right-arm offbreak,1172968
 Joey Field,7100563,New Zealand,2000-12-19,Right-hand bat,Right-arm medium-fast,1193544
@@ -53085,17 +53074,20 @@ Oliver Davies,401538,Australia,2000-10-14,Right-hand bat,Right-arm offbreak,1076
 Yousuf Babar,7502760,Pakistan,1997-12-10,Right-hand bat,,1161312
 Grant Stewart,3000772,England,1994-02-19,Right-hand bat,Right-arm medium,1098186
 Kirk McKenzie,11200267,West Indies,2000-11-09,Left-hand bat,Right-arm offbreak,1209196
-Scott Currie,3002032,England,2001-05-02,Right-hand bat,Right-arm medium-fast,1104697
 Herschelle Gibbs,9205958,South Africa,1974-02-23,Right-hand bat,Right-arm bowler,45224
 William O'Donnell,7100363,New Zealand,1997-09-29,Right-hand bat,Right-arm offbreak,1163453
 Ryan Harrison,7100313,New Zealand,1999-10-10,Right-hand bat,Right-arm medium,1214273
-Irfan Khan,7503309,Pakistan,2002-12-28,Right-hand bat,Right-arm medium-fast,1199426
 Joshua James,11200711,West Indies,2001-02-21,Right-hand bat,Right-arm medium,1209191
 Kissoondath Magram,11201719,West Indies,2000-08-06,,Legbreak,1213280
 Kadeem Alleyne,11201947,West Indies,2001-01-01,Right-hand bat,Right-arm fast,1264431
 Nathan Smith,7101431,New Zealand,1998-07-15,Right-hand bat,Right-arm medium-fast,959771
 Ben Geddes,3000227,England,2001-07-31,Right-hand bat,,1185574
 Nial Smith,11200331,West Indies,1995-10-22,Right-hand bat,Right-arm medium,1206454
+Scott Currie,3002032,England,2001-05-02,Right-hand bat,Right-arm medium-fast,1104697
+Rob Yates,3001917,England,1999-09-19,Left-hand bat,Right-arm offbreak,1097408
+Tom Prest,3002239,England,2003-03-24,Right-hand bat,Right-arm offbreak,1181700
+Lyndon James,3008217,England,1998-12-27,Right-hand bat,Right-arm medium,1046871
+Irfan Khan,7503309,Pakistan,2002-12-28,Right-hand bat,Right-arm medium-fast,1199426
 Jack Wood,401265,Australia,1996-10-01,Right-hand bat,Slow left-arm chinaman,1210733
 Vikai Kelley,3004504,England,2002-09-02,Right-hand bat,,1231047
 Blake Cullen,3004848,England,2002-02-19,Right-hand bat,Right-arm fast-medium,1111984
@@ -53494,7 +53486,6 @@ Buddhadev Mangaldas,4500472,India,1988-06-20,Right-hand bat,Right-arm medium,426
 Imran Fahad,800992,Bangladesh,2002-12-27,Right-hand bat,Right-arm offbreak,989841
 Asfan Khan,4508356,India,1995-02-14,Right-hand bat,,1175474
 Mohammad Faizul,6000165,Malaysia,1990-05-14,Right-hand bat,Right-arm medium-fast,1021061
-Ben Martindale,3009264,England,2002-12-12,Left-hand bat,Right-arm medium,1264861
 Dharmang Patel,8100096,Qatar,1991-09-16,Right-hand bat,Right-arm offbreak,1059203
 Suhrid Roy,6300033,Malta,2001-03-29,Right-hand bat,Right-arm medium,1204212
 Joshua Dodd,9202549,South Africa,1996-02-24,Right-hand bat,Right-arm medium,1166267
@@ -53508,6 +53499,7 @@ Tekkami Atchuta Rao,4505132,India,1986-08-21,Left-hand bat,Left-arm medium,34001
 Carlijn de Groot,6900225,Netherlands,1986-09-10,Right-hand bat,Right-arm medium,302754
 Chaminda Ruwan,9000011,Singapore,1979-07-29,Right-hand bat,Right-arm medium,49389
 Roopnarine Ramgobin,11201341,West Indies,1983-09-23,Right-hand bat,Right-arm offbreak,52825
+Ben Martindale,3009264,England,2002-12-12,Left-hand bat,Right-arm medium,1264861
 Mohammad Sarfraz,7505017,Pakistan,1975-02-02,Left-hand bat,Left-arm fast-medium,41482
 Manjula Priyantha,9500699,Sri Lanka,1980-10-15,Right-hand bat,Right-arm offbreak,50068
 Angelo Christiaans,9205393,South Africa,1983-01-24,Right-hand bat,Right-arm medium-fast,262232
@@ -54564,7 +54556,6 @@ Dushantha Ekanayake,9501796,Sri Lanka,1969-06-08,Right-hand bat,Right-arm fast-m
 Tyson Dlungwana,9203371,South Africa,1997-02-18,Right-hand bat,Right-arm medium,595632
 Shanesh Weerawansa,9502636,Sri Lanka,1980-08-03,Right-hand bat,Right-arm fast-medium,51021
 Bhanuka Rajapaksa,9501560,Sri Lanka,1991-10-24,Left-hand bat,Right-arm medium,342619
-Beau Webster,400090,Australia,1993-12-01,Right-hand bat,Right-arm medium-fast,381329
 Usama Basharat,7505517,Pakistan,1989-11-11,Left-hand bat,Slow left-arm orthodox,430783
 MD Nidheesh,4506619,India,1991-05-05,Right-hand bat,Right-arm medium,822703
 Uneeb Shah,9400163,Spain,1984-05-06,Right-hand bat,Right-arm medium,134611
@@ -54574,6 +54565,7 @@ Mohammad Mujtaba,101259,Afghanistan,1994-12-01,Left-hand bat,Slow left-arm ortho
 Gavin Hamilton,8600289,Scotland,1974-09-16,Left-hand bat,Right-arm medium-fast,14020
 Anthony Clarke-Bruce,402656,Australia,1978-10-19,Right-hand bat,Right-arm fast-medium,4855
 Ranjan Rath,4504497,India,1982-09-17,Right-hand bat,Right-arm offbreak,33122
+Beau Webster,400090,Australia,1993-12-01,Right-hand bat,Right-arm medium-fast,381329
 Gayathri Liyanage,9501826,Sri Lanka,1975-05-07,Right-hand bat,Right-arm medium,54859
 Ruchini Samarasinghe,9505335,Sri Lanka,1991-12-03,Left-hand bat,Right-arm fast-medium,430390
 Patrick Foster,3006288,England,1987-03-20,Right-hand bat,Right-arm medium-fast,253979
@@ -54878,7 +54870,6 @@ Siddharth Raut,4511441,India,1993-06-24,Right-hand bat,Right-arm medium-fast,125
 Callie Wilson,403606,Australia,2003-11-01,Right-hand bat,Right-arm fast,1292972
 Gurpreet Singh,11204471,India,1993-09-11,Left-hand bat,Left-arm medium,501810
 Debalina Samanta,11204474,India,2005-12-02,Right-hand bat,Right-arm medium,97727482
-Thanneru Vamsi Krishna,4511454,India,2000-10-20,Right-hand bat,Right-arm offbreak,1292612
 Tripurana Vijay,4511456,India,2001-09-05,Right-hand bat,Right-arm offbreak,1292527
 Kunal Yadav,4511439,India,1999-12-23,Right-hand bat,Right-arm medium,12000112
 Josephine Ulrik,10100143,Tanzania,2006-07-28,Left-hand bat,Slow left-arm orthodox,99624
@@ -54896,6 +54887,7 @@ Lachlan Bangs,403501,Australia,1999-04-26,Left-hand bat,Left-arm fast,1295054
 Yatharth Gunchala,4511469,India,2003-10-01,Right-hand bat,,13000116
 Prince Badiani,4511440,India,2003-12-17,Right-hand bat,Right-arm medium-fast,12000113
 Rushabh Jain,4511489,India,2000-04-20,Right-hand bat,Right-arm medium,11000135
+Thanneru Vamsi Krishna,4511454,India,2000-10-20,Right-hand bat,Right-arm offbreak,1292612
 Surya Teja,4511446,India,1999-11-09,Right-hand bat,Right-arm medium,12000118
 Sanjana Kumari,11204505,India,2003-02-17,,,123693
 Josephine Abwom,5500407,Kenya,2002-07-29,Right-hand bat,Right-arm medium-fast,1265239
@@ -55002,7 +54994,6 @@ Pawan Pathiraja,9505743,Sri Lanka,2003-06-07,Left-hand bat,,1282469
 Elizabeth Buchanan,7101588,New Zealand,2006-04-12,Right-hand bat,,1352227
 Shiva Sankar,11201960,West Indies,2002-11-05,Right-hand bat,Right-arm medium,1294448
 Tom Aspinwall,3009160,England,2004-03-13,Right-hand bat,Right-arm medium,1260230
-George Thomas,3009163,England,2003-11-14,Right-hand bat,Right-arm medium,1260859
 Carlon Bowen-Tuckett,11201952,West Indies,2004-02-28,Right-hand bat,,1275936
 Campbell Kellaway,403507,Australia,2002-11-01,Left-hand bat,Right-arm medium,1295842
 Onaje Amory,11201950,West Indies,2003-09-12,Right-hand bat,Right-arm offbreak,1275932
@@ -55014,6 +55005,7 @@ James Sales,3009165,England,2003-02-11,Right-hand bat,Right-arm medium,1259996
 Kinit Patel,4511517,India,2001-08-16,Right-hand bat,Right-arm offbreak,13000134
 Manav Bedekar,4511518,India,2003-11-18,Right-hand bat,Legbreak,13000135
 Giovonte Depeiza,11201949,West Indies,2003-01-26,Right-hand bat,Slow left-arm orthodox,1275892
+George Thomas,3009163,England,2003-11-14,Right-hand bat,Right-arm medium,1260859
 Teddy Bishop,11201951,West Indies,2003-01-26,Right-hand bat,Right-arm offbreak,1275935
 Sakuna Liyanage,9505741,Sri Lanka,2003-01-29,Left-hand bat,Right-arm medium,1253667
 Diarmuid Burke,4900476,Ireland,2003-08-15,Left-hand bat,Left-arm medium-fast,1278222
@@ -56087,7 +56079,6 @@ Haroon Sediai,9900212,Sweden,1999-11-24,,,83546
 Ibrahim Ahmad,9900213,Sweden,1992-10-01,,,78400
 Kenrick James,11206465,India,2003-10-24,Right-hand bat,Right-arm medium-fast,32737378
 Yusuf Sahak,9900196,Sweden,1985-01-03,,,65774
-Mohsin Khan,7505788,Pakistan,2004-06-12,Right-hand bat,Right-arm slow,94142
 Muhammad Zeeshan,7505789,Pakistan,1992-02-17,Right-hand bat,Right-arm offbreak,77997
 Noman Tarakhel,101560,Afghanistan,2006-01-01,Right-hand bat,Right-arm fast,94137
 Saad Anis,9900226,Sweden,1987-02-02,Right-hand bat,Right-arm medium,76785
@@ -56111,6 +56102,7 @@ Arijit Ghosh,9900238,Sweden,1984-07-19,Right-hand bat,Right-arm medium,76849
 Aryan Kumar Sareen,9900240,Sweden,2002-02-02,Right-hand bat,Right-arm medium,76867
 Hamed Arabzai,9900202,Sweden,1999-11-22,Right-hand bat,Right-arm fast,71656
 Arshpreet Singh,9900239,Sweden,2000-12-11,Right-hand bat,Right-arm medium,76845
+Mohsin Khan,7505788,Pakistan,2004-06-12,Right-hand bat,Right-arm slow,94142
 Wendell Inglis,11202348,West Indies,1986-08-07,Right-hand bat,Right-arm medium-fast,149014
 Sajid Ahmed,9900208,Sweden,1982-04-12,Right-hand bat,Right-arm slow,96136
 Keyur Patel,9900246,Sweden,1993-09-11,Right-hand bat,Right-arm medium,76862
@@ -56527,9 +56519,9 @@ Jaliya Suranga,9505843,Sri Lanka,1980-10-28,Right-hand bat,Right-arm medium,9622
 Attiq Rehman,7505945,Pakistan,1994-01-06,Right-hand bat,Right-arm medium,1262502
 Hemanth Perumal,11206749,India,1997-05-12,Right-hand bat,Right-arm medium,1269198
 Ananya Pradeep,11206759,India,2005-05-03,Right-hand bat,,68122
-Rohit D,11206820,India,1992-05-28,Right-hand bat,,1269095
 Anil Pattanaik,11206746,India,1989-11-02,Right-hand bat,Right-arm medium,80515
 Sharan Ramakrishnan,11206788,India,1996-05-03,Left-hand bat,Right-arm medium,77390
+Rohit D,11206820,India,1992-05-28,Right-hand bat,,1269095
 Aditya Rathore,11206803,India,2002-08-07,Left-hand bat,Legbreak,94891
 Asad Tanveer,7505944,Pakistan,2000-09-02,Right-hand bat,Right-arm fast,95960
 Pidusha Fernando,9505836,Sri Lanka,2003-03-25,Right-hand bat,Right-arm fast,96213
@@ -57167,7 +57159,6 @@ Muhammad Tayub,3009294,England,2000-07-03,Right-hand bat,Right-arm fast,86374
 Yvonne Graves,3009245,England,1998-10-10,Right-hand bat,Right-arm offbreak,86094
 Gopal Saha,3009286,England,1979-11-27,Right-hand bat,Right-arm slow,95151
 Douglas Finau,8400102,Samoa,2004-05-01,Right-hand bat,Right-arm fast,1292717
-Hamza Shaikh,3009287,England,2006-05-29,Right-hand bat,Right-arm slow,1269389
 Darren Roache,8400104,Samoa,2006-07-25,Right-hand bat,Right-arm fast,1292719
 Waqas Raja,900287,Belgium,1986-12-12,Right-hand bat,Right-arm medium,72131
 Anshul Bist,10700516,United States of America,2002-01-12,Left-hand bat,Right-arm medium,1292643
@@ -57179,6 +57170,7 @@ Julian de Mey,6900445,Netherlands,1994-05-01,Right-hand bat,Slow left-arm orthod
 Tim de Leede,6900446,Netherlands,1968-01-25,Right-hand bat,Right-arm medium,2488256
 Sami Rahmani,9900341,Sweden,1988-08-13,Right-hand bat,Right-arm medium,78754
 Jaweed Zadran,500118,Austria,2002-04-15,Right-hand bat,Right-arm fast,79509
+Hamza Shaikh,3009287,England,2006-05-29,Right-hand bat,Right-arm slow,1269389
 Alfie Ogborne,3009275,England,2003-07-15,Right-hand bat,Left-arm medium,1262574
 Yash Punja,11500882,United Arab Emirates,2006-01-26,Right-hand bat,Legbreak,129372199
 Zabiullah Zahid,9900342,Sweden,1993-01-28,Right-hand bat,Right-arm medium,78762
@@ -57368,12 +57360,12 @@ Abbas Khan,7400331,Oman,1998-04-23,Right-hand bat,Right-arm offbreak,98508
 Gobinath Selvaraj,7400329,Oman,1993-04-28,Right-hand bat,Right-arm medium,98509
 Shahrukh Khan,7400312,Oman,1998-05-21,Left-hand bat,Slow left-arm orthodox,98514
 Saishiv Narayan,7400341,Oman,1999-09-29,Right-hand bat,,67587
-Karan Kannan,7400332,Oman,2001-11-11,Right-hand bat,Right-arm offbreak,82061
 Muhammad Aqeel,7400320,Oman,1999-11-02,Right-hand bat,Right-arm offbreak,92563
 Khalid Manzoor,7400326,Oman,1986-01-02,Right-hand bat,Right-arm fast,98512
 James Rai,11203952,India,1990-10-21,Right-hand bat,Right-arm medium,420021
 Shah Faisal,7400313,Oman,1997-05-01,Left-hand bat,Left-arm medium,75299
 Abhishek Daxini,2400041,Croatia,1981-09-01,Right-hand bat,Right-arm medium,98763
+Karan Kannan,7400332,Oman,2001-11-11,Right-hand bat,Right-arm offbreak,82061
 Faraan Chaudhary,11501739,Sweden,2003-07-08,Right-hand bat,Right-arm offbreak,8932459
 Kamran Zia,11501740,Sweden,1984-07-22,Right-hand bat,Right-arm medium,8932460
 Muhammad Vanice,11501741,Sweden,1980-10-30,Right-hand bat,Right-arm medium,8932461
@@ -57708,7 +57700,6 @@ Ranjodh Singh,9400305,Spain,1989-01-01,Left-hand bat,Right-arm fast,99299
 Mohammad Tanzeer,9400327,Spain,1994-10-21,Right-hand bat,Right-arm medium,81590
 Fayyaz Dongargoan,10604042,United Arab Emirates,1988-07-23,Right-hand bat,Right-arm offbreak,9128891
 Fayyaz Ahmad,10604043,United Arab Emirates,1988-12-18,Right-hand bat,Right-arm offbreak,9128892
-Mohammad Aadil Alam,6800545,Nepal,2003-10-18,Right-hand bat,,99614
 Gagandeep Singh,3800063,Ghana,1981-10-03,,,134469
 Amritpal Singh,9400293,Spain,1998-01-09,Right-hand bat,Right-arm medium,99320
 Jose Joao,6500082,Mozambique,2004-05-02,Right-hand bat,Left-arm fast-medium,134468
@@ -57748,6 +57739,7 @@ A Rudharan,11204610,India,2001-07-28,Right-hand bat,Right-arm offbreak,9128084
 A Kannan,11204611,India,1994-06-17,Right-hand bat,Right-arm offbreak,9128085
 Y Vasanth Kumar,11204612,India,1999-03-07,Right-hand bat,Right-arm offbreak,9128086
 Suryansh Shedge,11204477,India,2003-01-29,Right-hand bat,Right-arm offbreak,9128893
+Mohammad Aadil Alam,6800545,Nepal,2003-10-18,Right-hand bat,,99614
 S Nirmal Kumar,11204613,India,2000-08-08,Right-hand bat,Right-arm offbreak,9128087
 P K Mashkoor Ahamed,11204614,India,1988-06-15,Right-hand bat,Right-arm offbreak,9128088
 P K Mashkoor Ahamed,11204615,India,1988-06-15,Right-hand bat,Right-arm offbreak,9128095
@@ -57915,7 +57907,6 @@ Vimalnadh,10604172,United Arab Emirates,1998-02-12,Left-hand bat,Legbreak,102826
 Nikolaos Katechis,4000067,Greece,1977-07-13,Right-hand bat,Right-arm offbreak,86340
 Nathan Le Tissier,3009342,England,2003-03-14,Right-hand bat,Slow left-arm orthodox,76909
 Siraj Uddin,10604174,United Arab Emirates,2002-01-02,Right-hand bat,Right-arm fast-medium,91046
-Ahsan Shah,10604175,United Arab Emirates,1994-07-13,Right-hand bat,Right-arm medium-fast,91369
 Ali Imran Zaidi,10604177,United Arab Emirates,1994-09-27,Right-hand bat,Right-arm offbreak,91359
 Muhammed Ismail,10604187,United Arab Emirates,2003-06-01,Left-hand bat,Slow left-arm orthodox,547896
 Mubeen Ali,10604038,United Arab Emirates,1999-06-18,Right-hand bat,Right-arm fast,1292978
@@ -57936,6 +57927,7 @@ Lovepreet Singh,10604185,United Arab Emirates,2002-12-05,Right-hand bat,Legbreak
 Jahmeal Buchanan,1900108,Cayman Islands,1991-12-31,Left-hand bat,Right-arm medium,1360648
 Saad Ali,10604176,United Arab Emirates,1999-09-10,Left-hand bat,,99798
 Abdul Muqtadar Babar,10604181,United Arab Emirates,1991-01-09,,,57963
+Ahsan Shah,10604175,United Arab Emirates,1994-07-13,Right-hand bat,Right-arm medium-fast,91369
 Saksham Jha,11205067,India,2000-01-09,Right-hand bat,Right-arm fast,185057
 Muhammad Arsalan,11503535,Malaysia,2000-12-12,Right-hand bat,Right-arm offbreak,5639302
 Arshad Butt,11503482,Switzerland,1968-04-12,Right-hand bat,Right-arm slow,9563203
@@ -58121,7 +58113,6 @@ Rongyu Zhao,11504268,China,2001-05-03,Right-hand bat,,100516
 Mengting Liu,11504269,China,2001-02-14,Right-hand bat,,100517
 Pan Phyu,11504271,Myanmar,2005-01-12,Right-hand bat,,100519
 Thae Po,11504272,Myanmar,2003-04-20,Right-hand bat,,100520
-Henry Rogers,11504276,England,2006-02-01,Right-hand bat,Right-arm medium,580239
 Ross Whitfield,11504278,England,2004-09-10,Right-hand bat,Right-arm offbreak,776779
 Charlie Barnard,11504279,England,2004-11-05,Right-hand bat,Right-arm offbreak,259722
 Josh Thomas,11504282,England,2005-01-11,Left-hand bat,Slow left-arm orthodox,1258580
@@ -58130,6 +58121,7 @@ Wenjing Yin,11504270,China,2000-06-18,Right-hand bat,,100518
 Sadamali Arachchige,11504248,Bahrain,1989-10-09,Right-hand bat,,100496
 Keshana Fonseka,11504277,England,2005-12-01,Right-hand bat,Right-arm offbreak,659124
 Quaid Rehman,11504274,Germany,2003-12-15,Right-hand bat,Right-arm medium,618471
+Henry Rogers,11504276,England,2006-02-01,Right-hand bat,Right-arm medium,580239
 Tanveer Siddik Rasel,6000946,Malaysia,1995-11-15,,,54546998
 Fawad Ali,6000947,Malaysia,1995-09-03,Right-hand bat,Right-arm medium,54546999
 Tanmay Tiwari,11504372,India,2000-09-04,Right-hand bat,,148716
@@ -58183,7 +58175,6 @@ Kunal Tyagi,11504356,India,2002-06-30,Right-hand bat,Right-arm fast,1358714
 Arslan Naseem,8000066,Portugal,1999-10-28,Right-hand bat,Right-arm medium,9127139
 Lakshan Weerakoon,8000065,Portugal,1993-01-02,Right-hand bat,Right-arm medium,9127839
 Pathum Kumara,9505948,Sri Lanka,1999-04-23,Right-hand bat,,12100719
-Teun Kloppenburg,11504638,Netherlands,2007-02-23,,,8965517
 Suman Kunwar,6800555,Nepal,1981-12-02,Right-hand bat,Right-arm slow,597122
 Abhishek Rajesh,8000092,Portugal,1994-02-09,Right-hand bat,Right-arm medium,597201
 Lakshman KC,6800557,Nepal,1995-08-17,Right-hand bat,Right-arm medium,597204
@@ -58198,7 +58189,6 @@ Jasbinder Singh,8000095,Portugal,1995-04-24,Right-hand bat,Right-arm fast,597206
 John Zinkus,3009347,England,1987-04-03,Right-hand bat,Right-arm medium,597205
 Ahmad Siddiqui,801981,Bangladesh,1989-06-15,Right-hand bat,Right-arm medium-fast,597302
 Rounak Kumar,11504743,India,2002-12-19,,,8652104
-Raghav Goyal,11205402,India,2001-06-20,Left-hand bat,Slow left-arm orthodox,9127559
 Binit Kumar,6800550,Nepal,1983-11-16,Right-hand bat,Right-arm offbreak,556107
 Akshay Thorbole,8000093,Portugal,1995-11-02,Right-hand bat,Right-arm medium,597202
 Gurbhej Singh,8000087,Portugal,2002-10-29,Right-hand bat,Right-arm fast,556111
@@ -58207,6 +58197,8 @@ Rajesh Dhupar,11504740,India,1995-07-08,Right-hand bat,Right-arm medium,8652101
 Rishikesh Tiwari,11504746,India,2000-05-01,,,5686102
 Joel Davies,403628,Australia,2003-09-28,Left-hand bat,Slow left-arm orthodox,1295851
 Harsh Raj,11504745,India,2000-02-25,,,5686101
+Teun Kloppenburg,11504638,Netherlands,2007-02-23,,,8965517
+Raghav Goyal,11205402,India,2001-06-20,Left-hand bat,Slow left-arm orthodox,9127559
 Mohammed Shofi,801983,Bangladesh,1993-11-03,Right-hand bat,Right-arm fast,597409
 Stefano Kanhala,11504804,Italy,2007-03-14,Right-hand bat,Right-arm medium,44586
 Liyabona Malife,11504767,South Africa,2004-09-20,Left-hand bat,Right-arm medium,5686104
@@ -58746,7 +58738,6 @@ Ahilya Chandel,11506434,Japan,2003-01-10,Left-hand bat,Left-arm medium,1341621
 Yash Bhagat,11500197,India,2003-12-06,Right-hand bat,,375008
 Shaik Rasheed,11500128,India,2004-09-24,Right-hand bat,Legbreak,62489
 Chennu Siddhardha,11500153,India,2001-07-07,Right-hand bat,Right-arm offbreak,95783
-Sai Hariram K,11500181,India,2004-12-21,Right-hand bat,Right-arm offbreak,96122
 Gavvala Mallikarjuna,11500154,India,2004-12-01,Right-hand bat,Slow left-arm orthodox,95752
 Jagarlapudi Ram,11500164,India,2002-06-10,Right-hand bat,Right-arm fast,60460
 Madhav Rayudu,11500158,India,1996-11-04,Right-hand bat,Right-arm fast,96169
@@ -58785,6 +58776,7 @@ Kelon Lynch,11506504,West Indies,1994-03-09,Left-hand bat,Right-arm fast,665791
 Ako George,11506466,West Indies,1991-03-29,Left-hand bat,Right-arm offbreak,8659645
 Amit Kumar,11500236,India,2002-11-01,Right-hand bat,Left-arm slow,375010
 Erika Toguchi-Quinn,11506439,Japan,2001-02-01,Right-hand bat,Legbreak,1394372
+Sai Hariram K,11500181,India,2004-12-21,Right-hand bat,Right-arm offbreak,96122
 Murugan K,11500224,India,1997-04-14,Left-hand bat,,82240
 Subramaniyan K,11500225,India,2004-02-17,Left-hand bat,Right-arm medium-fast,98126
 Sunil Kashyap,11500228,India,1999-12-30,,,5551010
@@ -59583,7 +59575,6 @@ Govarthan Palanisamy,11502610,Hungary,1991-10-03,Left-hand bat,Left-arm medium,3
 Akarsh Ashok,11502577,Hungary,1995-02-25,Right-hand bat,Right-arm medium,3201613
 Alden Pinto,11502579,Hungary,1987-01-09,Left-hand bat,Left-arm medium,3201615
 Fayaz Khan,11502584,Hungary,1990-12-16,Right-hand bat,Right-arm slow,3201620
-Nithiyananda R,11502625,India,2005-01-07,,,5632012
 Ryan King,11502651,Australia,2001-11-02,,,1963396
 Haris Karim,11502664,Afghanistan,2005-06-30,Right-hand bat,Right-arm medium,3664201
 Pramod Haridas,11502613,Hungary,1985-09-17,Right-hand bat,Right-arm slow,3201716
@@ -59868,7 +59859,6 @@ Esmatullah Habibi,11503571,Afghanistan,2001-01-01,Left-hand bat,Slow left-arm or
 Lalbaz Sinzai,11503567,Afghanistan,2003-01-01,Right-hand bat,Right-arm medium-fast,1389283
 Shubham Arya,11503637,India,2002-11-29,Right-hand bat,Right-arm offbreak,9635304
 Arjun Sharma,11503642,India,2001-11-27,Right-hand bat,Right-arm medium,9635309
-Dom Kelly,11503550,England,2005-10-01,Left-hand bat,Right-arm medium,1314791
 Sukrant Sharma,11503645,India,1999-05-29,Right-hand bat,Slow left-arm orthodox,9635312
 Sultan Mohmud,11510178,Estonia,2000-01-08,Right-hand bat,Right-arm fast,1228134
 Joseph Moses,11503686,Switzerland,1984-12-11,,,146481
@@ -59896,6 +59886,7 @@ Gurneet Singh,11503648,India,2002-08-07,Left-hand bat,Right-arm medium,9635314
 Armaan Jakhar,11503656,India,2003-07-23,Right-hand bat,Right-arm medium,9635322
 Tushar Joshi,11503678,India,2000-08-09,Right-hand bat,Right-arm medium,129373366
 Mohammad Akram,11503579,Afghanistan,2000-03-29,Right-hand bat,,10943933
+Dom Kelly,11503550,England,2005-10-01,Left-hand bat,Right-arm medium,1314791
 Fareeduddin Taimoor,11510243,Estonia,1985-03-27,Right-hand bat,Right-arm offbreak,129375345
 Ojus Tudavekar,11510252,Estonia,1998-05-27,Right-hand bat,Right-arm medium,129375353
 Nkosi Beaton,11510263,West Indies,2001-06-17,,,168801
@@ -60125,10 +60116,10 @@ Jitendra Yadav,11501562,Nepal,2002-08-21,Left-hand bat,Right-arm medium-fast,135
 Samarth Kadam,11502023,India,1999-11-27,Right-hand bat,,13791574
 Yohan Liyanage,11501364,Sri Lanka,2000-12-27,Left-hand bat,Right-arm offbreak,3201318
 Avinash Rane,2500141,Cyprus,1987-12-15,Right-hand bat,Right-arm medium,1444140
-Karthik B Nair,11500184,India,1997-12-12,Right-hand bat,Right-arm offbreak,82182
 Shahbaz Masood,5200616,Italy,1986-02-28,Right-hand bat,Right-arm medium,108996
 Sai Sama,11500996,Austria,1995-09-18,Right-hand bat,Right-arm fast,1453682
 Mohamad Nazir,11501006,Austria,1997-08-06,Right-hand bat,Right-arm slow,2353606
+Karthik B Nair,11500184,India,1997-12-12,Right-hand bat,Right-arm offbreak,82182
 Rameshwar Daud,11501964,India,2001-10-03,Right-hand bat,Right-arm fast,1379143
 Sanket More,11205041,India,1995-06-22,Right-hand bat,Right-arm fast-medium,185031
 Linkon Jamil,2500080,Cyprus,1998-01-19,Right-hand bat,Right-arm medium,129219
@@ -60657,7 +60648,6 @@ Mujahid Muhammad,11506741,Pakistan,1997-04-04,Right-hand bat,Right-arm medium,11
 Shanto Ifratul,11506683,Spain,1993-02-28,Right-hand bat,,101563
 Syed Hashim Shah,11506690,Pakistan,2003-04-21,Left-hand bat,,1400412
 Amarjeet Singh,11506668,Spain,2005-06-11,Right-hand bat,,101548
-Muhammad Shahab,11506704,Pakistan,2000-07-11,Left-hand bat,Left-arm medium,5562113
 Asim Latif,11506769,Spain,1972-01-11,Right-hand bat,Right-arm fast,129374242
 Mohammmad Huraira,11506722,Pakistan,2002-04-25,Right-hand bat,,60017
 Sarwar Afridi,11506717,Pakistan,1995-01-20,Right-hand bat,Right-arm medium-fast,5562122
@@ -61841,11 +61831,11 @@ Ramon Shindler,11534549,Poland,1952-07-24,Right-hand bat,Right-arm slow,13776816
 Luke Horan,11535339,Bermuda,2008-08-04,Right-hand bat,Right-arm medium,1377682426
 Maulik Senjaliya,11533535,India,1996-12-03,Left-hand bat,Left-arm slow,1377680641
 Majid Ali,11534247,Poland,1985-09-18,Right-hand bat,Right-arm fast,1377681344
-Divyanshu Yadav,11507736,India,2002-08-01,Right-hand bat,Slow left-arm orthodox,1349722
 Sam Galappatthige,11534550,Poland,1980-08-19,Right-hand bat,Right-arm medium,1377681644
 Kumar Deobrat,4509139,India,1992-10-24,Right-hand bat,Right-arm medium,500154
 Taranjit Singh Bharaj,11535239,Denmark,1993-03-03,Right-hand bat,Right-arm offbreak,1377682326
 Isaiah O'Brien,11535340,Bermuda,2008-02-22,Right-hand bat,Right-arm medium,1377682427
+Divyanshu Yadav,11507736,India,2002-08-01,Right-hand bat,Slow left-arm orthodox,1349722
 Neel Pandya,11503182,India,1986-09-10,Right-hand bat,Right-arm medium,109436
 Mohsin Khalid,11534248,Poland,1995-08-14,Right-hand bat,Right-arm medium,1377681345
 Harsha Vikas Tanna,11534433,India,1998-11-09,Right-hand bat,Left-arm medium,1377681527
@@ -61871,7 +61861,7 @@ M Madhav Rayadu,11535448,India,1996-11-04,Right-hand bat,Right-arm medium,137768
 Arman Hossain,801346,Bangladesh,1983-06-22,Right-hand bat,,56231
 Rahul Sharma,11534251,Poland,1993-08-15,Right-hand bat,Right-arm fast,1377681348
 Upendra Dodia,11534554,Poland,1985-05-21,Left-hand bat,Right-arm slow,1377681648
-Aditya Javraji,11535782,India,2007-10-25,Right-hand bat,,1377682869
+Aditya Javvaji,11535782,India,2007-10-25,Right-hand bat,,1377682869
 Smit patel,4511562,India,1998-04-23,Right-hand bat,Right-arm medium,1000415
 Ayon Samiul,11534182,Bangladesh,1996-07-28,Right-hand bat,,1377681280
 Ravi Rathinam,11534252,Poland,1991-05-24,Left-hand bat,Left-arm medium,1377681349
@@ -62122,6 +62112,7 @@ Vikas Reddy,11535500,India,1997-12-11,Right-hand bat,Right-arm offbreak,13776825
 Kurt D'souza,11534306,Poland,2004-09-24,Right-hand bat,Right-arm medium,1377681403
 Khalid Safi,11534737,Germany,1995-12-24,,,1377681829
 Vaishnav Reddy,11535501,India,2000-12-22,Right-hand bat,Right-arm offbreak,1377682588
+Samir Butt,11535924,Netherlands,2006-06-06,,,1377683010
 Matthew Keating,11534307,Poland,1989-02-21,Right-hand bat,Right-arm medium,1377681404
 Mohammad Sadagat,11534738,Germany,2005-02-05,,,1377681830
 Yashveer Goud,11535502,India,2007-11-22,Left-hand bat,Slow left-arm orthodox,1377682589
@@ -62267,10 +62258,12 @@ Navneet Singh,4506790,India,1994-12-07,Left-hand bat,Right-arm offbreak,851751
 Zada Sher,11504937,Cyprus,1990-01-01,Right-hand bat,Right-arm medium,101016
 Omparkash Yadav,11533924,India,1984-11-02,Right-hand bat,Right-arm fast,1377681024
 Abdul Hamid Hotak,101076,Afghanistan,1992-07-25,Right-hand bat,Right-arm medium-fast,1015477
+Tonny Staal,6900440,Netherlands,1996-03-30,Right-hand bat,Legbreak,93001
 Farmanullah Safi,101611,Afghanistan,2001-03-14,Left-hand bat,Right-arm medium-fast,68049
 Andrija Curavic,11533645,Croatia,1986-06-18,Right-hand bat,Right-arm medium,1377680749
 Manish Tiwari,11203079,India,1986-10-02,Right-hand bat,Right-arm offbreak,5312211
 Chandan Sahani,4508517,India,1998-01-29,Right-hand bat,Right-arm medium,1070178
+Annie Williams,11535992,England,2008-06-03,Right-hand bat,,1377683078
 Chillakuru Reddy,11535568,India,2005-10-18,Right-hand bat,Right-arm medium,1377682655
 Satwick Reddy,11535570,India,2002-01-12,Right-hand bat,,1377682657
 Nihaal Reddy,11535571,India,2006-07-06,Right-hand bat,Right-arm offbreak,1377682658
@@ -62299,8 +62292,10 @@ Jaydev Rendla,11535592,India,2008-08-20,Left-hand bat,Legbreak,1377682679
 Naman Agarwal,11535593,India,2003-06-06,Right-hand bat,Right-arm offbreak,1377682680
 Nomaan Ahmed,11535594,India,2002-05-18,Right-hand bat,,1377682681
 Vikram Naik,11535597,India,1994-10-10,Right-hand bat,,1377682684
+P Surendiran,4509706,India,1998-07-02,Right-hand bat,Right-arm medium,1216223
 Zahir Pakteen,11533679,Afghanistan,1998-12-20,Left-hand bat,Left-arm slow,1377680783
 Kunta Rahul,11535598,India,2003-10-15,Right-hand bat,Legbreak,1377682685
+Himanshu Sharma,11504216,India,1998-06-06,Right-hand bat,Legbreak,9635110
 Yamin Ahmadzai,100697,Afghanistan,1992-07-25,Right-hand bat,Right-arm medium-fast,440968
 Ghazi Abbas,11535602,India,2004-10-26,Left-hand bat,Slow left-arm orthodox,1377682689
 Smit Patel,2600115,Czech Republic,1988-04-23,Right-hand bat,Right-arm medium,1263718
@@ -62308,8 +62303,38 @@ Bunny Jagan,11535603,India,2004-07-02,Right-hand bat,Right-arm offbreak,13776826
 Adnan Mushtaq,10602503,United Arab Emirates,1977-04-11,Right-hand bat,,25593
 Shrunjith Reddy,11203686,India,2006-08-03,Right-hand bat,Right-arm offbreak,749367
 Duan Jansen,9205744,South Africa,2000-05-01,Right-hand bat,Left-arm fast,595954
+Adam Fox,11536034,England,2007-01-31,Right-hand bat,,1377683120
+Gus Miller,3007691,England,2002-01-08,Right-hand bat,Right-arm medium,1153257
+Ricardo Vasconcelos,9203080,South Africa,1997-10-27,Left-hand bat,,696241
+Oliver Dandy,11536035,England,2006-10-17,Left-hand bat,,1377683121
+Eesa Nadeem,11536038,England,2006-02-20,Right-hand bat,Right-arm medium,1377683124
+Arjun Nahal,11536039,England,2008-11-29,Right-hand bat,Right-arm offbreak,1377683125
+Jack Pidgeon,11536040,England,2009-04-03,Left-hand bat,Slow left-arm orthodox,1377683126
+William Rogers,11536042,England,2002-10-06,Right-hand bat,Left-arm medium,1377683128
+Sam Ashman,11536043,England,2006-11-22,Right-hand bat,Right-arm medium,1377683129
+Nilesh Bhandari,11536044,England,2007-07-20,Right-hand bat,Slow left-arm orthodox,1377683130
+Freddie Gillett,11536045,England,2008-01-28,Right-hand bat,Right-arm fast-medium,1377683131
+Finn Gordon,11536046,England,2007-04-05,Left-hand bat,Right-arm offbreak,1377683132
+Harry Petrie,3009279,England,2002-09-06,Right-hand bat,Right-arm medium,1231236
+Ben Salter,11536050,England,2006-03-22,Right-hand bat,Right-arm medium,1377683135
+Oliver Williams,11536052,England,2006-10-08,Right-hand bat,Right-arm medium,1377683137
+Oscar Butcher,11536055,England,2008-09-26,Right-hand bat,,1377683140
+Josh Croom,11536056,England,2002-08-13,Left-hand bat,Left-arm medium,1377683141
+Ben Fletcher,11536057,England,2000-08-27,Left-hand bat,Left-arm medium,1377683142
+Toby Lambert,11536059,England,2008-02-17,Right-hand bat,,1377683144
+Jack Carson,3005524,England,2000-12-03,Right-hand bat,Right-arm offbreak,1145101
+Danial Ibrahim,11536060,England,2004-08-09,Right-hand bat,Right-arm medium,1377683145
+Muhammad Shahab,11506704,Pakistan,2000-07-11,Left-hand bat,Left-arm medium,5562113
+Robert Kirtley,11536061,England,2008-06-12,Left-hand bat,Right-arm medium,1377683146
+Ollie Moore,11536065,England,2007-12-07,Right-hand bat,Right-arm medium,1377683150
+Toby Munt,11536068,England,2007-06-22,Left-hand bat,Left-arm medium,1377683153
+Freddie Price,11536071,England,2007-08-15,Right-hand bat,Right-arm fast-medium,1377683156
 Kuldeep Singh,4506467,India,1978-10-26,Left-hand bat,Slow left-arm orthodox,30359
+Mohammed Rizvi,11536074,England,1998-01-13,Right-hand bat,Legbreak,1377683159
 Narendra Meena,11508485,India,1981-10-31,Left-hand bat,Slow left-arm orthodox,3652163
+Alfie Smethurst,11536076,England,2006-12-10,Left-hand bat,Slow left-arm orthodox,1377683161
+Rajaram Sivaramakrishnan,11536080,India,2000-10-13,Right-hand bat,Right-arm offbreak,1377683165
+V Keerthivasan,11536081,India,2006-05-19,Right-hand bat,Right-arm offbreak,1377683166
 Marco Rodic,11534037,Czech Republic,2008-09-06,Right-hand bat,Right-arm slow,1377681136
 Matthew Lavelle,11534038,Czech Republic,1976-09-14,Right-hand bat,Right-arm medium,1377681137
 Moshe Harries,11534039,Czech Republic,2006-11-07,Right-hand bat,Right-arm medium,1377681138
@@ -62375,8 +62400,8 @@ John Kariko,7700229,Papua New Guinea,2004-01-16,Left-hand bat,,1295879
 Saqib Zulfiqar,6900297,Netherlands,1997-03-28,Right-hand bat,Slow left-arm orthodox,526481
 Lloyd Paternott,3005938,England,1992-01-15,Right-hand bat,Right-arm medium,558746
 Henry Hurle,11504286,England,2004-11-11,Right-hand bat,,1276118
-Will Huffer,11510611,England,1998-10-30,Right-hand bat,Right-arm medium,123539
 Justin Broad,9200822,South Africa,2000-06-30,Right-hand bat,Right-arm medium,948595
+Will Huffer,11510611,England,1998-10-30,Right-hand bat,Right-arm medium,123539
 Zakirullah Oriakhil,11510612,Afghanistan,2006-02-10,Left-hand bat,Left-arm fast,123535
 Adam Mather,11510637,South Africa,1998-08-01,Right-hand bat,Right-arm fast,298548
 Michael Turner,11510639,England,1999-08-23,Left-hand bat,Slow left-arm orthodox,296577
@@ -63984,8 +64009,8 @@ Puja Paul,11204559,India,2000-10-16,Right-hand bat,Right-arm medium-fast,84097
 Oliver Davidson,8600340,Scotland,2004-07-28,Left-hand bat,Slow left-arm orthodox,1278259
 Jaden Carmicheal,11201953,West Indies,2003-07-10,Right-hand bat,Slow left-arm orthodox,1294446
 Jordan Johnson,11201956,West Indies,2005-04-26,Left-hand bat,,1294444
-Muhaymen Majeed,8600345,Scotland,2002-12-30,Left-hand bat,,1278261
 Charlie Tear,8600347,Scotland,2004-06-12,Right-hand bat,,1266476
+Muhaymen Majeed,8600345,Scotland,2002-12-30,Left-hand bat,,1278261
 Suliman Arabzai,101404,Afghanistan,2004-04-03,Right-hand bat,Right-arm bowler,1139527
 Asakhe Tsaka,9207114,South Africa,2003-07-15,Left-hand bat,Slow left-arm orthodox,1255250
 Balwinder Singh,500072,Austria,1992-01-12,Right-hand bat,Right-arm medium,1263727
@@ -64291,9 +64316,9 @@ Tariq Mehmood,9400183,Spain,1988-01-01,Right-hand bat,,134631
 Kartik Biswal,11204216,India,1997-06-30,Right-hand bat,Right-arm offbreak,1252328
 Nabum Abo,11204235,India,1988-10-05,Right-hand bat,Right-arm medium,91301
 Muhammad Nur Izzudin,6000674,Malaysia,2001-06-14,Right-hand bat,Right-arm medium,94436
+Ankur Malik,11203970,India,2003-11-05,Right-hand bat,Right-arm offbreak,1287041
 Mohamad Fhadli Ishak,6000675,Malaysia,1987-03-13,Right-hand bat,Right-arm medium,94416
 Shukri Rahim,6000682,Malaysia,1986-10-06,Right-hand bat,Right-arm offbreak,67203
-Ankur Malik,11203970,India,2003-11-05,Right-hand bat,Right-arm offbreak,1287041
 Syahir Shaari,6000469,Malaysia,2006-01-17,Right-hand bat,Right-arm offbreak,93030
 Muhammad Syamil,6000540,Malaysia,2004-06-02,Right-hand bat,Right-arm offbreak,67945
 Rajiv Malay,4511458,India,1991-06-30,Right-hand bat,,1292549
@@ -64434,8 +64459,8 @@ Luke Mussett,3001391,England,2000-03-02,Right-hand bat,Right-arm medium,1153260
 Ahrar Amin,101690,Afghanistan,2004-10-21,Right-hand bat,Right-arm medium,99492
 Charlie Anderson,11507867,Australia,2005-01-20,Right-hand bat,Right-arm medium,1356605
 Rizwan Chowdhury,101692,Afghanistan,2005-05-03,Right-hand bat,Right-arm medium,9949302
-Peter Hatzoglou,402382,Australia,1998-11-27,Right-hand bat,Legbreak googly,1191384
 Kavinda Ishwara,11501550,Sri Lanka,2001-10-08,Right-hand bat,Right-arm offbreak,1359605
+Peter Hatzoglou,402382,Australia,1998-11-27,Right-hand bat,Legbreak googly,1191384
 Siddarth Kappa,11507928,United States Of America,2006-07-06,Right-hand bat,Right-arm medium,110120
 Khush Bhalala,11507927,United States Of America,2005-09-15,Right-hand bat,Right-arm medium-fast,110759
 Yusuf Sazid,11501693,Bangladesh,2002-06-26,Right-hand bat,Right-arm offbreak,8932412
@@ -64622,8 +64647,8 @@ Vikal Kumar Gupta,11508855,India,2001-02-03,,,165367
 Balkrisna Rajeshkumar,11508907,Portugal,1973-03-24,Right-hand bat,Left-arm medium,166936
 Devender Mehla,11508908,India,1991-12-01,Right-hand bat,Right-arm medium,143464
 Saqib Zounas,11508939,Pakistan,1986-01-01,Right-hand bat,Right-arm offbreak,14108616
-Bokhariya Karan,11508951,India,1996-06-20,Right-hand bat,Right-arm fast,14108619
 Ankit Singh,11508978,India,1987-10-10,Right-hand bat,Right-arm fast,14108629
+Bokhariya Karan,11508951,India,1996-06-20,Right-hand bat,Right-arm fast,14108619
 Mohammed Umar,11509041,United Arab Emirates,2005-07-26,Right-hand bat,Right-arm fast,3265415
 Jagdeep Singh,11509109,India,1992-06-25,Right-hand bat,Right-arm fast,8956267
 Debasis Samal,11509168,Rwanda,1987-11-20,,,108697
