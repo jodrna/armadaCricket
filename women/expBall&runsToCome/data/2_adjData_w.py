@@ -14,6 +14,7 @@ from datetime import date
 
 connection = engine.connect()
 raw_data_og = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', parse_dates=['date'])
+raw_data_og = raw_data_og[raw_data_og.competition == 'The Hundred (Women\'s Comp)']
 # raw_data_og_max_date = raw_data_og['date'].max()
 raw_data_og = raw_data_og.drop_duplicates(subset=['id'])
 # # raw_data_og = raw_data_og[raw_data_og.matchid == 1233979]
@@ -100,8 +101,8 @@ raw_data['ground_wkts_3'] = raw_data['ground_wkts_3'].fillna(raw_data['ground_wk
 
 #merge in surge BBL values
 raw_data = raw_data.merge(bblvalues, on='over')
-raw_data['bbl_runs_ratio'] = np.where((raw_data['date'] > date(2020, 6, 6)) & ((raw_data['over'] < 11) | (raw_data['power_surge'] == 1)), raw_data['bbl_runs_ratio'], 1)
-raw_data['bbl_wkts_ratio'] = np.where((raw_data['date'] > date(2020, 6, 6)) & ((raw_data['over'] < 11) | (raw_data['power_surge'] == 1)), raw_data['bbl_wkts_ratio'], 1)
+raw_data['bbl_runs_ratio'] = np.where(((raw_data['competition'] == 'Women\'s Big Bash League') & (raw_data['date'] > date(2020, 6, 6))) & ((raw_data['over'] < 11) | (raw_data['power_surge'] == 1)), raw_data['bbl_runs_ratio'], 1)
+raw_data['bbl_wkts_ratio'] = np.where(((raw_data['competition'] == 'Women\'s Big Bash League') & (raw_data['date'] > date(2020, 6, 6))) & ((raw_data['over'] < 11) | (raw_data['power_surge'] == 1)), raw_data['bbl_wkts_ratio'], 1)
 raw_data['ovrexpr_bbl'] = raw_data['ovrexpr'] / raw_data['bbl_runs_ratio']
 raw_data['ovrexpw_bbl'] = raw_data['ovrexpw'] / raw_data['bbl_wkts_ratio']
 
@@ -398,14 +399,21 @@ his = his.sort_values(by='year', ascending=False)
 new_data = his.copy()
 new_data = pd.pivot_table(new_data, values=['rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum'], index=['id'], aggfunc={'rar_bat': 'sum', 'raw_bat': 'sum', 'rar_ground_sum': 'mean', 'raw_ground_sum': 'mean', 'rar_bowl_sum': 'mean', 'raw_bowl_sum': 'mean', 'rar_bbl_sum': 'mean', 'raw_bbl_sum': 'mean'}).reset_index()
 
-new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum']+ new_data['rar_bbl_sum'] + new_data['raw_bbl_sum']
+new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum'] + new_data['rar_bbl_sum'] + new_data['raw_bbl_sum']
 
-raw_data_og = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum', 'RA_sum']], on='id', how='left')
+raw_data_for_hundredAdjusts = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum', 'RA_sum']], on='id', how='left')
 
-raw_data_og.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', index=False)
+raw_data_for_hundredAdjusts.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w_2.csv', index=False)
+
+new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum'] + new_data['rar_bbl_sum'] + new_data['raw_bbl_sum'] + new_data['rar_hundred_sum']
+
+# raw_data_final = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum', 'rar_hundred_sum', 'RA_sum']], on='id', how='left')
+#
+# raw_data_final.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', index=False)
 
 
-BBLtest = raw_data_og[raw_data_og.competition == 'Women\'s Big Bash League']
+# BBLtest = raw_data_final[raw_data_final.competition == 'Women\'s Big Bash League']
+# Hundredtest = raw_data_final[raw_data_final.competition == 'The Hundred (Women\'s Comp)']
 # ##testing:
 # raw_data_og = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_adjusted_runs_to_come_{for_match}.csv')
 # raw_data_og = raw_data_og.sort_values(by=['year'])

@@ -127,7 +127,7 @@ rollextra['extra'] = rollextra['extra'] / 100
 raw_data = raw_data.reset_index(drop=True)
 raw_data['extra'] = rollextra['extra']
 raw_data['ball'] = raw_data['delivery2'] - raw_data['extra']
-raw_data['ballsremaining'] = round((120 - ((np.floor(raw_data['ball']) * 6) + ((raw_data['ball'] - np.floor(raw_data['ball'])) * 100) - 1)), 0)
+raw_data['ballsremaining'] = np.where(raw_data['competition'] == 'The Hundred (Women\'s Comp)', raw_data['ballsremaining'], round((120 - ((np.floor(raw_data['ball']) * 6) + ((raw_data['ball'] - np.floor(raw_data['ball'])) * 100) - 1)), 0))
 
 # fix the score, first find games where total score != stated score, for these games stick with stated score, for others go to rolling score
 runs_comp = pd.pivot_table(raw_data, values=['runs', 't_runs'], index=['matchid', 'innings'], aggfunc={'runs': 'sum', 't_runs': 'mean'}).reset_index()
