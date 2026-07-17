@@ -69,6 +69,9 @@ targets['target_x'] = targets['target_x'] + 1
 raw_data = raw_data.merge(targets, how='left', on=['matchid', 'innings'])
 raw_data['target'] = raw_data['target_x']
 raw_data = raw_data.drop(labels=['target_x'], axis=1)
+##needs to be done before hundred split
+raw_data['over_number'] = raw_data['delivery2'].apply(lambda x: np.floor(x))
+raw_data['over'] = raw_data['over_number'] + 1
 
 # # # take out big bash after 2019 season because of the power surge
 # raw_data = raw_data[(raw_data['competition'] != 'Women\'s Big Bash League') | (raw_data['date'] < date(2020, 6, 6))]
@@ -119,7 +122,6 @@ raw_data = raw_data.drop(labels=['reduced', 'remove', 'max_balls'], axis=1)  # s
 
 # fix the ball
 raw_data['extra'] = np.where(raw_data['wide'] + raw_data['noball'] > 0, 1, 0)
-raw_data['over_number'] = raw_data['delivery2'].apply(lambda x: np.floor(x))
 rollextra = pd.DataFrame(raw_data.groupby(['matchid', 'over_number', 'innings'], sort=False)['extra'].rolling(50, min_periods=1, closed='left').sum()).reset_index().fillna(0)
 rollextra = rollextra.sort_values(by=['matchid', 'level_3']).reset_index(drop=True)
 rollextra['extra'] = rollextra['extra'] / 100
@@ -127,7 +129,7 @@ rollextra['extra'] = rollextra['extra'] / 100
 raw_data = raw_data.reset_index(drop=True)
 raw_data['extra'] = rollextra['extra']
 raw_data['ball'] = raw_data['delivery2'] - raw_data['extra']
-raw_data['ballsremaining'] = np.where(raw_data['competition'] == 'The Hundred (Women\'s Comp)', raw_data['ballsremaining'], round((120 - ((np.floor(raw_data['ball']) * 6) + ((raw_data['ball'] - np.floor(raw_data['ball'])) * 100) - 1)), 0))
+raw_data['ballsremaining'] = round((120 - ((np.floor(raw_data['ball']) * 6) + ((raw_data['ball'] - np.floor(raw_data['ball'])) * 100) - 1)), 0)
 # fix the score, first find games where total score != stated score, for these games stick with stated score, for others go to rolling score
 runs_comp = pd.pivot_table(raw_data, values=['runs', 't_runs'], index=['matchid', 'innings'], aggfunc={'runs': 'sum', 't_runs': 'mean'}).reset_index()
 runs_comp['comp'] = runs_comp['runs'] - runs_comp['t_runs']
@@ -136,7 +138,7 @@ raw_data = raw_data.reset_index(drop=True)
 raw_data['true_score'] = true_score['runs']  # does this join them effectively?
 raw_data = raw_data.merge(runs_comp.loc[:, ['matchid', 'innings', 'comp']], on=['matchid', 'innings'], how='left')
 raw_data['score'] = np.where(raw_data['comp'] != 0, raw_data['score'], raw_data['true_score'])
-raw_data = raw_data.drop(labels=['true_score', 'extra', 'over_number', ], axis=1)
+raw_data = raw_data.drop(labels=['true_score', 'extra'], axis=1)
 
 
 hundred.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/hundredData.csv', index=False)
@@ -155,7 +157,6 @@ raw_data = raw_data[raw_data['wickets'] < 10]
 raw_data = raw_data[(raw_data['required'] > 0) | (raw_data['innings'] == 1)]
 raw_data = raw_data[raw_data['ballsremaining'] > 0]
 raw_data = raw_data[raw_data['score'] > -1]
-raw_data['over'] = raw_data['over_number'] + 1
 
 wkt_value_sum = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/wkt_sum_mean_w.csv')
 raw_data = raw_data.merge(wkt_value_sum, how='left')
@@ -163,14 +164,10 @@ raw_data = raw_data.drop_duplicates(subset=['id'])
 
 # # print("5")
 
-raw_data = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\hundredData.csv')
-raw_data['required'] = raw_data['target'] - raw_data['score']
-# raw_data_test = raw_data[raw_data.matchid == 1252700]
-
 ## export
 if run_type == 1:
-#     raw_data.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
-#     # raw_data = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_w.csv')
+    raw_data.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
+    # raw_data = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_w.csv')
     sqlupload = raw_data.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]
     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a']
 
@@ -199,10 +196,9 @@ if run_type == 1:
                 ord_clean_a            = t.ord_clean_a,
                 required_clean_a       = t.required_clean_a
             FROM player_ratings.w_t20_bbb_clean t
-            WHERE a.id = t.id_clean_a and a.id_clean_a IS NULL  -- skip already-updated rows
+            WHERE a.id = t.id_clean_a 
+                AND a.id_clean_a IS NULL  -- skip already-updated rows
         """))
-
-AND
 
 else:
     sqlupload = raw_data.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]

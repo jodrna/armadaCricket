@@ -64,7 +64,7 @@ recoveries_ground.rename(columns={'runsratio_ground': 'ground_runs', 'wktsratio_
 raw_data = raw_data.merge(recoveries_bat, on='batterid', how='left')
 raw_data = raw_data.merge(recoveries_bowl, on='bowlerid', how='left')
 raw_data = raw_data.merge(recoveries_ground, on=('venue', 'innperiod'), how='left')
-
+raw_data_test00000 = raw_data[raw_data.competition == 'The Hundred (Women\'s Comp)']
 # his_max_date1 = raw_data['date'].max()
 ##merge in the bowler batter and ground ratings
 bowler_data = bowler_data.drop_duplicates(subset=['date', 'bowlerid', 'competition', 'host'])
@@ -79,7 +79,7 @@ raw_data['run_rating_pr_ba'] = raw_data['run_rating_pr_ba'].fillna(raw_data['opp
 raw_data['wkt_rating_pr_ba'] = raw_data['wkt_rating_pr_ba'].fillna(raw_data['oppo_bat_wkts_old'])
 raw_data['oppo_bat_runs'] = np.where(raw_data['balls_faced_pr_ba'] >= 150, raw_data['run_rating_pr_ba'], raw_data['oppo_bat_runs_old'])
 raw_data['oppo_bat_wkts'] = np.where(raw_data['balls_faced_pr_ba'] >= 150, raw_data['wkt_rating_pr_ba'], raw_data['oppo_bat_wkts_old'])
-
+raw_data_test0000 = raw_data[raw_data.competition == 'The Hundred (Women\'s Comp)']
 
 ###need to merge the ground stuff into separate columns for each innperiod, this makes it easier to predict the amount of runs added by innperiod later on:
 ground_data = ground_data.drop_duplicates(subset=['matchid', 'innperiod'])
@@ -101,7 +101,7 @@ raw_data['ground_runs_2'] = raw_data['ground_runs_2'].fillna(raw_data['ground_ru
 raw_data['ground_wkts_2'] = raw_data['ground_wkts_2'].fillna(raw_data['ground_wkts'])
 raw_data['ground_runs_3'] = raw_data['ground_runs_3'].fillna(raw_data['ground_runs'])
 raw_data['ground_wkts_3'] = raw_data['ground_wkts_3'].fillna(raw_data['ground_wkts'])
-
+raw_data_test000 = raw_data[raw_data.competition == 'The Hundred (Women\'s Comp)']
 #merge in surge BBL values
 raw_data = raw_data.merge(bblvalues, on='over')
 raw_data['bbl_runs_ratio'] = np.where(((raw_data['competition'] == 'Women\'s Big Bash League') & (raw_data['date'] > date(2020, 6, 6))) & ((raw_data['over'] < 11) | (raw_data['power_surge'] == 1)), raw_data['bbl_runs_ratio'], 1)
@@ -116,7 +116,7 @@ raw_data['bat_exp_wktvalue'] = raw_data['wktvalue'] * raw_data['realexpwbat']
 raw_data['bowl_exp_wktvalue'] = raw_data['wktvalue'] * raw_data['realexpwbowl']
 raw_data['ground_exp_wktvalue'] = raw_data['wktvalue'] * raw_data['ovrexpw']
 raw_data['bbl_exp_wktvalue'] = raw_data['wktvalue'] * raw_data['ovrexpw_bbl']
-
+raw_data_test00 = raw_data[raw_data.competition == 'The Hundred (Women\'s Comp)']
 ###now we can work out the ra_bowl and bbl already for each ball, we'll sum them later
 raw_data['rar_bowl'] = (raw_data['oppo_bowl_runs'] - 1) * raw_data['realexprbowl']
 raw_data['raw_bowl'] = (1 - raw_data['oppo_bowl_wkts']) * raw_data['bowl_exp_wktvalue']
@@ -146,7 +146,7 @@ raw_data_bbl_test = raw_data[(raw_data['competition'] == 'Women\'s Big Bash Leag
 # raw_data.to_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra_w.csv', index=False)
 # raw_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra_w.csv')
 
-
+raw_data_test0 = raw_data[raw_data.competition == 'The Hundred (Women\'s Comp)']
 
 # ##################need from here to mkae his ########################################################
 # raw_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra_w.csv')
@@ -341,7 +341,7 @@ lineups = lineups.drop_duplicates(subset=['matchid', 'batterid'])
 # lineups.to_csv(fr'{user_name}\Documents\Tempdata\lineups_w.csv', index=False)
 
 
-
+raw_data_test1 = raw_data[raw_data.competition == 'The Hundred (Women\'s Comp)']
 # expr_pred = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\MatchMarket\er_tc_smooth_w.csv')
 # raw_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra2_w.csv')
 
@@ -405,7 +405,7 @@ new_data = pd.pivot_table(new_data, values=['rar_bat', 'raw_bat',  'rar_ground_s
 new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum'] + new_data['rar_bbl_sum'] + new_data['raw_bbl_sum']
 
 raw_data_for_hundredAdjusts = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum', 'RA_sum']], on='id', how='left')
-
+raw_data_for_hundredAdjusts_test1 = raw_data_for_hundredAdjusts[raw_data_for_hundredAdjusts.competition == 'The Hundred (Women\'s Comp)']
 raw_data_for_hundredAdjusts.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w_2.csv', index=False)
 
 # new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum'] + new_data['rar_bbl_sum'] + new_data['raw_bbl_sum'] + new_data['rar_hundred_sum']
