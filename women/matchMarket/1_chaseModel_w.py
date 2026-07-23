@@ -73,16 +73,16 @@ chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
 chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inningBallNumber', 'sample', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
 chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSplineYear'] # changing to include year
-chaseLookup['daysGroup'] = 12.2
+chaseLookup['daysGroup'] = 12.4
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSplineYear']).reset_index(drop=True)
 chaseLookup['in'] = 1
 
 
-#
-medians = pd.pivot_table(trainData, index=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], values=['daysGroup'], aggfunc='median').reset_index()
-medians = medians.rename(columns={'daysGroup': 'daysGroupMedian'})
-chaseLookup = chaseLookup.merge(medians, how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
-chaseLookup['daysGroup'] = chaseLookup['daysGroupMedian'].fillna(12)
+# #
+# medians = pd.pivot_table(trainData, index=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], values=['daysGroup'], aggfunc='median').reset_index()
+# medians = medians.rename(columns={'daysGroup': 'daysGroupMedian'})
+# chaseLookup = chaseLookup.merge(medians, how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
+# chaseLookup['daysGroup'] = chaseLookup['daysGroupMedian'].fillna(12)
 
 # remove chases which are effectively lost
 trainData = trainData.merge(chaseLookup.loc[:, ['in', 'totalInningWickets', 'runsRequired', 'inningBallNumber']], how='left', on=['totalInningWickets', 'runsRequired', 'inningBallNumber'])

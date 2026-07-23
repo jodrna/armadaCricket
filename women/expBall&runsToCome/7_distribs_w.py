@@ -96,31 +96,31 @@ y_scatter_max = masterLookup['totalInningRunsToComeSimSTD'].max()
 
 fig, axes = plt.subplots(nrows=10, ncols=2, figsize=(16, 32), sharex=False, sharey=False)
 
-for wk in range(10):
-    ax_line = axes[wk, 0]
-    ax_scatter = axes[wk, 1]
-
-    # line plots
-    d_line = masterLookup.loc[masterLookup['totalInningWickets'] == wk,
-                              ['inningBallNumber',
-                               'totalInningRunsToComeSimBiasSpline',
-                               'totalInningRunsToComeSimBiasSplineYear']].sort_values('inningBallNumber')
-    ax_line.plot(d_line['inningBallNumber'], d_line['totalInningRunsToComeSimBiasSpline'])
-    ax_line.plot(d_line['inningBallNumber'], d_line['totalInningRunsToComeSimBiasSplineYear'])
-    ax_line.set_xlim(x_line_min, x_line_max)
-    ax_line.set_ylim(y_line_min, y_line_max)
-
-    # scatter plots
-    d_scatter = masterLookup.loc[masterLookup['totalInningWickets'] == wk,
-                                 ['totalInningRunsToComeSimBiasSpline', 'totalInningRunsToComeSimSTD']]
-    ax_scatter.scatter(d_scatter['totalInningRunsToComeSimBiasSpline'],
-                       d_scatter['totalInningRunsToComeSimSTD'],
-                       s=10, alpha=0.7)
-    ax_scatter.set_xlim(x_scatter_min, x_scatter_max)
-    ax_scatter.set_ylim(y_scatter_min, y_scatter_max)
-
-plt.tight_layout()
-plt.show()
+# for wk in range(10):
+#     ax_line = axes[wk, 0]
+#     ax_scatter = axes[wk, 1]
+#
+#     # line plots
+#     d_line = masterLookup.loc[masterLookup['totalInningWickets'] == wk,
+#                               ['inningBallNumber',
+#                                'totalInningRunsToComeSimBiasSpline',
+#                                'totalInningRunsToComeSimBiasSplineYear']].sort_values('inningBallNumber')
+#     ax_line.plot(d_line['inningBallNumber'], d_line['totalInningRunsToComeSimBiasSpline'])
+#     ax_line.plot(d_line['inningBallNumber'], d_line['totalInningRunsToComeSimBiasSplineYear'])
+#     ax_line.set_xlim(x_line_min, x_line_max)
+#     ax_line.set_ylim(y_line_min, y_line_max)
+#
+#     # scatter plots
+#     d_scatter = masterLookup.loc[masterLookup['totalInningWickets'] == wk,
+#                                  ['totalInningRunsToComeSimBiasSpline', 'totalInningRunsToComeSimSTD']]
+#     ax_scatter.scatter(d_scatter['totalInningRunsToComeSimBiasSpline'],
+#                        d_scatter['totalInningRunsToComeSimSTD'],
+#                        s=10, alpha=0.7)
+#     ax_scatter.set_xlim(x_scatter_min, x_scatter_max)
+#     ax_scatter.set_ylim(y_scatter_min, y_scatter_max)
+#
+# plt.tight_layout()
+# plt.show()
 
 
 
@@ -136,48 +136,48 @@ fig, axes = plt.subplots(10, 5, figsize=(22, 30), sharex=False)
 metrics = ['mean', 'std', 'skew', 'kurtosis']
 titles  = ['Mean', 'Standard Deviation', 'Skewness', 'Kurtosis', 'STD vs Mean']
 
-for i in range(10):  # totalInningWickets from 0 to 9
-    # Filter by count (do once per row)
-    real_filtered = stdsReal[(stdsReal['totalInningWickets'] == i) & (stdsReal['count'] >= 100)]
-    classAdjusted_filtered = stdsClassAdjusted[(stdsClassAdjusted['totalInningWickets'] == i) & (stdsClassAdjusted['count'] >= 1000)]
-
-    # First 4 columns: original line plots
-    for j, metric in enumerate(metrics):
-        ax = axes[i, j]
-
-        # Plot Real and Adjusted
-        ax.plot(real_filtered['inningBallNumber'], real_filtered[metric], label='Real', color='green')
-        ax.plot(classAdjusted_filtered['inningBallNumber'], classAdjusted_filtered[metric], label='Class Adjusted', color='orange')
-
-        # Titles and labels
-        if i == 0:
-            ax.set_title(titles[j])
-        if j == 0:
-            ax.set_ylabel(f'Wickets: {i}')
-        if i == 9 and j == 2:
-            ax.legend(loc='lower right')
-
-    # 5th column: scatter of std vs mean
-    ax_scatter = axes[i, 4]
-    # Plot only if there is data after dropna
-    rf = real_filtered[['mean', 'std']].dropna()
-    cf = classAdjusted_filtered[['mean', 'std']].dropna()
-
-    if not rf.empty:
-        ax_scatter.scatter(rf['mean'], rf['std'], label='Real', alpha=0.6, color='green')
-    if not cf.empty:
-        ax_scatter.scatter(cf['mean'], cf['std'], label='Class Adjusted', alpha=0.6, color='orange')
-    if rf.empty and cf.empty:
-        ax_scatter.text(0.5, 0.5, 'No data', ha='center', va='center', transform=ax_scatter.transAxes)
-
-    if i == 0:
-        ax_scatter.set_title(titles[4])
-    # Optional: only one legend for the scatter, bottom row
-    if i == 9:
-        ax_scatter.legend(loc='lower right')
-
-plt.tight_layout()
-plt.show()
+# for i in range(10):  # totalInningWickets from 0 to 9
+#     # Filter by count (do once per row)
+#     real_filtered = stdsReal[(stdsReal['totalInningWickets'] == i) & (stdsReal['count'] >= 100)]
+#     classAdjusted_filtered = stdsClassAdjusted[(stdsClassAdjusted['totalInningWickets'] == i) & (stdsClassAdjusted['count'] >= 1000)]
+#
+#     # First 4 columns: original line plots
+#     for j, metric in enumerate(metrics):
+#         ax = axes[i, j]
+#
+#         # Plot Real and Adjusted
+#         ax.plot(real_filtered['inningBallNumber'], real_filtered[metric], label='Real', color='green')
+#         ax.plot(classAdjusted_filtered['inningBallNumber'], classAdjusted_filtered[metric], label='Class Adjusted', color='orange')
+#
+#         # Titles and labels
+#         if i == 0:
+#             ax.set_title(titles[j])
+#         if j == 0:
+#             ax.set_ylabel(f'Wickets: {i}')
+#         if i == 9 and j == 2:
+#             ax.legend(loc='lower right')
+#
+#     # 5th column: scatter of std vs mean
+#     ax_scatter = axes[i, 4]
+#     # Plot only if there is data after dropna
+#     rf = real_filtered[['mean', 'std']].dropna()
+#     cf = classAdjusted_filtered[['mean', 'std']].dropna()
+#
+#     if not rf.empty:
+#         ax_scatter.scatter(rf['mean'], rf['std'], label='Real', alpha=0.6, color='green')
+#     if not cf.empty:
+#         ax_scatter.scatter(cf['mean'], cf['std'], label='Class Adjusted', alpha=0.6, color='orange')
+#     if rf.empty and cf.empty:
+#         ax_scatter.text(0.5, 0.5, 'No data', ha='center', va='center', transform=ax_scatter.transAxes)
+#
+#     if i == 0:
+#         ax_scatter.set_title(titles[4])
+#     # Optional: only one legend for the scatter, bottom row
+#     if i == 9:
+#         ax_scatter.legend(loc='lower right')
+#
+# plt.tight_layout()
+# plt.show()
 
 
 
