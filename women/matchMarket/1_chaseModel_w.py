@@ -14,6 +14,8 @@ from paths import PROJECT_ROOT
 
 # import
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
+trainData = trainData[trainData['competition'] != "The Hundred (Women's Comp)"]
+# trainData = trainData[(trainData['competition'] != "Women's Big Bash League") | (trainData['date'] < pd.Timestamp(2020, 6, 6))]
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
 chaseSituations = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/auxiliaries/chaseSituationBuilder_w.csv')
 # chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookupLive_w.csv')
@@ -71,7 +73,7 @@ chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
 chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inningBallNumber', 'sample', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
 chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSplineYear'] # changing to include year
-chaseLookup['daysGroup'] = 13
+chaseLookup['daysGroup'] = 12.2
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSplineYear']).reset_index(drop=True)
 chaseLookup['in'] = 1
 
@@ -200,140 +202,140 @@ chaseLookup.insert(col_position, 'lookup', (chaseLookup['totalInningWickets'] + 
 
 
 
-# # graph of predictions
-# fig, axes = plt.subplots(10, 4, figsize=(20, 40))           # create a figure of dimension 10 (Wickets) by 5 (number of graphs for each wicket)
-# for x in np.arange(0, 10, 1):                               # loop 0-10 for wickets
-#     graph_data = chaseLookup.copy()
-#     graph_data = graph_data[graph_data['totalInningWickets'] == x]       # filter the dataframe for the wicket in question
-#     # graph_data['chase_adj%'] = graph_data['blendr_win%'] - graph_data['X_win%']
-#     # create tables of the numbers to be plotted
-#     actual = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='chaseWin%', aggfunc='mean')
-#     old = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_chaseWin%', aggfunc='mean')
-#     new = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_chaseWin%', aggfunc='mean')
-#     diff = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_diff', aggfunc='mean')
-#     # plot in a heatmap
-#     sns.heatmap(ax=axes[x, 0], data=actual, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
-#     sns.heatmap(ax=axes[x, 1], data=old, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
-#     sns.heatmap(ax=axes[x, 2], data=new, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
-#     sns.heatmap(ax=axes[x, 3], data=diff, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=-0.2, vmax=0.2, center=0, xticklabels=10, yticklabels=10)
+# # # graph of predictions
+# # fig, axes = plt.subplots(10, 4, figsize=(20, 40))           # create a figure of dimension 10 (Wickets) by 5 (number of graphs for each wicket)
+# # for x in np.arange(0, 10, 1):                               # loop 0-10 for wickets
+# #     graph_data = chaseLookup.copy()
+# #     graph_data = graph_data[graph_data['totalInningWickets'] == x]       # filter the dataframe for the wicket in question
+# #     # graph_data['chase_adj%'] = graph_data['blendr_win%'] - graph_data['X_win%']
+# #     # create tables of the numbers to be plotted
+# #     actual = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='chaseWin%', aggfunc='mean')
+# #     old = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_chaseWin%', aggfunc='mean')
+# #     new = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_chaseWin%', aggfunc='mean')
+# #     diff = pd.pivot_table(graph_data, index='runsRequired', columns='inningBallsRemaining', values='m_diff', aggfunc='mean')
+# #     # plot in a heatmap
+# #     sns.heatmap(ax=axes[x, 0], data=actual, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
+# #     sns.heatmap(ax=axes[x, 1], data=old, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
+# #     sns.heatmap(ax=axes[x, 2], data=new, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=0, vmax=1, center=0.5, xticklabels=10, yticklabels=10)
+# #     sns.heatmap(ax=axes[x, 3], data=diff, cmap=plt.cm.get_cmap('PiYG', 1000), vmin=-0.2, vmax=0.2, center=0, xticklabels=10, yticklabels=10)
+# #
+# #     # set titles for each graph
+# #     title1 = f"actual_win% - {x} wickets lost"
+# #     axes[x, 0].set_title(title1)
+# #     title2 = f"old - {x} wickets lost"
+# #     axes[x, 1].set_title(title2)
+# #     title3 = f"new {x} wickets lost"
+# #     axes[x, 2].set_title(title3)
+# #     title4 = f"diff - {x} wickets lost"
+# #     axes[x, 3].set_title(title4)
+# #     # title5 = f"blendr_win%_ - {x} wickets lost"
+# #     # axes[x, 4].set_title(title4)
+# # plt.tight_layout()
+# # plt.show()
 #
-#     # set titles for each graph
-#     title1 = f"actual_win% - {x} wickets lost"
-#     axes[x, 0].set_title(title1)
-#     title2 = f"old - {x} wickets lost"
-#     axes[x, 1].set_title(title2)
-#     title3 = f"new {x} wickets lost"
-#     axes[x, 2].set_title(title3)
-#     title4 = f"diff - {x} wickets lost"
-#     axes[x, 3].set_title(title4)
-#     # title5 = f"blendr_win%_ - {x} wickets lost"
-#     # axes[x, 4].set_title(title4)
+# # over/under performance heatmap
+# # x = daysGroup, split into 0.04-year steps
+# # y = balls remaining
+# # colour = actual chase win% - expected chase win%
+#
+#
+# heat_data = trainData.copy()
+# heat_data = heat_data.drop(columns=['m_chaseWin%'])
+# heat_data = heat_data.merge(chaseLookup.loc[:, ['inningBallsRemaining', 'totalInningWickets', 'runsRequired', 'm_chaseWin%']], how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
+#
+#
+# # medians = pd.pivot_table(trainData, index=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], values=['daysGroup'], aggfunc='median').reset_index()
+# # medians = medians.rename(columns={'daysGroup': 'daysGroupMedian'})
+# # heat_data = heat_data.merge(medians, how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
+# heat_data = heat_data.dropna(
+#     subset=[
+#         'daysGroup',
+#         'inningBallsRemaining',
+#         'chaseWin',
+#         'm_chaseWin%'
+#     ]
+# )
+#
+# year_centres = np.arange(
+#     np.floor(heat_data['daysGroup'].min()),
+#     np.ceil(heat_data['daysGroup'].max()) + 0.04,
+#     0.04
+# )
+#
+# ball_centres = np.arange(1, 121, 1)
+#
+# rows = []
+#
+# for yc in year_centres:
+#     for bc in ball_centres:
+#         mask = (
+#             (heat_data['daysGroup'].sub(yc).abs() <= 0.5) &
+#             (heat_data['inningBallsRemaining'].sub(bc).abs() <= 10)
+#         )
+#
+#         cell = heat_data.loc[mask]
+#
+#         sample = len(cell)
+#
+#         if sample < 100:
+#             actual = np.nan
+#             expected = np.nan
+#             over_under = np.nan
+#         else:
+#             actual = cell['chaseWin'].mean()
+#             expected = cell['m_chaseWin%'].mean()
+#             over_under = actual - expected
+#
+#         rows.append({
+#             'daysGroupCentre': yc,
+#             'yearLabel': 2015 + yc,
+#             'inningBallsRemaining': bc,
+#             'sample': sample,
+#             'actual_chaseWin%': actual,
+#             'expected_chaseWin%': expected,
+#             'over_under': over_under
+#         })
+#
+# heatmap_df = pd.DataFrame(rows)
+#
+# heatmap_pivot = heatmap_df.pivot(
+#     index='inningBallsRemaining',
+#     columns='daysGroupCentre',
+#     values='over_under'
+# )
+#
+# plt.figure(figsize=(16, 10))
+#
+# sns.heatmap(
+#     heatmap_pivot,
+#     cmap='PiYG',
+#     center=0,
+#     vmin=-0.2,
+#     vmax=0.2,
+#     linewidths=0,
+#     cbar_kws={'label': 'Actual chase win% - expected chase win%'}
+# )
+#
+# plt.title('Women chasing over/under performance by year and balls remaining')
+# plt.xlabel('Year')
+# plt.ylabel('Balls remaining')
+#
+# xtick_positions = np.arange(0, len(year_centres), 25)
+# xtick_labels = [
+#     str(int(2015 + year_centres[pos]))
+#     for pos in xtick_positions
+# ]
+#
+# plt.xticks(
+#     xtick_positions,
+#     xtick_labels,
+#     rotation=0
+# )
+#
+# plt.gca().invert_yaxis()
+#
 # plt.tight_layout()
 # plt.show()
-
-# over/under performance heatmap
-# x = daysGroup, split into 0.04-year steps
-# y = balls remaining
-# colour = actual chase win% - expected chase win%
-
-
-heat_data = trainData.copy()
-heat_data = heat_data.drop(columns=['m_chaseWin%'])
-heat_data = heat_data.merge(chaseLookup.loc[:, ['inningBallsRemaining', 'totalInningWickets', 'runsRequired', 'm_chaseWin%']], how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
-
-
-# medians = pd.pivot_table(trainData, index=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'], values=['daysGroup'], aggfunc='median').reset_index()
-# medians = medians.rename(columns={'daysGroup': 'daysGroupMedian'})
-# heat_data = heat_data.merge(medians, how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
-heat_data = heat_data.dropna(
-    subset=[
-        'daysGroup',
-        'inningBallsRemaining',
-        'chaseWin',
-        'm_chaseWin%'
-    ]
-)
-
-year_centres = np.arange(
-    np.floor(heat_data['daysGroup'].min()),
-    np.ceil(heat_data['daysGroup'].max()) + 0.04,
-    0.04
-)
-
-ball_centres = np.arange(1, 121, 1)
-
-rows = []
-
-for yc in year_centres:
-    for bc in ball_centres:
-        mask = (
-            (heat_data['daysGroup'].sub(yc).abs() <= 0.5) &
-            (heat_data['inningBallsRemaining'].sub(bc).abs() <= 10)
-        )
-
-        cell = heat_data.loc[mask]
-
-        sample = len(cell)
-
-        if sample < 100:
-            actual = np.nan
-            expected = np.nan
-            over_under = np.nan
-        else:
-            actual = cell['chaseWin'].mean()
-            expected = cell['m_chaseWin%'].mean()
-            over_under = actual - expected
-
-        rows.append({
-            'daysGroupCentre': yc,
-            'yearLabel': 2015 + yc,
-            'inningBallsRemaining': bc,
-            'sample': sample,
-            'actual_chaseWin%': actual,
-            'expected_chaseWin%': expected,
-            'over_under': over_under
-        })
-
-heatmap_df = pd.DataFrame(rows)
-
-heatmap_pivot = heatmap_df.pivot(
-    index='inningBallsRemaining',
-    columns='daysGroupCentre',
-    values='over_under'
-)
-
-plt.figure(figsize=(16, 10))
-
-sns.heatmap(
-    heatmap_pivot,
-    cmap='PiYG',
-    center=0,
-    vmin=-0.2,
-    vmax=0.2,
-    linewidths=0,
-    cbar_kws={'label': 'Actual chase win% - expected chase win%'}
-)
-
-plt.title('Women chasing over/under performance by year and balls remaining')
-plt.xlabel('Year')
-plt.ylabel('Balls remaining')
-
-xtick_positions = np.arange(0, len(year_centres), 25)
-xtick_labels = [
-    str(int(2015 + year_centres[pos]))
-    for pos in xtick_positions
-]
-
-plt.xticks(
-    xtick_positions,
-    xtick_labels,
-    rotation=0
-)
-
-plt.gca().invert_yaxis()
-
-plt.tight_layout()
-plt.show()
 
 
 
