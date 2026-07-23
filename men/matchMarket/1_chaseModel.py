@@ -19,6 +19,7 @@ masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_mast
 chaseSituations = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/auxiliaries/chaseSituationBuilder.csv')
 chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookupLive.csv')
 
+
 # drop nans from adj
 trainData = trainData.dropna(axis=0, subset=['runsRequiredAdj'])
 # now when running for adj simply change std runs required to adj
@@ -51,10 +52,22 @@ trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
 # we need to remove duplicates in runs to come so just select batting order 1
 masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 11)]
 # merge in runs to come
-trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSpline', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
+trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSplineYear', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 # create a ratio of runs to come to be used as a predictor, drop any nans
-trainData['ratioRequired'] = trainData['runsRequired'] / trainData['totalInningRunsToComeSimBiasSpline']
+trainData['ratioRequired'] = trainData['runsRequired'] / trainData['totalInningRunsToComeSimBiasSplineYear']
 trainData = trainData.dropna(axis=0, subset=['ratioRequired'])
+
+
+# test = trainData.copy()
+# test['wickets_group'] = np.round(test['totalInningWickets'] / 3, 0) * 3
+# test['year_group'] = np.round(test['year'] / 3, 0) * 3
+# test['runsRequired_round'] = np.round(test['runsRequiredAdj'], 0)
+# test = pd.pivot_table(test, values=['sample', 'chaseWin'],
+#                             index=['wickets_group', 'inningBallNumber', 'runsRequired_round', 'year_group'],
+#                             aggfunc={'sample': 'sum', 'chaseWin': 'sum'}).reset_index()
+# test['chase_win%'] = test['chaseWin'] / test['sample']
+# test = test[(test['wickets_group'] < 7) & (test['inningBallNumber'] == 115)] #
+
 
 
 # create an empty dataframe
@@ -103,19 +116,13 @@ chaseLookupMain['m_chaseWin%'] = model.predict_proba(X)[:, 1]
 trainDataMain = trainDataMain[(trainDataMain['inningBallsRemaining'] > 6)]
 
 
-
-
-
-
-
-
 # last over model
 trainDataLastOver = trainData.copy()
 trainDataLastOver = trainDataLastOver[(trainDataLastOver['inningBallsRemaining'] < 7)]
 
 # prepare the data
 y = trainDataLastOver['chaseWin']
-X_std = trainDataLastOver[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining']]
+X_std = trainDataLastOver[['runsRequired', 'ratioRequired', 'totalInningWickets', 'inningBallsRemaining', 'daysGroup']]
 scaler = StandardScaler()
 scaler.fit(X_std)
 X_std = scaler.transform(X_std)
@@ -128,12 +135,9 @@ trainDataLastOver['m_chaseWin%'] = model.predict_proba(X_std)[:, 1]
 # now predict the chase situations outside of training
 chaseLookupLastOver = chaseLookup.copy()
 chaseLookupLastOver = chaseLookupLastOver[(chaseLookupLastOver['inningBallsRemaining'] < 7)]
-X = chaseLookupLastOver[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining']]
+X = chaseLookupLastOver[['runsRequired', 'ratioRequired', 'totalInningWickets', 'inningBallsRemaining', 'daysGroup']]
 X = scaler.transform(X)
 chaseLookupLastOver['m_chaseWin%'] = model.predict_proba(X)[:, 1]
-
-
-
 
 
 # Scaling to range [0.0001, 0.9999]
@@ -219,103 +223,103 @@ chaseLookup.insert(col_position, 'lookup', (chaseLookup['totalInningWickets'] + 
 
 
 
-# over/under performance heatmap
-# x = daysGroup, split into 0.04-year steps
-# y = balls remaining
-# colour = actual chase win% - expected chase win%
-
-heat_data = trainData.copy()
-heat_data = heat_data.drop(columns=['m_chaseWin%'])
-heat_data = heat_data.merge(chaseLookup.loc[:, ['inningBallsRemaining', 'totalInningWickets', 'runsRequired', 'm_chaseWin%']], how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
-heat_data = heat_data.dropna(
-    subset=[
-        'daysGroup',
-        'inningBallsRemaining',
-        'chaseWin',
-        'm_chaseWin%'
-    ]
-)
-
-year_centres = np.arange(
-    np.floor(heat_data['daysGroup'].min()),
-    np.ceil(heat_data['daysGroup'].max()) + 0.04,
-    0.04
-)
-
-ball_centres = np.arange(1, 121, 1)
-
-rows = []
-
-for yc in year_centres:
-    for bc in ball_centres:
-        mask = (
-            (heat_data['daysGroup'].sub(yc).abs() <= 0.5) &
-            (heat_data['inningBallsRemaining'].sub(bc).abs() <= 5)
-        )
-
-        cell = heat_data.loc[mask]
-
-        sample = len(cell)
-
-        if sample < 100:
-            actual = np.nan
-            expected = np.nan
-            over_under = np.nan
-        else:
-            actual = cell['chaseWin'].mean()
-            expected = cell['m_chaseWin%'].mean()
-            over_under = actual - expected
-
-        rows.append({
-            'daysGroupCentre': yc,
-            'yearLabel': 2015 + yc,
-            'inningBallsRemaining': bc,
-            'sample': sample,
-            'actual_chaseWin%': actual,
-            'expected_chaseWin%': expected,
-            'over_under': over_under
-        })
-
-heatmap_df = pd.DataFrame(rows)
-
-heatmap_pivot = heatmap_df.pivot(
-    index='inningBallsRemaining',
-    columns='daysGroupCentre',
-    values='over_under'
-)
-
-plt.figure(figsize=(16, 10))
-
-sns.heatmap(
-    heatmap_pivot,
-    cmap='RdYlGn',
-    center=0,
-    vmin=-0.08,
-    vmax=0.08,
-    linewidths=0,
-    cbar_kws={'label': 'Actual chase win% - expected chase win%'}
-)
-
-plt.title('Women chasing over/under performance by year and balls remaining')
-plt.xlabel('Year')
-plt.ylabel('Balls remaining')
-
-xtick_positions = np.arange(0, len(year_centres), 25)
-xtick_labels = [
-    str(int(2015 + year_centres[pos]))
-    for pos in xtick_positions
-]
-
-plt.xticks(
-    xtick_positions,
-    xtick_labels,
-    rotation=0
-)
-
-plt.gca().invert_yaxis()
-
-plt.tight_layout()
-plt.show()
+# # over/under performance heatmap
+# # x = daysGroup, split into 0.04-year steps
+# # y = balls remaining
+# # colour = actual chase win% - expected chase win%
+#
+# heat_data = trainData.copy()
+# heat_data = heat_data.drop(columns=['m_chaseWin%'])
+# heat_data = heat_data.merge(chaseLookup.loc[:, ['inningBallsRemaining', 'totalInningWickets', 'runsRequired', 'm_chaseWin%']], how='left', on=['inningBallsRemaining', 'totalInningWickets', 'runsRequired'])
+# heat_data = heat_data.dropna(
+#     subset=[
+#         'daysGroup',
+#         'inningBallsRemaining',
+#         'chaseWin',
+#         'm_chaseWin%'
+#     ]
+# )
+#
+# year_centres = np.arange(
+#     np.floor(heat_data['daysGroup'].min()),
+#     np.ceil(heat_data['daysGroup'].max()) + 0.04,
+#     0.04
+# )
+#
+# ball_centres = np.arange(1, 121, 1)
+#
+# rows = []
+#
+# for yc in year_centres:
+#     for bc in ball_centres:
+#         mask = (
+#             (heat_data['daysGroup'].sub(yc).abs() <= 0.5) &
+#             (heat_data['inningBallsRemaining'].sub(bc).abs() <= 5)
+#         )
+#
+#         cell = heat_data.loc[mask]
+#
+#         sample = len(cell)
+#
+#         if sample < 100:
+#             actual = np.nan
+#             expected = np.nan
+#             over_under = np.nan
+#         else:
+#             actual = cell['chaseWin'].mean()
+#             expected = cell['m_chaseWin%'].mean()
+#             over_under = actual - expected
+#
+#         rows.append({
+#             'daysGroupCentre': yc,
+#             'yearLabel': 2015 + yc,
+#             'inningBallsRemaining': bc,
+#             'sample': sample,
+#             'actual_chaseWin%': actual,
+#             'expected_chaseWin%': expected,
+#             'over_under': over_under
+#         })
+#
+# heatmap_df = pd.DataFrame(rows)
+#
+# heatmap_pivot = heatmap_df.pivot(
+#     index='inningBallsRemaining',
+#     columns='daysGroupCentre',
+#     values='over_under'
+# )
+#
+# plt.figure(figsize=(16, 10))
+#
+# sns.heatmap(
+#     heatmap_pivot,
+#     cmap='RdYlGn',
+#     center=0,
+#     vmin=-0.08,
+#     vmax=0.08,
+#     linewidths=0,
+#     cbar_kws={'label': 'Actual chase win% - expected chase win%'}
+# )
+#
+# plt.title('Women chasing over/under performance by year and balls remaining')
+# plt.xlabel('Year')
+# plt.ylabel('Balls remaining')
+#
+# xtick_positions = np.arange(0, len(year_centres), 25)
+# xtick_labels = [
+#     str(int(2015 + year_centres[pos]))
+#     for pos in xtick_positions
+# ]
+#
+# plt.xticks(
+#     xtick_positions,
+#     xtick_labels,
+#     rotation=0
+# )
+#
+# plt.gca().invert_yaxis()
+#
+# plt.tight_layout()
+# plt.show()
 
 
 
