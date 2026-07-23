@@ -407,6 +407,8 @@ new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_g
 raw_data_for_hundredAdjusts = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum', 'RA_sum']], on='id', how='left')
 raw_data_for_hundredAdjusts_test1 = raw_data_for_hundredAdjusts[raw_data_for_hundredAdjusts.competition == 'The Hundred (Women\'s Comp)']
 raw_data_for_hundredAdjusts.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w_2.csv', index=False)
+##temp while we figure out the hundred stuff:
+raw_data_for_hundredAdjusts.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', index=False)
 
 # new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum'] + new_data['rar_bbl_sum'] + new_data['raw_bbl_sum'] + new_data['rar_hundred_sum']
 
