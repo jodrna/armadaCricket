@@ -9,6 +9,7 @@ from sklearn.preprocessing import PolynomialFeatures
 
 # import data and the runs to come modelled numbers
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
+trainData = trainData[trainData['competition'] != "The Hundred (Women's Comp)"]
 trainData = trainData[trainData['inningNumber'] == 1]
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
 

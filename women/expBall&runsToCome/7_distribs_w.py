@@ -21,6 +21,7 @@ connection = engine.connect()
 
 # import data
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
+trainData = trainData[trainData['competition'] != "The Hundred (Women's Comp)"]
 # simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
 matchMarket = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w.csv')
@@ -249,7 +250,7 @@ row2 = stdsClassAdjusted.loc[(stdsClassAdjusted['inningBallNumber'] == inningBal
 
 # Extract the moments
 # mean = row2['mean'].values[0]
-mean_estimate = 156.43
+mean_estimate = 153.14
 
 for i in range(0, 10, 1):
 
