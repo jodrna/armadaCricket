@@ -3,7 +3,7 @@ import numpy as np
 from paths import PROJECT_ROOT
 
 # import
-trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w_2.csv', parse_dates=['date'])
 
 trainData = trainData.rename(columns={'innings': 'inningNumber', 'wickets': 'totalInningWickets', 'bowlerwicket': 'isWicketBowler', 'noball': 'noballRuns', 'over': 'overNumber',
                                       'score': 'totalInningRuns', 't_runs': 'totalInningRunsEnd', 'runs_to_come': 'totalInningRunsToCome', 'wicket': 'isWicket',
@@ -38,8 +38,8 @@ trainData = trainData[trainData['date'] >= '01-01-2015']
 
 trainData = trainData.loc[:, ['matchid', 'id', 'tier', 'date', 'year', 'competition', 'venue', 'host', 'home', 'away', 'battingteam', 'inningNumber', 'totalRuns', 'totalInningRuns',
                               'totalInningRunsEnd', 'isWicket', 'totalInningWickets', 'totalInningWicketsEnd', 'inningBallsRemaining', 'target', 'noballRuns', 'wideRuns', 'ord', 'byeRuns', 'legbyes',
-                              'innperiod', 'isWicketBowler', 'realexprbat', 'realexpwbat', 'rating_sample_size', 'major_nation', 'batsmanballs', 'ovrexpr', 'ovrexpw', 'batsman', 'nonstriker', 'extra',
-                              'true_score', 'comp', 'required', 'totalInningRunsToCome', 'result', 'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'isPowerplay', 'isValid',
+                              'innperiod', 'isWicketBowler', 'realexprbat', 'realexpwbat', 'rating_sample_size', 'major_nation', 'batsmanballs', 'ovrexpr', 'ovrexpw', 'batsman', 'nonstriker', 'comp',
+                              'required', 'totalInningRunsToCome', 'result', 'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'isPowerplay', 'isValid',
                               'isWide', 'isNoball', 'sample', 'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired', 'RA_sum']]
 
 
@@ -48,7 +48,7 @@ trainData.columns = ['matchID', 'ID', 'tier', 'date', 'year', 'competition', 've
                      'inningBallsRemaining', 'target', 'noballRuns', 'wideRuns',
                      'ord', 'byeRuns', 'legbyeRuns', 'inningPhase', 'isWicketBowler', 'realexprbat', 'realexpwbat', 'rating_sample_size',
                      'major_nation', 'batsmanBallsFaced', 'ovrexpr', 'ovrexpw',
-                     'batsmanName', 'nonstrikerName', 'extra', 'true_score', 'comp', 'required', 'totalInningRunsToCome', 'result',
+                     'batsmanName', 'nonstrikerName', 'comp', 'required', 'totalInningRunsToCome', 'result',
                      'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'isPowerplay', 'isValid', 'isWide', 'isNoball', 'sample',
                      'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired', 'RA_Sum']
 
@@ -58,4 +58,5 @@ trainData['totalInningRunsToComeAdj'] = trainData['totalInningRunsToCome'] - tra
 
 # export the cleaned data
 trainData.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', index=False)
+
 
