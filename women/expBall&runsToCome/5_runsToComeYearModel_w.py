@@ -10,7 +10,11 @@ from datetime import timedelta, date
 
 # import cleaned ball-by-ball data
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
-trainData = trainData[(trainData['competition'] != "Women's Big Bash League") | (trainData['date'] < pd.Timestamp(2020, 6, 6))]
+# trainData = trainData[(trainData['competition'] != "Women's Big Bash League") | (trainData['date'] < pd.Timestamp(2020, 6, 6))]
+# hundred_test = trainData[(trainData['competition'] == "The Hundred (Women's Comp)") & (trainData['inningBallsRemaining'] == 100) & (trainData['inningNumber'] == 1)]
+# hundred_test = hundred_test.groupby(['year'])[['totalInningRunsToCome', 'totalInningRunsToComeAdj']].mean().reset_index()
+trainData = trainData[trainData['competition'] != "The Hundred (Women's Comp)"]
+
 
 # import master lookup table from previous modelling step
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/4_masterLookup_w.csv')
