@@ -10,29 +10,26 @@ from paths import PROJECT_ROOT
 
 
 # -------------------------
-# Load hundred data
+# Load  data
 # -------------------------
-hundredData = pd.read_csv(
-    PROJECT_ROOT / 'women/expBall&runsToCome/data/hundredData.csv',
+data = pd.read_csv(
+    PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv',
     parse_dates=['date']
 )
 
-hundredData = hundredData[hundredData['innings'] == 1].copy()
-hundredData['runs_to_come'] = hundredData['runs'] + hundredData['t_runs'] - hundredData['score']
-hundredData = hundredData[hundredData['ballsremaining'] > 0].copy()
+
+# isolate the hundred data
+hundredData = data[(data['competition'] == 'The Hundred (Women\'s Comp)')].copy()
+hundredData = hundredData[hundredData['inningNumber'] == 1]
+hundredData['totalInningRunsToCome'] = hundredData['totalInningRunsEnd'] - (hundredData['totalInningRuns'] - hundredData['totalRuns'])
+hundredData = hundredData[hundredData['inningBallsRemaining'] > 0].copy()
 
 
-# -------------------------
-# Load t20 data
-# -------------------------
-t20Data = pd.read_csv(
-    PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w_2.csv',
-    parse_dates=['date']
-)
-
-t20Data = t20Data[t20Data['innings'] == 1].copy()
+# isolate t20 data
+t20Data = data[(data['competition'] != 'The Hundred (Women\'s Comp)')].copy()
+t20Data = t20Data[t20Data['inningNumber'] == 1]
 t20Data = t20Data[t20Data['year'] > 2020].copy()
-t20Data = t20Data[t20Data['ballsremaining'] > 0].copy()
+t20Data = t20Data[t20Data['inningBallsRemaining'] > 0].copy()
 
 
 # -------------------------
@@ -40,35 +37,35 @@ t20Data = t20Data[t20Data['ballsremaining'] > 0].copy()
 # -------------------------
 hundredComparison = pd.pivot_table(
     hundredData,
-    values='runs_to_come',
-    index=['ballsremaining', 'wickets'],
+    values='totalInningRunsToCome',
+    index=['inningBallsRemaining', 'totalInningWickets'],
     aggfunc=['mean', 'count']
 ).reset_index()
 
 hundredComparison.columns = [
-    'ballsremaining',
-    'wickets',
+    'inningBallsRemaining',
+    'totalInningWickets',
     'mean_hundred',
     'count_hundred'
 ]
 
 t20Comparison = pd.pivot_table(
     t20Data,
-    values='runs_to_come',
-    index=['ballsremaining', 'wickets'],
+    values='totalInningRunsToCome',
+    index=['inningBallsRemaining', 'totalInningWickets'],
     aggfunc=['mean', 'count']
 ).reset_index()
 
 t20Comparison.columns = [
-    'ballsremaining',
-    'wickets',
+    'inningBallsRemaining',
+    'totalInningWickets',
     'mean_t20',
     'count_t20'
 ]
 
 comparison = hundredComparison.merge(
     t20Comparison,
-    on=['ballsremaining', 'wickets'],
+    on=['inningBallsRemaining', 'totalInningWickets'],
     how='left'
 )
 
@@ -88,8 +85,8 @@ comparison['ratio_hundred_vs_t20'] = (
 # Merge comparison ratio to Hundred data for modelling
 # -------------------------
 hundredData = hundredData.merge(
-    comparison[['ballsremaining', 'wickets', 'mean_t20', 'mean_hundred', 'ratio_hundred_vs_t20']],
-    on=['ballsremaining', 'wickets'],
+    comparison[['inningBallsRemaining', 'totalInningWickets', 'mean_t20', 'mean_hundred', 'ratio_hundred_vs_t20']],
+    on=['inningBallsRemaining', 'totalInningWickets'],
     how='left'
 )
 
@@ -105,7 +102,7 @@ hundredData = hundredData.dropna(
 comparison_br = pd.pivot_table(
     hundredData,
     values=['mean_t20', 'mean_hundred', 'ratio_hundred_vs_t20'],
-    index='ballsremaining',
+    index='inningBallsRemaining',
     aggfunc='mean'
 ).reset_index()
 
@@ -113,7 +110,7 @@ comparison_br = pd.pivot_table(
 # -------------------------
 # Fit model on balls remaining
 # -------------------------
-X = comparison_br[['ballsremaining']]
+X = comparison_br[['inningBallsRemaining']]
 y = comparison_br['ratio_hundred_vs_t20']
 
 model = Pipeline([
@@ -127,9 +124,9 @@ model.fit(X, y)
 # Apply adjustment to Hundred data
 # -------------------------
 comparison_br['ratio_pred'] = model.predict(
-    comparison_br[['ballsremaining']]
+    comparison_br[['inningBallsRemaining']]
 )
-comparison_br['adj_runs_to_come'] = comparison_br['mean_hundred'] / comparison_br['ratio_pred']
+comparison_br['totalInningRunsToCome100Adj'] = comparison_br['mean_hundred'] / comparison_br['ratio_pred']
 
 
 
@@ -138,7 +135,7 @@ comparison_br['adj_runs_to_come'] = comparison_br['mean_hundred'] / comparison_b
 # -------------------------
 comparison = comparison.merge(
     comparison_br,
-    on=['ballsremaining'],
+    on=['inningBallsRemaining'],
     how='left', suffixes=('', '_br')
 )
 
@@ -150,17 +147,17 @@ comparison = comparison.merge(
 # -------------------------
 plotData = comparison[
     [
-        'ballsremaining',
+        'inningBallsRemaining',
         'mean_t20_br',
         'mean_hundred_br',
-        'adj_runs_to_come',
+        'totalInningRunsToCome100Adj',
         'ratio_hundred_vs_t20_br',
         'ratio_pred'
     ]
 ].drop_duplicates(
-    subset=['ballsremaining']
+    subset=['inningBallsRemaining']
 ).sort_values(
-    'ballsremaining'
+    'inningBallsRemaining'
 )
 
 fig, ax1 = plt.subplots(figsize=(12, 7))
@@ -169,22 +166,22 @@ fig, ax1 = plt.subplots(figsize=(12, 7))
 # Runs-to-come curves
 # -------------------------
 ax1.plot(
-    plotData['ballsremaining'],
+    plotData['inningBallsRemaining'],
     plotData['mean_t20_br'],
     label='T20 runs to come',
     linewidth=2
 )
 
 ax1.plot(
-    plotData['ballsremaining'],
+    plotData['inningBallsRemaining'],
     plotData['mean_hundred_br'],
     label='Hundred runs to come',
     linewidth=2
 )
 
 ax1.plot(
-    plotData['ballsremaining'],
-    plotData['adj_runs_to_come'],
+    plotData['inningBallsRemaining'],
+    plotData['totalInningRunsToCome100Adj'],
     label='Adjusted Hundred runs to come',
     linewidth=2
 )
@@ -199,7 +196,7 @@ ax1.grid(alpha=0.3)
 ax2 = ax1.twinx()
 
 ax2.plot(
-    plotData['ballsremaining'],
+    plotData['inningBallsRemaining'],
     plotData['ratio_hundred_vs_t20_br'],
     '--',
     linewidth=2,
@@ -207,7 +204,7 @@ ax2.plot(
 )
 
 ax2.plot(
-    plotData['ballsremaining'],
+    plotData['inningBallsRemaining'],
     plotData['ratio_pred'],
     ':',
     linewidth=3,
@@ -234,4 +231,7 @@ plt.show()
 
 
 
-comparison.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/auxiliaries/hundredAdjusts.csv', index=False)
+# comparison.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/auxiliaries/hundredAdjusts.csv', index=False)
+# comparison_br.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/auxiliaries/hundredAdjustsCompare.csv', index=False)
+
+
