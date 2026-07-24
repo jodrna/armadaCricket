@@ -1,173 +1,254 @@
 from pathlib import Path
-user_name = Path.home()
+from datetime import timedelta, date
 import pandas as pd
 import numpy as np
-from datetime import timedelta, date
 from db import engine
 from paths import PROJECT_ROOT
-import subprocess
-from sqlalchemy import text
-import sqlalchemy
-
+user_name = Path.home()
 connection = engine.connect()
 
-#updating all data (1) or just daily update (2)?
+
+# -------------------------
+# Update settings
+# -------------------------
+# 1 = complete update of all data
+# 2 = daily update
 run_type = 1
 
+
+# -------------------------
+# Get last downloaded date
+# -------------------------
 last_date_data = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv', parse_dates=['date'])
+
 if last_date_data['date_of_run'].max() == pd.Timestamp(date.today()):
     exit()
 
 last_date = last_date_data['date'].max() - timedelta(days=10)
-format_date_new = last_date.strftime("%m/%d/%Y")
+
 format_date_old = '12/31/2014'
+format_date_new = last_date.strftime('%m/%d/%Y')
+
 if run_type == 1:
     format_date = format_date_old
 else:
     format_date = format_date_new
 
-print("2")
-param = [(format_date,)] #here we convert the format_date to a tuple, because the method of inserting variables into the SQL query requires either a tuple or a dictionary. To make a dictionary we would need to put a placeholder name in the sql query but for some reason this doesn't work with postgres Sql (according to gpt)
-sql_query = '''select  matchid, id, tier, date, year, competition, venue, host, home, away, battingteam, innings, ball, delivery2, runs, score, t_runs, wicket, wickets, t_wickets,
-                                 ballsremaining, target, reduced, max_balls, noball, wide, ord, byes, legbyes, innperiod, bowlerwicket, realexprbat, realexpwbat, realexprbowl, realexpwbowl, rating_sample_size, major_nation, batsmanballs, ovrexpr, ovrexpw, batsman, nonstriker, bowler, batterid, bowlerid, av_runs_bat, av_wkts_bat, style_new, power_surge
-                                 from match_data.w_t20_bbb tb
-                                 where tier < 3
-                                 and date > %s
-                                 and reduced is not true
-                                 order by matchid, innings, id'''
 
-sql_data = pd.read_sql_query(sql_query, con=connection, params=(format_date,))  # param is the format_date in this case. It is subbed in for %s within the query. You could have multiple %s in the query and multiple parameters in order
-connection.commit()
-# sql_data.to_csv(fr'{user_name}\Documents\Tempdata\sqldataforclean2023_w.csv', index=False)
-# sql_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\sqldataforclean2023_w.csv', dtype={'reduced': 'object'})
-print("3")
-# sql_data['runs_to_come'] = sql_data['t_runs'] - sql_data['score']
-# sql_data = sql_data[(sql_data.competition == 'The Hundred (Women\'s Comp)') & (sql_data.innings == 1)]
-# test = sql_data.groupby(['ballsremaining'])['runs_to_come'].mean().reset_index()
+# -------------------------
+# get ball-by-ball data
+# -------------------------
+sql_query = '''
+select matchid, id, tier, date, year, competition, venue, host, home, away, battingteam, innings, ball, delivery2, runs, score, t_runs, wicket, wickets, t_wickets,
+       ballsremaining, target, reduced, max_balls, noball, wide, ord, byes, legbyes, innperiod, bowlerwicket, realexprbat, realexpwbat, realexprbowl, realexpwbowl,
+       rating_sample_size, major_nation, batsmanballs, ovrexpr, ovrexpw, batsman, nonstriker, bowler, batterid, bowlerid, av_runs_bat, av_wkts_bat, style_new, power_surge
+from match_data.w_t20_bbb
+where tier < 3
+and date > %s
+and reduced is not true
+order by matchid, innings, id
+'''
 
-# #export then import again, simple way to get date format correct
-# sql_data.to_csv(fr'{user_name}\Documents\Tempdata\sqldataforclean2023_w.csv', index=False)
-# raw_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\sqldataforclean2023_w.csv', dtype={'reduced': 'object'})
-raw_data = sql_data.copy()
+allData = pd.read_sql_query(sql_query, con=connection, params=(format_date,))
+allData = allData.sort_values(by=['matchid', 'innings', 'delivery2']).reset_index(drop=True)
 
-print("4")
 
-raw_data = raw_data.sort_values(by=['matchid', 'innings', 'delivery2'])
+# -------------------------
+# Initial cleaning
+# -------------------------
+allData['target'] = np.where(allData['innings'] == 1, np.nan, allData['target'])
+allData['reduced'] = allData['reduced'].fillna(False)
+allData = allData.dropna(subset=['battingteam'])
+allData['venue'] = allData['venue'].replace({'R.Premadasa Stadium': 'R Premadasa Stadium'})
 
-uniques = raw_data['date'].apply(type).unique()
-# some cleaning, set target in 1st innings to nan, set reduced game to false when nan, change duplicate venue names
-raw_data['target'] = np.where(raw_data['innings'] == 1, np.nan, raw_data['target'])
-raw_data['reduced'] = raw_data['reduced'].fillna(False)
-raw_data = raw_data.dropna(subset=['battingteam'], axis=0)
-raw_data['venue'] = np.where(raw_data['venue'] == 'R.Premadasa Stadium', 'R Premadasa Stadium', raw_data['venue'])  # could add to this (chinniswamy)
 
-# make sure targets are 1 more than 1st innings total
-targets = pd.pivot_table(raw_data[raw_data['innings'] == 1], values=['t_runs'], index=['matchid'], aggfunc=['mean']).reset_index()
+# -------------------------
+# re calculate second innings targets
+# -------------------------
+targets = pd.pivot_table(allData[allData['innings'] == 1], values='t_runs', index='matchid', aggfunc='mean').reset_index()
+targets['target_new'] = targets['t_runs'] + 1
 targets['innings'] = 2
-targets.columns = ['matchid', 'target_x', 'innings']
-targets['target_x'] = targets['target_x'] + 1
-raw_data = raw_data.merge(targets, how='left', on=['matchid', 'innings'])
-raw_data['target'] = raw_data['target_x']
-raw_data = raw_data.drop(labels=['target_x'], axis=1)
-##needs to be done before hundred split
-raw_data['over_number'] = raw_data['delivery2'].apply(lambda x: np.floor(x))
-raw_data['over'] = raw_data['over_number'] + 1
-raw_data['extra'] = np.where(raw_data['wide'] + raw_data['noball'] > 0, 1, 0)
+targets = targets[['matchid', 'innings', 'target_new']]
 
-# # # take out big bash after 2019 season because of the power surge
-# raw_data = raw_data[(raw_data['competition'] != 'Women\'s Big Bash League') | (raw_data['date'] < date(2020, 6, 6))]
-# take out the 100
-# raw_data = raw_data[(raw_data['competition'] != 'The Hundred (Women\'s Comp)')]
-hundred = raw_data[(raw_data['competition'] == 'The Hundred (Women\'s Comp)')]
-raw_data = raw_data[(raw_data['competition'] != 'The Hundred (Women\'s Comp)')]
+allData = allData.merge(targets, how='left', on=['matchid', 'innings'])
+allData['target'] = np.where(allData['innings'] == 2, allData['target_new'], allData['target'])
+allData = allData.drop(columns=['target_new'])
 
-# # for t20i only include the major nations
-# raw_data = raw_data[(raw_data['competition'] != 'WT20I') |
-#                     (raw_data.home.isin(['England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']) &
-#                      raw_data.away.isin(['England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']))]
 
-pivot = pd.pivot_table(raw_data, values=['t_runs', 't_wickets', 'max_balls', 'ball', 'noball', 'wide', 'target'], index=['matchid', 'innings', 'reduced'],
-                       aggfunc={'t_runs': 'max', 't_wickets': 'max', 'max_balls': 'min', 'ball': 'count', 'noball': 'sum', 'wide': 'sum', 'target': 'max'}).reset_index()
+# -------------------------
+# Create over and extras variables
+# -------------------------
+allData['over_number'] = np.floor(allData['delivery2'])
+allData['over'] = allData['over_number'] + 1
+allData['extra'] = np.where((allData['wide'] + allData['noball']) > 0, 1, 0)
 
-# 1st innings reduced games
-pivot_1 = pivot.copy()
-pivot_1 = pivot_1[pivot_1['innings'] == 1]
+
+# -------------------------
+# separate Hundred and T20 data
+# -------------------------
+hundredData = allData[allData['competition'] == 'The Hundred (Women\'s Comp)'].copy()
+t20Data = allData[allData['competition'] != 'The Hundred (Women\'s Comp)'].copy()
+
+
+
+# CLEAN T20 DATA
+# -------------------------
+# Identify reduced T20 games that aren't already flagged on SQL as reduced
+# -------------------------
+pivot = pd.pivot_table(
+    t20Data,
+    values=['t_runs', 't_wickets', 'max_balls', 'ball', 'noball', 'wide', 'target'],
+    index=['matchid', 'innings', 'reduced'],
+    aggfunc={'t_runs': 'max', 't_wickets': 'max', 'max_balls': 'min', 'ball': 'count', 'noball': 'sum', 'wide': 'sum', 'target': 'max'}
+).reset_index()
+
+
+# -------------------------
+# identify 1st innings reduced games
+# -------------------------
+pivot_1 = pivot[pivot['innings'] == 1].copy()
 pivot_1['innings_balls'] = pivot_1['ball'] - pivot_1['wide'] - pivot_1['noball']
-# remove where max balls less than 120 but greater than 0 (because 0 max balls has errors, we'll deal with it separately)
-pivot_1['remove'] = np.where((pivot_1['innings'] == 1) & (pivot_1['max_balls'] < 120) & (pivot_1['max_balls'] > 0), 1, 0)
-# remove where max balls = 120, reduced = true and innings_balls < 120, sometimes max balls is 120 & only 2nd innings was reduced, here we can keep the first innings but only if there are 120 balls in the data
-pivot_1['remove'] = np.where((pivot_1['innings'] == 1) & (pivot_1['max_balls'] == 120) & (pivot_1['reduced'] is True) & (pivot_1['innings_balls'] < 115), 1, pivot_1['remove'])
-# where max balls is 0, look at innings_balls, if its 120 then not reduced. If it's less than 118 then remove unless there are 10 wickets
-pivot_1['remove'] = np.where((pivot_1['innings'] == 1) & (pivot_1['max_balls'] == 0) & (pivot_1['innings_balls'] > 117), 0, pivot_1['remove'])
-pivot_1['remove'] = np.where((pivot_1['innings'] == 1) & (pivot_1['max_balls'] == 0) & (pivot_1['innings_balls'] < 118) & (pivot_1['t_wickets'] < 10), 1, pivot_1['remove'])
+pivot_1['remove'] = 0
 
-# 2nd innings reduced games
-pivot_2 = pivot.copy()
-pivot_2 = pivot_2[pivot_2['innings'] == 2]
+# Known reduced innings
+pivot_1['remove'] = np.where((pivot_1['max_balls'] < 120) & (pivot_1['max_balls'] > 0), 1, pivot_1['remove'])
+
+# Max balls says 120 but innings was flagged as reduced and stopped early
+pivot_1['remove'] = np.where((pivot_1['max_balls'] == 120) & pivot_1['reduced'] & (pivot_1['innings_balls'] < 115), 1, pivot_1['remove'])
+
+# max_balls = 0 is unreliable, so use actual balls bowled
+pivot_1['remove'] = np.where((pivot_1['max_balls'] == 0) & (pivot_1['innings_balls'] > 117), 0, pivot_1['remove'])
+pivot_1['remove'] = np.where((pivot_1['max_balls'] == 0) & (pivot_1['innings_balls'] < 118) & (pivot_1['t_wickets'] < 10), 1, pivot_1['remove'])
+
+
+# -------------------------
+# identify 2nd innings reduced games
+# -------------------------
+pivot_2 = pivot[pivot['innings'] == 2].copy()
 pivot_2['innings_balls'] = pivot_2['ball'] - pivot_2['wide'] - pivot_2['noball']
-# if sql says reduced mark as reduced
-pivot_2['remove'] = np.where((pivot_2['innings'] == 2) & (pivot_2['reduced'] is True), 1, 0)
-# remove where max balls less than 120 but greater than 0 (because 0 max balls has errors, we'll deal with it separately)
-pivot_2['remove'] = np.where((pivot_2['innings'] == 2) & (pivot_2['max_balls'] < 120) & (pivot_2['max_balls'] > 0), 1, pivot_2['remove'])
-# look at non-reduced games with 120 max balls, check first if 120 bowled, if not then look if target reached or bowled out, mark as reduced accordingly
-pivot_2['remove'] = np.where((pivot_2['innings'] == 2) & (pivot_2['reduced'] is False) & (pivot_2['max_balls'] == 120) & (pivot_2['innings_balls'] < 114) & (pivot_2['t_runs'] < pivot_2['target']) &
-                             (pivot_2['t_wickets'] < 10), 1, pivot_2['remove'])
-pivot_2['remove'] = np.where((pivot_2['innings'] == 2) & (pivot_2['reduced'] is False) & (pivot_2['max_balls'] == 0) & (pivot_2['innings_balls'] < 114) & (pivot_2['t_runs'] < pivot_2['target']) &
-                             (pivot_2['t_wickets'] < 10), 1, pivot_2['remove'])
+pivot_2['remove'] = 0
 
-# merge the reduced into the raw data then remove reduced games
-pivot = pd.concat([pivot_1, pivot_2], axis=0)
-raw_data = raw_data.merge(pivot.loc[:, ['matchid', 'innings', 'remove']], how='left', on=['matchid', 'innings'])
-raw_data = raw_data[raw_data['remove'] == 0]
-raw_data = raw_data.drop(labels=['reduced', 'remove', 'max_balls'], axis=1)  # same as dropping columns
+# Known reduced innings
+pivot_2['remove'] = np.where(pivot_2['reduced'], 1, pivot_2['remove'])
 
-# fix the ball
-rollextra = pd.DataFrame(raw_data.groupby(['matchid', 'over_number', 'innings'], sort=False)['extra'].rolling(50, min_periods=1, closed='left').sum()).reset_index().fillna(0)
+# Reduced maximum innings length
+pivot_2['remove'] = np.where((pivot_2['max_balls'] < 120) & (pivot_2['max_balls'] > 0), 1, pivot_2['remove'])
+
+# Short innings which did not reach the target or lose 10 wickets
+pivot_2['remove'] = np.where(~pivot_2['reduced'] & (pivot_2['max_balls'] == 120) & (pivot_2['innings_balls'] < 114) & (pivot_2['t_runs'] < pivot_2['target']) & (pivot_2['t_wickets'] < 10), 1, pivot_2['remove'])
+pivot_2['remove'] = np.where(~pivot_2['reduced'] & (pivot_2['max_balls'] == 0) & (pivot_2['innings_balls'] < 114) & (pivot_2['t_runs'] < pivot_2['target']) & (pivot_2['t_wickets'] < 10), 1, pivot_2['remove'])
+
+
+# -------------------------
+# remove reduced games
+# -------------------------
+pivot = pd.concat([pivot_1, pivot_2], ignore_index=True)
+t20Data = t20Data.merge(pivot[['matchid', 'innings', 'remove']], how='left', on=['matchid', 'innings'])
+t20Data = t20Data[t20Data['remove'] == 0].copy()
+t20Data = t20Data.drop(columns=['reduced', 'remove', 'max_balls'])
+
+
+# -------------------------
+# fix ball number, we need to count the number of illegal deliveries in the over so far to help (rollextra)
+# -------------------------
+rollextra = t20Data.groupby(['matchid', 'over_number', 'innings'], sort=False)['extra'].rolling(50, min_periods=1, closed='left').sum().reset_index().fillna(0)
 rollextra = rollextra.sort_values(by=['matchid', 'level_3']).reset_index(drop=True)
 rollextra['extra'] = rollextra['extra'] / 100
-# now assign
-raw_data = raw_data.reset_index(drop=True)
-raw_data['extra'] = rollextra['extra']
-raw_data['ball'] = raw_data['delivery2'] - raw_data['extra']
-raw_data['ballsremaining'] = round((120 - ((np.floor(raw_data['ball']) * 6) + ((raw_data['ball'] - np.floor(raw_data['ball'])) * 100) - 1)), 0)
-# fix the score, first find games where total score != stated score, for these games stick with stated score, for others go to rolling score
-runs_comp = pd.pivot_table(raw_data, values=['runs', 't_runs'], index=['matchid', 'innings'], aggfunc={'runs': 'sum', 't_runs': 'mean'}).reset_index()
+t20Data = t20Data.reset_index(drop=True)
+t20Data['extra'] = rollextra['extra']
+t20Data['ball'] = t20Data['delivery2'] - t20Data['extra']
+t20Data['ballsremaining'] = np.round(120 - ((np.floor(t20Data['ball']) * 6) + ((t20Data['ball'] - np.floor(t20Data['ball'])) * 100) - 1), 0)
+
+
+# -------------------------
+# Fix score
+# -------------------------
+runs_comp = pd.pivot_table(t20Data, values=['runs', 't_runs'], index=['matchid', 'innings'], aggfunc={'runs': 'sum', 't_runs': 'mean'}).reset_index()
 runs_comp['comp'] = runs_comp['runs'] - runs_comp['t_runs']
-true_score = pd.DataFrame(raw_data.groupby(['matchid', 'innings'], sort=False)['runs'].rolling(200, min_periods=1, closed='left').sum()).reset_index().fillna(0)
-raw_data = raw_data.reset_index(drop=True)
-raw_data['true_score'] = true_score['runs']  # does this join them effectively?
-raw_data = raw_data.merge(runs_comp.loc[:, ['matchid', 'innings', 'comp']], on=['matchid', 'innings'], how='left')
-raw_data['score'] = np.where(raw_data['comp'] != 0, raw_data['score'], raw_data['true_score'])
+true_score = t20Data.groupby(['matchid', 'innings'], sort=False)['runs'].rolling(200, min_periods=1, closed='left').sum().reset_index().fillna(0)
+t20Data = t20Data.reset_index(drop=True)
+t20Data['true_score'] = true_score['runs']
+t20Data = t20Data.merge(runs_comp[['matchid', 'innings', 'comp']], how='left', on=['matchid', 'innings'])
+t20Data['score'] = np.where(t20Data['comp'] != 0, t20Data['score'], t20Data['true_score'])
 
-hundred['true_score'] = hundred['score']
-hundred.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/hundredData.csv', index=False)
 
-raw_data = pd.concat([raw_data, hundred], axis=0)
 
-# clean
-raw_data['wickets'] = raw_data['wickets'] - raw_data['wicket']
-raw_data['wickets'] = np.where(raw_data['wickets'] == -1, 0, raw_data['wickets'])
-raw_data['required'] = raw_data['target'] - raw_data['score']
-raw_data['runs_to_come'] = raw_data['t_runs'] - raw_data['score']
-raw_data['result'] = np.where(raw_data['innings'] == 1, np.nan, np.where(raw_data['t_runs'] >= raw_data['target'], 1, 0))
 
-# final filter, remove obvious errors, wickets greater than 9, required must be more than 0 when innings is 2, ballsremaining must be >0, score must be >-1
-raw_data = raw_data[raw_data['wickets'] < 10]
-raw_data = raw_data[(raw_data['required'] > 0) | (raw_data['innings'] == 1)]
-raw_data = raw_data[raw_data['ballsremaining'] > 0]
-raw_data = raw_data[raw_data['score'] > -1]
+
+# CLEAN HUNDRED DATA
+# -------------------------
+# fix ball number, we need to count the number of illegal deliveries in the over so far to help (rollextra)
+# -------------------------
+rollextra = hundredData.groupby(['matchid', 'over_number', 'innings'], sort=False)['extra'].rolling(50, min_periods=1, closed='left').sum().reset_index().fillna(0)
+rollextra = rollextra.sort_values(by=['matchid', 'level_3']).reset_index(drop=True)
+rollextra['extra'] = rollextra['extra'] / 100
+hundredData = hundredData.reset_index(drop=True)
+hundredData['extra'] = rollextra['extra']
+hundredData['ball'] = round(hundredData['delivery2'] - hundredData['extra'], 2)
+hundredData['ballsremaining'] = np.round(100 - ((np.floor(hundredData['ball']) * 5) + ((hundredData['ball'] - np.floor(hundredData['ball'])) * 100) - 1), 0)
+
+
+# -------------------------
+# Fix score
+# -------------------------
+runs_comp = pd.pivot_table(hundredData, values=['runs', 't_runs'], index=['matchid', 'innings'], aggfunc={'runs': 'sum', 't_runs': 'mean'}).reset_index()
+runs_comp['comp'] = runs_comp['runs'] - runs_comp['t_runs']
+true_score = hundredData.groupby(['matchid', 'innings'], sort=False)['runs'].rolling(200, min_periods=1, closed='left').sum().reset_index().fillna(0)
+hundredData = hundredData.reset_index(drop=True)
+hundredData['true_score'] = true_score['runs']
+hundredData = hundredData.merge(runs_comp[['matchid', 'innings', 'comp']], how='left', on=['matchid', 'innings'])
+hundredData['score'] = np.where(hundredData['comp'] != 0, hundredData['score'], hundredData['true_score'])
+
+
+
+
+
+# -------------------------
+# combine hundred and t20 data again now they've been cleaned seperately
+# -------------------------
+allData = pd.concat([t20Data, hundredData], ignore_index=True)
+
+
+
+
+
+
+
+
+# -------------------------
+# final bits
+# -------------------------
+allData['wickets'] = allData['wickets'] - allData['wicket']
+allData['wickets'] = np.where(allData['wickets'] == -1, 0, allData['wickets'])
+allData['required'] = allData['target'] - allData['score']
+allData['runs_to_come'] = allData['t_runs'] - allData['score']
+allData['result'] = np.where(allData['innings'] == 1, np.nan, np.where(allData['t_runs'] >= allData['target'], 1, 0))
+
+
+# -------------------------
+# Final cleaning
+# -------------------------
+allData = allData[allData['wickets'] < 10]
+allData = allData[(allData['required'] > 0) | (allData['innings'] == 1)]
+allData = allData[allData['ballsremaining'] > 0]
+allData = allData[allData['score'] > -1]
 
 wkt_value_sum = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/wkt_sum_mean_w.csv')
-raw_data = raw_data.merge(wkt_value_sum, how='left')
-raw_data = raw_data.drop_duplicates(subset=['id'])
+allData = allData.merge(wkt_value_sum, how='left')
 
-# # print("5")
+allData = allData.drop_duplicates(subset=['id']).reset_index(drop=True)
 
-## export
+
+
+
+# -------------------------
+# Export
+# -------------------------
 if run_type == 1:
-    raw_data.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
-#     # raw_data = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_w.csv')
-#     sqlupload = raw_data.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]
+    allData.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
+
+#     # allData = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_w.csv')
+#     sqlupload = allData.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]
 #     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a']
 #
 #     with connection.begin():
@@ -200,7 +281,7 @@ if run_type == 1:
 #         """))
 #
 # else:
-#     sqlupload = raw_data.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]
+#     sqlupload = allData.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]
 #     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a']
 #
 #     with connection.begin():
@@ -243,8 +324,8 @@ if run_type == 1:
 #
 #         connection.execute(text("DROP TABLE player_ratings.w_t20_bbb_clean_temp"))
 #
-#     raw_data = raw_data.sort_values(by='date', ascending=False)
-#     date = raw_data.head(1)
+#     allData = allData.sort_values(by='date', ascending=False)
+#     date = allData.head(1)
 #     date['date_of_run'] = pd.Timestamp(date.today())
 #     date = date.loc[:,['date', 'date_of_run']]
 #     date.to_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv', index=False)
@@ -254,3 +335,5 @@ if run_type == 1:
 #     subprocess.run(['git', 'push'])
 #
 # connection.close()
+
+

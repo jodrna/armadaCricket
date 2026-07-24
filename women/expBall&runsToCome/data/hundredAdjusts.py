@@ -21,7 +21,7 @@ data = pd.read_csv(
 # isolate the hundred data
 hundredData = data[(data['competition'] == 'The Hundred (Women\'s Comp)')].copy()
 hundredData = hundredData[hundredData['inningNumber'] == 1]
-hundredData['totalInningRunsToCome'] = hundredData['totalInningRunsEnd'] - (hundredData['totalInningRuns'] - hundredData['totalRuns'])
+# hundredData['totalInningRunsToCome'] = hundredData['totalInningRunsEnd'] - (hundredData['totalInningRuns'] - hundredData['totalRuns'])
 hundredData = hundredData[hundredData['inningBallsRemaining'] > 0].copy()
 
 

@@ -28,14 +28,9 @@ trainData['isWicketRunOut'] = np.where(trainData['isWicket'] > trainData['isWick
 trainData['chaseWin'] = np.where(trainData['totalInningRunsEnd'] >= trainData['target'], 1, 0)
 trainData['runsRequired'] = trainData['target'] - trainData['totalInningRuns']
 
-# # take out big bash power surge and 10 wickets down, keep only matches after 1st Jan 2015
-# trainData = trainData[(trainData['competition'] != 'Big Bash League') | (trainData['date'] < '06-06-2020')]
-# trainData['totalInningWickets'] = np.where(trainData['isWicket'] == True, trainData['totalInningWickets'] - 1, trainData['totalInningWickets'])
-trainData = trainData[trainData['totalInningWickets'] <= 9]
-trainData = trainData[trainData['totalInningWickets'] >= 0]
-trainData = trainData[trainData['date'] >= '01-01-2015']
 
 
+# order and rename columns
 trainData = trainData.loc[:, ['matchid', 'id', 'tier', 'date', 'year', 'competition', 'venue', 'host', 'home', 'away', 'battingteam', 'inningNumber', 'totalRuns', 'totalInningRuns',
                               'totalInningRunsEnd', 'isWicket', 'totalInningWickets', 'totalInningWicketsEnd', 'inningBallsRemaining', 'target', 'noballRuns', 'wideRuns', 'ord', 'byeRuns', 'legbyes',
                               'innperiod', 'isWicketBowler', 'realexprbat', 'realexpwbat', 'rating_sample_size', 'major_nation', 'batsmanballs', 'ovrexpr', 'ovrexpw', 'batsman', 'nonstriker', 'comp',
