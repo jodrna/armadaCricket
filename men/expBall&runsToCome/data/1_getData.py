@@ -11,7 +11,7 @@ from sqlalchemy import text
 connection = engine.connect()
 
 #updating all data (1) or just daily update (2)?
-run_type = 2
+run_type = 1
 
 subprocess.run(['git', 'pull'], check=True)
 last_date_data = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/latest_data_clean.csv', parse_dates=['date'])

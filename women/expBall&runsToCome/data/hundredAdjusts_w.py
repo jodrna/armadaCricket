@@ -66,7 +66,7 @@ t20Comparison.columns = [
 comparison = hundredComparison.merge(
     t20Comparison,
     on=['inningBallsRemaining', 'totalInningWickets'],
-    how='left'
+    how='outer'
 )
 
 comparison = comparison[comparison['count_hundred'] > 5].copy()
