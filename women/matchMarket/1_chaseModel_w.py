@@ -59,6 +59,7 @@ masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGrou
 trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSplineYear', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 # create a ratio of runs to come to be used as a predictor, drop any nans
 trainData['ratioRequired'] = trainData['runsRequired'] / trainData['totalInningRunsToComeSimBiasSplineYear'] # changing to include year
+trainData['ratioRequiredStd'] = trainData['runsRequiredStd'] / trainData['totalInningRunsToComeSimBiasSplineYear']
 trainData = trainData.dropna(axis=0, subset=['ratioRequired'])
 
 
@@ -73,7 +74,9 @@ chaseLookup = chaseLookup.rename(columns={'sample': 'chaseSample'})
 chaseLookup = chaseLookup.merge(masterLookup.loc[:, ['totalInningWickets', 'inningBallNumber', 'sample', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
 chaseLookup = chaseLookup.rename(columns={'sample': 'ballWicketSample'})
 chaseLookup['ratioRequired'] = chaseLookup['runsRequired'] / chaseLookup['totalInningRunsToComeSimBiasSplineYear'] # changing to include year
-chaseLookup['daysGroup'] = 12.4
+chaseLookup['ratioRequiredStd'] = chaseLookup['runsRequiredStd'] / chaseLookup['totalInningRunsToComeSimBiasSplineYear'] # changing to include year
+chaseLookup['daysGroup'] = 11.7
+
 chaseLookup = chaseLookup.dropna(axis=0, subset=['totalInningRunsToComeSimBiasSplineYear']).reset_index(drop=True)
 chaseLookup['in'] = 1
 
@@ -129,7 +132,7 @@ trainDataLastOver = trainDataLastOver[(trainDataLastOver['inningBallsRemaining']
 
 # prepare the data
 y = trainDataLastOver['chaseWin']
-X_std = trainDataLastOver[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining']]
+X_std = trainDataLastOver[['runsRequiredStd', 'ratioRequiredStd', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining']]
 scaler = StandardScaler()
 scaler.fit(X_std)
 X_std = scaler.transform(X_std)
@@ -142,19 +145,48 @@ trainDataLastOver['m_chaseWin%'] = model.predict_proba(X_std)[:, 1]
 # now predict the chase situations outside of training
 chaseLookupLastOver = chaseLookup.copy()
 chaseLookupLastOver = chaseLookupLastOver[(chaseLookupLastOver['inningBallsRemaining'] < 7)]
-X = chaseLookupLastOver[['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining']]
+X = chaseLookupLastOver[['runsRequiredStd', 'ratioRequiredStd', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining']]
 X = scaler.transform(X)
 chaseLookupLastOver['m_chaseWin%'] = model.predict_proba(X)[:, 1]
-
-
-
 
 # Scaling to range [0.0001, 0.9999]
 min_val, max_val = 0.0001, 0.9999
 chaseLookupLastOver['m_chaseWin%'] = min_val + (chaseLookupLastOver['m_chaseWin%'] - chaseLookupLastOver['m_chaseWin%'].min()) * (max_val - min_val) / (chaseLookupLastOver['m_chaseWin%'].max() - chaseLookupLastOver['m_chaseWin%'].min())
 
 
-# combine the 2 models
+
+
+# DEATH model
+trainDataDeath = trainData.copy()
+trainDataDeath = trainDataDeath[(trainDataDeath['inningBallsRemaining'] < 31)]
+
+# prepare the data
+y = trainDataDeath['chaseWin']
+X_stdDeath = trainDataDeath[['runsRequiredStd', 'ratioRequiredStd', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining']]
+scaler = StandardScaler()
+scaler.fit(X_stdDeath)
+X_stdDeath = scaler.transform(X_stdDeath)
+
+# build the model
+modelDeath = MLPClassifier(hidden_layer_sizes=(8, 4), random_state=42, activation='logistic', batch_size='auto', learning_rate='constant', max_iter=5000, early_stopping=False, learning_rate_init=0.001)
+modelDeath.fit(X_stdDeath, y)
+trainDataDeath['m_chaseWin%'] = modelDeath.predict_proba(X_stdDeath)[:, 1]
+
+# now predict the chase situations outside of training
+chaseLookupDeath = chaseLookup.copy()
+chaseLookupDeath = chaseLookupDeath[(chaseLookupDeath['inningBallsRemaining'] < 31)]
+X = chaseLookupDeath[['runsRequiredStd', 'ratioRequiredStd', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining']]
+X = scaler.transform(X)
+chaseLookupDeath['m_chaseWin%'] = modelDeath.predict_proba(X)[:, 1]
+
+# Scaling to range [0.0001, 0.9999]
+min_val, max_val = 0.0001, 0.9999
+chaseLookupDeath['m_chaseWin%'] = min_val + (chaseLookupDeath['m_chaseWin%'] - chaseLookupDeath['m_chaseWin%'].min()) * (max_val - min_val) / (chaseLookupDeath['m_chaseWin%'].max() - chaseLookupDeath['m_chaseWin%'].min())
+
+
+
+
+# combine the 3 models
 chaseLookup = pd.concat([chaseLookupLastOver, chaseLookupMain], axis=0).reset_index(drop=True)
 trainData = pd.concat([trainDataLastOver, trainDataMain], axis=0).reset_index(drop=True)
 

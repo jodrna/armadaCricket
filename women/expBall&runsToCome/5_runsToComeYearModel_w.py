@@ -13,7 +13,7 @@ trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_
 # trainData = trainData[(trainData['competition'] != "Women's Big Bash League") | (trainData['date'] < pd.Timestamp(2020, 6, 6))]
 # hundred_test = trainData[(trainData['competition'] == "The Hundred (Women's Comp)") & (trainData['inningBallsRemaining'] == 100) & (trainData['inningNumber'] == 1)]
 # hundred_test = hundred_test.groupby(['year'])[['totalInningRunsToCome', 'totalInningRunsToComeAdj']].mean().reset_index()
-trainData = trainData[trainData['competition'] != "The Hundred (Women's Comp)"]
+# trainData = trainData[trainData['competition'] != "The Hundred (Women's Comp)"]
 
 
 # import master lookup table from previous modelling step
@@ -176,7 +176,7 @@ masterLookup['daysGroup'] = masterLookup['year'] - 2015
 
 # duplicate the latest year and relabel as 9.4, this gives us the number we want to match the match market
 extraRows = masterLookup.loc[masterLookup['daysGroup'] == masterLookup['daysGroup'].max()].copy()
-extraRows['daysGroup'] = 12.2
+extraRows['daysGroup'] = 11.7
 
 # append future-year rows back onto master lookup
 masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)

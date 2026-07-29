@@ -408,7 +408,7 @@ if run_type == 1:
 #     subprocess.run(['git', 'commit', '-m', 'update csv files'])
 #     subprocess.run(['git', 'push'])
 #
-# connection.close()
+connection.close()
 
 
 
