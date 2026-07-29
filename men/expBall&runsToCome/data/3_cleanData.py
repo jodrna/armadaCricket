@@ -57,7 +57,7 @@ trainData.columns = ['matchID', 'ID', 'tier', 'date', 'year', 'competition', 've
 
 # adjusted runs, used for the match market and year adjustment
 trainData['runsRequiredAdj'] = trainData['runsRequired'] - trainData['RA_Sum']
-trainData['totalInningRunsToComeAdj'] = trainData['totalInningRunsToCome'] - trainData['RA_Sum']
+trainData['totalInningRunsToComeAdj'] = trainData['totalInningRunsToCome'] - trainData['RA_sum']
 
 
 # export the cleaned data

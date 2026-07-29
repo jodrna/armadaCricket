@@ -411,6 +411,9 @@ raw_data_for_hundredAdjusts.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data
 # raw_data_for_hundredAdjusts.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', index=False)
 
 dataClean_w = raw_data_for_hundredAdjusts.drop(columns=['rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum'])
+dataClean_w['totalInningRunsToComeAdj'] = dataClean_w['totalInningRunsToCome'] - dataClean_w['RA_sum']
+dataClean_w = dataClean_w.rename(columns={'RA_sum': 'RA_Sum'})
+
 dataClean_w.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', index=False)
 
 
