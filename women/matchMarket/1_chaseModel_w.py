@@ -185,7 +185,7 @@ min_val, max_val = 0.0001, 0.9999
 chaseLookupDeath['m_chaseWin%_Death'] = min_val + (chaseLookupDeath['m_chaseWin%_Death'] - chaseLookupDeath['m_chaseWin%_Death'].min()) * (max_val - min_val) / (chaseLookupDeath['m_chaseWin%_Death'].max() - chaseLookupDeath['m_chaseWin%_Death'].min())
 
 
-# combine the main and the death models - MAKE THIS SHOW ALL THREE MODELS SIDE BY SIDE TO SEE WHERE THE DIFFS ARE IF ANY
+# combine the main and the death models - - this shows the three models side by side and allows us to blend them or choose between them
 
 chaseLookupMain = chaseLookupMain.merge(chaseLookupDeath.loc[:, ['runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining', 'm_chaseWin%_Death']], on=('runsRequired', 'ratioRequired', 'totalInningWickets', 'daysGroup', 'inningBallsRemaining'), how='left')
 chaseLookupMain['m_chaseWin%'] = np.where(chaseLookupMain['inningBallsRemaining'] > 30, chaseLookupMain['m_chaseWin%Main'], np.where(chaseLookupMain['inningBallsRemaining'] < 12, chaseLookupMain['m_chaseWin%_Death'], (((chaseLookupMain['inningBallsRemaining'] - 12) / 18) * chaseLookupMain['m_chaseWin%Main']) + ((1 - ((chaseLookupMain['inningBallsRemaining'] - 12) / 18)) * chaseLookupMain['m_chaseWin%_Death'])))
