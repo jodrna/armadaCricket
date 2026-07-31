@@ -3,8 +3,7 @@ import numpy as np
 from paths import PROJECT_ROOT
 
 # import
-trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3New.csv', parse_dates=['date'])
-trainData['RA_sum'] = 0
+trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', parse_dates=['date'])
 # rename columns
 trainData = trainData.rename(columns={'innings': 'inningNumber', 'wickets': 'totalInningWickets', 'bowlerwicket': 'isWicketBowler', 'noball': 'noballRuns', 'over': 'overNumber',
                                       'score': 'totalInningRuns', 't_runs': 'totalInningRunsEnd', 'runs_to_come': 'totalInningRunsToCome', 'wicket': 'isWicket',
