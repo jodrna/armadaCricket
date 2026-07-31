@@ -3,7 +3,7 @@ import numpy as np
 from paths import PROJECT_ROOT
 
 # import
-trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', parse_dates=['date'])
+trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come.csv', parse_dates=['date'])
 # rename columns
 trainData = trainData.rename(columns={'innings': 'inningNumber', 'wickets': 'totalInningWickets', 'bowlerwicket': 'isWicketBowler', 'noball': 'noballRuns', 'over': 'overNumber',
                                       'score': 'totalInningRuns', 't_runs': 'totalInningRunsEnd', 'runs_to_come': 'totalInningRunsToCome', 'wicket': 'isWicket',
@@ -56,10 +56,10 @@ trainData.columns = ['matchID', 'ID', 'tier', 'date', 'year', 'competition', 've
 
 # adjusted runs, used for the match market and year adjustment
 trainData['runsRequiredAdj'] = trainData['runsRequired'] - trainData['RA_Sum']
-trainData['totalInningRunsToComeAdj'] = trainData['totalInningRunsToCome'] - trainData['RA_sum']
+trainData['totalInningRunsToComeAdj'] = trainData['totalInningRunsToCome'] - trainData['RA_Sum']
 
 
 # export the cleaned data
-trainData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataCleanNew.csv', index=False)
+trainData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', index=False)
 
 
