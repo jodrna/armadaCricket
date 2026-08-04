@@ -22,7 +22,7 @@ connection = engine.connect()
 # import data
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
 trainData = trainData[trainData['competition'] != "The Hundred (Women's Comp)"]
-# simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
+simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/simDataSmall_w.csv')
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/5_masterLookup_w.csv')
 matchMarket = pd.read_csv(PROJECT_ROOT / 'women/matchMarket/outputs/1_chaseLookup_w.csv')
 trainData = trainData[trainData['inningNumber'] == 1]

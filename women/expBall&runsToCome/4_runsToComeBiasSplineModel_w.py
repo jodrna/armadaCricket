@@ -14,7 +14,7 @@ from paths import PROJECT_ROOT
 # import necessary data
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
-simData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrd_w.csv')
+simData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/simDataSmall_w.csv')
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/2_masterLookup_w.csv')
 
 #
@@ -156,16 +156,4 @@ print(mean_absolute_error(trainData['totalInningRunsToCome'], trainData['totalIn
 
 # export
 masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/4_masterLookup_w.csv', index=False)
-
-
-
-simData = simData[[
-    'simID',
-    'inningBallNumber',
-    'totalInningWickets',
-    'totalInningRunsToCome',
-    'sample'
-]]
-
-simData.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/simDataSmall.csv', index=False)
 

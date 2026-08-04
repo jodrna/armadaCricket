@@ -18,7 +18,7 @@ from paths import PROJECT_ROOT
 
 # import data
 trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
-simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/ballSimsClassOrd.csv')
+simClassAdjusted = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/simDataSmall.csv')
 masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv')
 matchMarket = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookup.csv')
 trainData = trainData[trainData['inningNumber'] == 1]

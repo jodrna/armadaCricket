@@ -15,7 +15,7 @@ from paths import PROJECT_ROOT
 # import necessary data
 trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
-simData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/ballSimsClassOrd.csv')
+simData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/simDataSmall.csv')
 masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/2_masterLookup.csv')
 
 # situationMoments = simData.groupby(['totalInningWickets', 'inningBallNumber'])['totalInningRunsToCome'] \
