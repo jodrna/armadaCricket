@@ -6,10 +6,12 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
 
+# IPL or non IPL
+IPL = 0
 
 # import cleaned ball-by-ball data
 trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
-
+print(trainData[trainData.competition == 'Indian Premier League'])
 # import master lookup table from previous modeling step
 masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/4_masterLookup.csv')
 #
@@ -49,7 +51,9 @@ trainData = trainData.dropna(subset=['vsAdjOvr', 'vsOvr'])
 test3 = trainData[trainData.year == 2026].groupby(['competition'])['ID'].count().reset_index()
 # # only train on 2018+ data
 # trainData = trainData.loc[trainData['year'] > 2018].copy()
-trainData['IPL'] = np.where((trainData['competition'] == 'Indian Premier League') & (trainData['competition'] == 'International League T20'), 1, 0)
+trainData['IPL'] = np.where((trainData['competition'] == 'Indian Premier League') | (trainData['competition'] == 'International League T20'), 1, 0)
+
+print(trainData[trainData.IPL == 1])
 # create interaction terms between year trend and game state
 trainData['daysGroup_totalInningWickets'] = trainData['daysGroup'] * trainData['totalInningWickets']
 trainData['daysGroup_inningBallNumber'] = trainData['daysGroup'] * trainData['inningBallNumber']
@@ -141,70 +145,89 @@ RA_sum_wl_br = RA_sum_wl_br.merge(RA_sum_factoring, on='inningBallNumber', suffi
 RA_sum_wl_br['predicted_RA_Sum'] = RA_sum_wl_br['predicted_RA_Sum'] - RA_sum_wl_br['predicted_RA_Sum_factoring']
 RA_sum_wl_br = RA_sum_wl_br.loc[:, ['totalInningWickets', 'inningBallNumber', 'predicted_RA_Sum']]
 
-# # create year grouping used for prediction
-# masterLookup['daysGroup'] = masterLookup['year'] - 2015
-#
-# # duplicate the latest year and relabel as 9.4, this gives us the number we want to match the match market
-# extraRows = masterLookup.loc[masterLookup['daysGroup'] == 11].copy()
-# extraRows['daysGroup'] = 9.9
-#
-# # append future-year rows back onto master lookup
-# masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
-#
-# # recreate interaction features for prediction
-# masterLookup['daysGroup_totalInningWickets'] = masterLookup['daysGroup'] * masterLookup['totalInningWickets']
-# masterLookup['daysGroup_inningBallNumber'] = masterLookup['daysGroup'] * masterLookup['inningBallNumber']
-#
-# # prediction feature matrix
-# X_master = masterLookup[features]
-#
-# # predict year adjustment rates
-# masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] = (model_adj.predict(X_master))
-# masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] = (model_raw.predict(X_master))
-# if log_method == 1:
-#     masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] = np.expm1(masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj']) + vsAdjOvrMin
-#     masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] = np.expm1(masterLookup['totalInningRunsToComeSimBiasSplineYearRate']) + vsOvrMin
-#
-# # this is to allow for overall bias in the by year adjust model, this means the overall adjust for each wicket will be 1.000
-# masterLookup = masterLookup.merge(testing_wl, on='totalInningWickets', how='left')
-# masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] / masterLookup['yearFactor']
-# masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] / masterLookup['yearFactor2']
-#
-# # apply predicted year factors to baseline spline values
-# masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] * masterLookup['totalInningRunsToComeSimBiasSpline']
-# masterLookup['totalInningRunsToComeSimBiasSplineYear'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] * masterLookup['totalInningRunsToComeSimBiasSpline']
-# masterLookup = masterLookup.sort_values(by=['totalInningWickets', 'inningBallNumber', 'ord', 'daysGroup']).reset_index(drop=True)
-#
-# # apply predicted RA_sum as recovery work:
-# masterLookup = masterLookup.merge(RA_sum_wl_br, on=('totalInningWickets', 'inningBallNumber'), how='left')
-# masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] - masterLookup['predicted_RA_Sum']
-#
-# # #export final lookup table
-# masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv', index=False)
+# create year grouping used for prediction
+masterLookup['daysGroup'] = masterLookup['year'] - 2015
 
-# ##below is for making an output of the values each daysGroup will give
-# lookupForInruns = pd.DataFrame({'daysGroup': np.arange(5, 20.1, 0.1)})
-# # create interaction terms between year trend and game state
-# lookupForInruns['totalInningWickets'] = 0
-# lookupForInruns['inningBallNumber'] = 1
-# lookupForInruns['daysGroup_totalInningWickets'] = lookupForInruns['daysGroup'] * lookupForInruns['totalInningWickets']
-# lookupForInruns['daysGroup_inningBallNumber'] = lookupForInruns['daysGroup'] * lookupForInruns['inningBallNumber']
-# lookupForInruns = lookupForInruns.merge(masterLookup[(masterLookup.totalInningWickets == 0) & (masterLookup.inningBallNumber == 1)].groupby(['inningBallNumber', 'totalInningWickets'])[['totalInningRunsToComeSimBiasSpline', 'predicted_RA_Sum']].mean().reset_index(), on=('totalInningWickets', 'inningBallNumber'), how='left')
-# # prediction feature matrix
-# X_lookup = lookupForInruns[features]
-# lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] = (model_adj.predict(X_lookup))
-# lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] = (model_raw.predict(X_lookup))
-# if log_method == 1:
-#     lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] = np.expm1(lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj']) + vsAdjOvrMin
-#     lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] = np.expm1(lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate']) + vsOvrMin
-# lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj2'] = (lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']) - lookupForInruns['predicted_RA_Sum']
-# lookupForInruns['totalInningRunsToComeSimBiasSplineYear2'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']
-# # this is to allow for overall bias in the by year adjust model, this means the overall adjust for each wicket will be 1.000
-# lookupForInruns = lookupForInruns.merge(testing_wl, on='totalInningWickets', how='left')
-# lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj3'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj2'] / lookupForInruns['yearFactor']
-# lookupForInruns['totalInningRunsToComeSimBiasSplineYear3'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYear2'] / lookupForInruns['yearFactor2']
-#
-# lookupForInruns_final = lookupForInruns.loc[:, ['daysGroup', 'totalInningRunsToComeSimBiasSplineYear3', 'totalInningRunsToComeSimBiasSplineYearAdj3']]
+# duplicate the latest year and relabel as 9.4, this gives us the number we want to match the match market
+extraRows = masterLookup.loc[masterLookup['daysGroup'] == 11].copy()
+extraRows['daysGroup'] = 11.01
+
+
+# append future-year rows back onto master lookup
+masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
+
+# recreate interaction features for prediction
+masterLookup['daysGroup_totalInningWickets'] = masterLookup['daysGroup'] * masterLookup['totalInningWickets']
+masterLookup['daysGroup_inningBallNumber'] = masterLookup['daysGroup'] * masterLookup['inningBallNumber']
+if IPL == 0:
+    masterLookup['daysGroup_IPL'] = 0
+    masterLookup['daysGroup_totalInningWickets_IPL'] = 0
+    masterLookup['daysGroup_inningBallNumber_IPL'] = 0
+
+else:
+    masterLookup['daysGroup_IPL'] = masterLookup['daysGroup']
+    masterLookup['daysGroup_totalInningWickets_IPL'] = masterLookup['daysGroup_totalInningWickets']
+    masterLookup['daysGroup_inningBallNumber_IPL'] = masterLookup['daysGroup_inningBallNumber']
+
+# prediction feature matrix
+X_master = masterLookup[features]
+
+# predict year adjustment rates
+masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] = (model_adj.predict(X_master))
+masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] = (model_raw.predict(X_master))
+if log_method == 1:
+    masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] = np.expm1(masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj']) + vsAdjOvrMin
+    masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] = np.expm1(masterLookup['totalInningRunsToComeSimBiasSplineYearRate']) + vsOvrMin
+
+# this is to allow for overall bias in the by year adjust model, this means the overall adjust for each wicket will be 1.000
+masterLookup = masterLookup.merge(testing_wl, on='totalInningWickets', how='left')
+masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] / masterLookup['yearFactor']
+masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] / masterLookup['yearFactor2']
+
+# apply predicted year factors to baseline spline values
+masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] * masterLookup['totalInningRunsToComeSimBiasSpline']
+masterLookup['totalInningRunsToComeSimBiasSplineYear'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] * masterLookup['totalInningRunsToComeSimBiasSpline']
+masterLookup = masterLookup.sort_values(by=['totalInningWickets', 'inningBallNumber', 'ord', 'daysGroup']).reset_index(drop=True)
+
+# apply predicted RA_sum as recovery work:
+masterLookup = masterLookup.merge(RA_sum_wl_br, on=('totalInningWickets', 'inningBallNumber'), how='left')
+masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] - masterLookup['predicted_RA_Sum']
+
+# #export final lookup table
+masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv', index=False)
+
+##below is for making an output of the values each daysGroup will give
+lookupForInruns = pd.DataFrame({'daysGroup': np.arange(5, 20.1, 0.1)})
+# create interaction terms between year trend and game state
+lookupForInruns['totalInningWickets'] = 0
+lookupForInruns['inningBallNumber'] = 1
+lookupForInruns['daysGroup_totalInningWickets'] = lookupForInruns['daysGroup'] * lookupForInruns['totalInningWickets']
+lookupForInruns['daysGroup_inningBallNumber'] = lookupForInruns['daysGroup'] * lookupForInruns['inningBallNumber']
+if IPL == 0:
+    lookupForInruns['daysGroup_IPL'] = 0
+    lookupForInruns['daysGroup_totalInningWickets_IPL'] = 0
+    lookupForInruns['daysGroup_inningBallNumber_IPL'] = 0
+else:
+    lookupForInruns['daysGroup_IPL'] = lookupForInruns['daysGroup']
+    lookupForInruns['daysGroup_totalInningWickets_IPL'] = lookupForInruns['daysGroup_totalInningWickets']
+    lookupForInruns['daysGroup_inningBallNumber_IPL'] = lookupForInruns['daysGroup_inningBallNumber']
+
+lookupForInruns = lookupForInruns.merge(masterLookup[(masterLookup.totalInningWickets == 0) & (masterLookup.inningBallNumber == 1)].groupby(['inningBallNumber', 'totalInningWickets'])[['totalInningRunsToComeSimBiasSpline', 'predicted_RA_Sum']].mean().reset_index(), on=('totalInningWickets', 'inningBallNumber'), how='left')
+# prediction feature matrix
+X_lookup = lookupForInruns[features]
+lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] = (model_adj.predict(X_lookup))
+lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] = (model_raw.predict(X_lookup))
+if log_method == 1:
+    lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] = np.expm1(lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj']) + vsAdjOvrMin
+    lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] = np.expm1(lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate']) + vsOvrMin
+lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj2'] = (lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']) - lookupForInruns['predicted_RA_Sum']
+lookupForInruns['totalInningRunsToComeSimBiasSplineYear2'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']
+# this is to allow for overall bias in the by year adjust model, this means the overall adjust for each wicket will be 1.000
+lookupForInruns = lookupForInruns.merge(testing_wl, on='totalInningWickets', how='left')
+lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj3'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj2'] / lookupForInruns['yearFactor']
+lookupForInruns['totalInningRunsToComeSimBiasSplineYear3'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYear2'] / lookupForInruns['yearFactor2']
+
+lookupForInruns_final = lookupForInruns.loc[:, ['daysGroup', 'totalInningRunsToComeSimBiasSplineYear3', 'totalInningRunsToComeSimBiasSplineYearAdj3']]
 
 testing_br_year_IPL['pred_runsadj'], testing_br_year_IPL['pred_runs'] = testing_br_year_IPL['totalInningRunsToComeSimBiasSpline'] * testing_br_year_IPL['yearFactor'], testing_br_year_IPL['totalInningRunsToComeSimBiasSpline'] * testing_br_year_IPL['yearFactor2']
 comparison_by_year_final = testing_br_year_IPL[testing_br_year_IPL.inningBallNumber == 1]
