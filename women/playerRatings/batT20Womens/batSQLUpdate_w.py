@@ -93,8 +93,8 @@ with engine.begin() as conn:
 # upload historic outputs
 sql_upload_2 = ratings.copy()
 sql_upload_2 = sql_upload_2[sql_upload_2.matchid > 0]
-sql_upload_2 = sql_upload_2.loc[:, ['batsman', 'playerid', 'competition', 'host', 'run_rating_3', 'wkt_rating_3', 'balls_faced_r', 'date', 'matchid']]
-sql_upload_2.columns = ['batter', 'playerid', 'competition', 'host', 'run_rating', 'wkt_rating', 'balls_faced', 'date', 'matchid']
+sql_upload_2 = sql_upload_2.loc[:, ['batsman', 'playerid', 'competition', 'host', 'run_rating_3', 'wkt_rating_3', 'balls_faced_r', 'date', 'matchid', 'ord_r']]
+sql_upload_2.columns = ['batter', 'playerid', 'competition', 'host', 'run_rating', 'wkt_rating', 'balls_faced', 'date', 'matchid', 'ord']
 
 truncate_and_upload(
     sql_upload_2,
