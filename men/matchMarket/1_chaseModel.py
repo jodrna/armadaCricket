@@ -17,7 +17,7 @@ from paths import PROJECT_ROOT
 trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
 masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv')
 chaseSituations = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/auxiliaries/chaseSituationBuilder.csv')
-chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookupLive.csv')
+# chaseLookupLive = pd.read_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookupLive.csv')
 
 
 # drop nans from adj
@@ -52,7 +52,8 @@ trainData = trainData.sample(frac=1, random_state=42).reset_index(drop=True)
 # we need to remove duplicates in runs to come so just select batting order 1
 masterLookup = masterLookup[(masterLookup['ord'] == 1) & (masterLookup['daysGroup'] == 11)]
 # merge in runs to come
-trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSplineYear', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut']], how='left', on=['totalInningWickets', 'inningBallNumber'])
+trainData = trainData.merge(masterLookup.loc[:, ['totalInningRunsToComeSimBiasSplineYear', 'totalInningWickets', 'inningBallNumber', 'totalInningValidBallsFacedToCome', 'bowledOut', 'sample']].rename(columns={'sample': 'ballWicketSample'}), how='left', on=['totalInningWickets', 'inningBallNumber'])
+# ballWicketSample = sample size behind the (wickets, ball) state, kept on every row so it can be used to mask out unreliable states when scoring/checking the model (not when training it)
 # create a ratio of runs to come to be used as a predictor, drop any nans
 trainData['ratioRequired'] = trainData['runsRequired'] / trainData['totalInningRunsToComeSimBiasSplineYear']
 trainData = trainData.dropna(axis=0, subset=['ratioRequired'])
@@ -162,7 +163,7 @@ scaler.fit(X_std)
 X_std = scaler.transform(X_std)
 
 # build the model
-model = MLPClassifier(hidden_layer_sizes=(4, 2), random_state=42, activation='logistic', batch_size='auto', learning_rate='constant', max_iter=5000, early_stopping=False, learning_rate_init=0.001)
+model = MLPClassifier(hidden_layer_sizes=(64, 32), random_state=42, activation='logistic', batch_size='auto', learning_rate='constant', max_iter=5000, early_stopping=False, learning_rate_init=0.001)
 model.fit(X_std, y)
 trainDataMain['m_chaseWin%Main'] = model.predict_proba(X_std)[:, 1]
 
@@ -268,15 +269,15 @@ chaseLookup['state_id'] = (
 
 
 # some checks, the below doesn't affect the model
-# bias check
-bias = pd.pivot_table(trainData, values=['m_chaseWin%', 'chaseWin', 'sample'], aggfunc='sum', index=['totalInningWickets']).reset_index()
+# bias check - scored only on states with enough underlying ball/wicket data to trust (full trainData is still used for fitting above)
+bias = pd.pivot_table(trainData[trainData['ballWicketSample'] >= 100], values=['m_chaseWin%', 'chaseWin', 'sample'], aggfunc='sum', index=['totalInningWickets']).reset_index()
 bias['bias'] = bias['m_chaseWin%'] / bias['chaseWin']
 bias['win%'] = bias['chaseWin'] / bias['sample']
 
-# compare
-chaseLookup = chaseLookup.merge(chaseLookupLive.loc[:, ['m_chaseWin%', 'totalInningWickets', 'runsRequired', 'inningBallsRemaining']],
-                                how='left', on=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], suffixes=('', 'Live'))
-chaseLookup['m_diff'] = chaseLookup['m_chaseWin%'] - chaseLookup['m_chaseWin%Live']
+# # compare
+# chaseLookup = chaseLookup.merge(chaseLookupLive.loc[:, ['m_chaseWin%', 'totalInningWickets', 'runsRequired', 'inningBallsRemaining']],
+#                                 how='left', on=['totalInningWickets', 'runsRequired', 'inningBallsRemaining'], suffixes=('', 'Live'))
+# chaseLookup['m_diff'] = chaseLookup['m_chaseWin%'] - chaseLookup['m_chaseWin%Live']
 
 
 # chase win % year
