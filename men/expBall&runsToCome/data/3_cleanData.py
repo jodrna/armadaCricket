@@ -46,13 +46,15 @@ trainData = trainData.loc[:, ['matchid', 'id', 'tier', 'date', 'year', 'competit
                               'totalInningRunsEnd', 'isWicket', 'totalInningWickets', 'totalInningWicketsEnd', 'inningBallsRemaining', 'target', 'noballRuns', 'wideRuns', 'ord', 'byeRuns', 'legbyes',
                               'innperiod', 'isWicketBowler', 'realexprbat', 'realexpwbat', 'rating_sample_size', 'major_nation', 'batsmanballs', 'ovrexpr', 'ovrexpw', 'batsman', 'nonstriker', 'extra',
                               'true_score', 'comp', 'required', 'totalInningRunsToCome', 'result', 'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'isPowerplay', 'isValid',
-                              'isWide', 'isNoball', 'sample', 'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired', 'RA_sum']]
+                              'isWide', 'isNoball', 'sample', 'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired',
+                              'RA_sum', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'oppo_bowl_runs', 'oppo_bowl_wkts', 'oppo_bat_runs', 'oppo_bat_wkts', 'ground_runs', 'ground_wkts']]
 trainData.columns = ['matchID', 'ID', 'tier', 'date', 'year', 'competition', 'venue', 'host', 'home', 'away', 'battingTeam', 'inningNumber', 'totalRuns',
                      'totalInningRuns', 'totalInningRunsEnd', 'isWicket', 'totalInningWickets', 'totalInningWicketsEnd', 'inningBallsRemaining', 'target', 'noballRuns', 'wideRuns',
                      'ord', 'byeRuns', 'legbyeRuns', 'inningPhase', 'isWicketBowler', 'realexprbat', 'realexpwbat', 'rating_sample_size', 'major_nation', 'batsmanBallsFaced',
                      'ovrexpr', 'ovrexpw', 'batsmanName', 'nonstrikerName', 'extra', 'true_score', 'comp', 'required', 'totalInningRunsToCome', 'result',
                      'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'isPowerplay', 'isValid', 'isWide', 'isNoball', 'sample',
-                     'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired', 'RA_Sum']
+                     'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired',
+                     'RA_Sum', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'oppo_bowl_runs', 'oppo_bowl_wkts', 'oppo_bat_runs', 'oppo_bat_wkts', 'ground_runs', 'ground_wkts']
 
 # adjusted runs, used for the match market and year adjustment
 trainData['runsRequiredAdj'] = trainData['runsRequired'] - trainData['RA_Sum']
