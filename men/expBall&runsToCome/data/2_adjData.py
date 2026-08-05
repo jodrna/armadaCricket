@@ -15,6 +15,7 @@ connection = engine.connect()
 raw_data_og = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', parse_dates=['date'])
 # raw_data_og_max_date = raw_data_og['date'].max()
 raw_data_og = raw_data_og.drop_duplicates(subset=['id'])
+
 # # raw_data_og = raw_data_og[raw_data_og.matchid == 1233979]
 bowler_data = pd.read_sql_query("""select bowler, playerid as bowlerid, competition, host, date, run_rating as run_rating_pr_bo, wkt_rating as wkt_rating_pr_bo from player_ratings.bowler_ratings_historic""", con=connection)
 batter_data = pd.read_sql_query("""select batter as batsman, playerid as batterid, competition, host, date, run_rating as run_rating_pr_ba, wkt_rating as wkt_rating_pr_ba, balls_faced as balls_faced_pr_ba from player_ratings.batter_ratings_historic""", con=connection)
@@ -380,6 +381,8 @@ new_data = pd.pivot_table(new_data, values=['rar_bat', 'raw_bat',  'rar_ground_s
 new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum']
 
 raw_data_og = raw_data_og.merge(new_data.loc[:, ['id', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'RA_sum']], on='id', how='left')
+
+raw_data_og = raw_data_og.merge(raw_data.loc[:,['id', 'oppo_bowl_runs', 'oppo_bowl_wkts', 'oppo_bat_runs', 'oppo_bat_wkts', 'ground_runs', 'ground_wkts']], on='id', how='left')
 
 raw_data_og.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/Data/Cleaned_t20bbb3_adjusted_runs_to_come.csv', index=False)
 
