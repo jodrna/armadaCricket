@@ -8,10 +8,10 @@ from paths import PROJECT_ROOT
 # Settings
 # -------------------------
 
-mode = 'upload'          # 'upload' or 'download'
+mode = 'download'          # 'upload' or 'download'
 
 schema_name = 'player_ratings'
-table_name = 'sim_class_adjusted_women'
+table_name = 'sim_class_adjusted'
 
 
 # -------------------------
