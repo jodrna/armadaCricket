@@ -4,10 +4,13 @@ from sklearn import preprocessing
 import statsmodels.api as sm
 from batFunctions_w import build_replacement_debug_tables
 from paths import PROJECT_ROOT
+from women.playerRatings.batT20Womens.batErrorAnalysis_w import bat_data
+
 DEBUG_CONFIG = globals().get('DEBUG_CONFIG', None)
 BAT_REPLACEMENT_DEBUG_TABLES = None
 
 
+comps = pd.pivot_table(bat_data[bat_data['competition'] != 101], values='age', index='competition', aggfunc='count').reset_index()
 def make_ohe(values, cats, prefix, drop_first=True):
     drop = 'first' if drop_first else None
     encoder = preprocessing.OneHotEncoder(sparse_output=False, categories=[cats], drop=drop, handle_unknown='ignore')

@@ -145,5 +145,5 @@ masterLookup = masterLookup.rename(columns={'daysGroup': 'year'})
 masterLookup['year'] = masterLookup['year'] + 2015
 
 # export
-masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/2_masterLookup.csv', index=False)
+# masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/2_masterLookup2.csv', index=False)
 

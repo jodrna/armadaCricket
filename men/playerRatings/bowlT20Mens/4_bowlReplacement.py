@@ -137,11 +137,19 @@ for x in np.arange(0, 2, 1):
     # -------------------------
     # 2) Filters (main comps only)
     # -------------------------
-    bowl_data = bowl_data.loc[bowl_data['competition'].isin(['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
-                                                         'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League']), :]
+    # bowl_data = bowl_data.loc[bowl_data['competition'].isin(['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
+    #                                                      'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League']), :]
+    #
+    # ratings = ratings.loc[ratings['competition'].isin(['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
+    #                                                   'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League']), :].reset_index(drop=True)
 
-    ratings = ratings.loc[ratings['competition'].isin(['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
-                                                      'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League']), :].reset_index(drop=True)
+    competitions = ['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
+                    'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League',
+                    'Afghanistan Premier League', 'Bangladesh Premier League', 'New Zealand', 'ODDOMMO Bangladesh T20 Cup', 'Pakistan National T20 Cup', 'South Africa']
+
+    bowl_data = bowl_data.loc[bowl_data['format'] == 't20', :].copy()
+    bowl_data = bowl_data.loc[bowl_data['competition'].isin(competitions), :].copy()
+    ratings = ratings.loc[ratings['competition'].isin(competitions), :].reset_index(drop=True)
 
     # -------------------------
     # 3) Base cleaning / merges

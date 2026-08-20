@@ -406,15 +406,13 @@ new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_g
 
 raw_data_for_hundredAdjusts = raw_data_og.merge(new_data.loc[:, ['ID', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum', 'RA_sum']], on='ID', how='left')
 raw_data_for_hundredAdjusts_test1 = raw_data_for_hundredAdjusts[raw_data_for_hundredAdjusts.competition == 'The Hundred (Women\'s Comp)']
-raw_data_for_hundredAdjusts.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w_2.csv', index=False)
-##temp while we figure out the hundred stuff:
-# raw_data_for_hundredAdjusts.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', index=False)
 
 dataClean_w = raw_data_for_hundredAdjusts.drop(columns=['rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum'])
 dataClean_w['totalInningRunsToComeAdj'] = dataClean_w['totalInningRunsToCome'] - dataClean_w['RA_sum']
 dataClean_w = dataClean_w.rename(columns={'RA_sum': 'RA_Sum'})
 
-dataClean_w.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', index=False)
+dataClean_w.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', index=False)
+
 
 
 

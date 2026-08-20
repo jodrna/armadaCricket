@@ -7,6 +7,7 @@ from paths import PROJECT_ROOT
 # Imports
 # -------------------------
 bat_data = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombined.csv', parse_dates=['date'])
+
 player_info = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/playerInfo.csv', parse_dates=['dob'])
 ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/batRatingsFor.csv')
 
@@ -23,7 +24,7 @@ ratings = pd.read_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/auxiliaries/b
 # fix some comp names
 # -------------------------
 bat_data['competition'] = np.where(bat_data['competition'] == 'Champions Trophy', 'ODI', bat_data['competition'])
-
+bat_data['competition'] = bat_data['competition'].where(~bat_data['competition'].str.contains('ODI', na=False), 'ODI')
 
 # -------------------------
 # Fix ODI player ids (mapping via cricinfo_id, then via playerid)
@@ -269,7 +270,11 @@ bat_data['careerT20MatchNumber'] = bat_data.groupby('playerid')['uniqueMatchMark
 bat_data = bat_data.drop(columns=['uniqueMatchMarker'])
 
 
-# -------------------------
-# Export
-# -------------------------
-bat_data.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombinedClean.csv', index=False)
+
+comps = pd.pivot_table(bat_data, values='batsman', index='competition', aggfunc='count').reset_index()
+
+
+# # -------------------------
+# # Export
+# # -------------------------
+# bat_data.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombinedClean.csv', index=False)

@@ -165,7 +165,8 @@ for x in np.arange(0, 2, 1):
     # 2) Filters
     # -------------------------
     competitions = ['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
-                    'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League']
+                    'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League',
+                    'Afghanistan Premier League', 'Bangladesh Premier League', 'New Zealand', 'ODDOMMO Bangladesh T20 Cup', 'Pakistan National T20 Cup', 'South Africa']
 
     bat_data = bat_data.loc[bat_data['format'] == 't20', :].copy()
     bat_data = bat_data.loc[bat_data['competition'].isin(competitions), :].copy()
@@ -352,5 +353,6 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle2.csv', index=False)
     else:
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsRasoi2.csv', index=False)
+
 
 

@@ -196,6 +196,3 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/batRatingsRasoi3_w.csv', index=False)
         sql_upload.to_csv(PROJECT_ROOT / 'women/playerRatings/batT20Womens/outputs/sqlUploadRasoi_w.csv', index=False)
 
-
-
-

@@ -16,7 +16,7 @@ start_weight = 10
 # Load data
 # -------------------------
 data = pd.read_csv(
-    PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv',
+    PROJECT_ROOT / 'men/expBall&runsToCome/data/dataCleanNew.csv',
     parse_dates=['date']
 )
 
@@ -26,7 +26,7 @@ data = pd.read_csv(
 # -------------------------
 data['inningBallsRemainingOriginal'] = data['inningBallsRemaining']
 
-hundred_mask = data['competition'] == "The Hundred (Women's Comp)"
+hundred_mask = data['competition'] == "The Hundred (Men's Comp)"
 
 hundred_balls_remaining = data.loc[
     hundred_mask,
@@ -47,7 +47,7 @@ data.loc[hundred_mask, 'inningBallsRemaining'] = np.round(
 # Isolate the Hundred data
 # -------------------------
 hundredData = data[
-    data['competition'] == "The Hundred (Women's Comp)"
+    data['competition'] == "The Hundred (Men's Comp)"
 ].copy()
 
 hundredData = hundredData[
@@ -63,7 +63,7 @@ hundredData = hundredData[
 # Isolate T20 data
 # -------------------------
 t20Data = data[
-    data['competition'] != "The Hundred (Women's Comp)"
+    data['competition'] != "The Hundred (Men's Comp)"
 ].copy()
 
 t20Data = t20Data[
@@ -84,7 +84,7 @@ t20Data = t20Data[
 # -------------------------
 hundredComparison = pd.pivot_table(
     hundredData,
-    values='totalInningRunsToComeAdj',
+    values='totalInningRunsToCome',
     index=[
         'inningBallsRemainingOriginal',
         'inningBallsRemaining',
@@ -103,7 +103,7 @@ hundredComparison.columns = [
 
 t20Comparison = pd.pivot_table(
     t20Data,
-    values='totalInningRunsToComeAdj',
+    values='totalInningRunsToCome',
     index=[
         'inningBallsRemaining',
         'totalInningWickets'
@@ -174,7 +174,7 @@ hundredData = hundredData.dropna(
 hundredComparison_br = pd.pivot_table(
     hundredData,
     values=[
-        'totalInningRunsToComeAdj',
+        'totalInningRunsToCome',
         'totalInningWickets'
     ],
     index=[
@@ -186,7 +186,7 @@ hundredComparison_br = pd.pivot_table(
 
 hundredComparison_br = hundredComparison_br.rename(
     columns={
-        'totalInningRunsToComeAdj': 'mean_hundred',
+        'totalInningRunsToCome': 'mean_hundred',
         'totalInningWickets': 'mean_wickets_hundred'
     }
 )
@@ -198,7 +198,7 @@ hundredComparison_br = hundredComparison_br.rename(
 t20Comparison_br = pd.pivot_table(
     t20Data,
     values=[
-        'totalInningRunsToComeAdj',
+        'totalInningRunsToCome',
         'totalInningWickets'
     ],
     index='inningBallsRemaining',
@@ -207,7 +207,7 @@ t20Comparison_br = pd.pivot_table(
 
 t20Comparison_br = t20Comparison_br.rename(
     columns={
-        'totalInningRunsToComeAdj': 'mean_t20',
+        'totalInningRunsToCome': 'mean_t20',
         'totalInningWickets': 'mean_wickets_t20'
     }
 )
@@ -464,59 +464,6 @@ comparison_br['totalInningRunsToCome100Adj'] = (
 
 
 # -------------------------
-# Merge predicted ratio into the full data
-# -------------------------
-ratio_lookup = comparison_br.set_index(
-    [
-        'inningBallsRemainingOriginal',
-        'inningBallsRemaining'
-    ]
-)['ratio_pred_constrained']
-
-hundred_index = pd.MultiIndex.from_frame(
-    data.loc[
-        hundred_mask,
-        [
-            'inningBallsRemainingOriginal',
-            'inningBallsRemaining'
-        ]
-    ]
-)
-
-data['ratio_pred_constrained'] = np.nan
-
-data.loc[
-    hundred_mask,
-    'ratio_pred_constrained'
-] = ratio_lookup.reindex(
-    hundred_index
-).to_numpy()
-
-
-# -------------------------
-# Apply predicted ratio to Hundred runs to come
-# -------------------------
-hundred_adjustment_mask = (
-    hundred_mask
-    & data['ratio_pred_constrained'].notna()
-)
-
-data.loc[
-    hundred_adjustment_mask,
-    'totalInningRunsToComeAdj'
-] = (
-    data.loc[
-        hundred_adjustment_mask,
-        'totalInningRunsToComeAdj'
-    ]
-    / data.loc[
-        hundred_adjustment_mask,
-        'ratio_pred_constrained'
-    ]
-)
-
-
-# -------------------------
 # Merge constrained ratio into state comparison
 # -------------------------
 comparison = comparison.merge(
@@ -535,95 +482,95 @@ comparison = comparison.merge(
 )
 
 
-# # -------------------------
-# # Overall plot data
-# # -------------------------
-# plotData = comparison_br[
-#     [
-#         'inningBallsRemaining',
-#         'inningBallsRemainingOriginal',
-#         'mean_t20',
-#         'mean_hundred',
-#         'totalInningRunsToCome100Adj',
-#         'ratio_hundred_vs_t20',
-#         'ratio_pred_constrained'
-#     ]
-# ].sort_values(
-#     'inningBallsRemaining'
-# )
-#
-#
-# # # -------------------------
-# # Chart 1
-# # Overall runs and constrained ratio
-# # -------------------------
-# fig, ax1 = plt.subplots(figsize=(12, 7))
-#
-# ax1.plot(
-#     plotData['inningBallsRemaining'],
-#     plotData['mean_t20'],
-#     label='T20 runs to come',
-#     linewidth=2
-# )
-#
-# ax1.plot(
-#     plotData['inningBallsRemaining'],
-#     plotData['mean_hundred'],
-#     label='Hundred runs to come',
-#     linewidth=2
-# )
-#
-# ax1.plot(
-#     plotData['inningBallsRemaining'],
-#     plotData['totalInningRunsToCome100Adj'],
-#     label='Adjusted Hundred runs to come',
-#     linewidth=2
-# )
-#
-# ax1.set_xlabel('Scaled balls remaining')
-# ax1.set_ylabel('Mean runs to come')
-# ax1.grid(alpha=0.3)
-#
-# ax2 = ax1.twinx()
-#
-# ax2.plot(
-#     plotData['inningBallsRemaining'],
-#     plotData['ratio_hundred_vs_t20'],
-#     '--',
-#     linewidth=2,
-#     label='Actual ratio'
-# )
-#
-# ax2.plot(
-#     plotData['inningBallsRemaining'],
-#     plotData['ratio_pred_constrained'],
-#     ':',
-#     linewidth=3,
-#     label='Constrained predicted ratio'
-# )
-#
-# ax2.axvline(
-#     powerplay_split,
-#     linestyle=':',
-#     linewidth=2,
-#     alpha=0.5,
-#     label='Powerplay boundary'
-# )
-#
-# ax2.set_ylabel('Hundred / T20 ratio')
-#
-# lines1, labels1 = ax1.get_legend_handles_labels()
-# lines2, labels2 = ax2.get_legend_handles_labels()
-#
-# ax1.legend(
-#     lines1 + lines2,
-#     labels1 + labels2,
-#     loc='best'
-# )
-#
-# plt.title('T20 vs Hundred Runs to Come')
-# plt.tight_layout()
-# plt.show()
+# -------------------------
+# Overall plot data
+# -------------------------
+plotData = comparison_br[
+    [
+        'inningBallsRemaining',
+        'inningBallsRemainingOriginal',
+        'mean_t20',
+        'mean_hundred',
+        'totalInningRunsToCome100Adj',
+        'ratio_hundred_vs_t20',
+        'ratio_pred_constrained'
+    ]
+].sort_values(
+    'inningBallsRemaining'
+)
+
+
+# -------------------------
+# Chart 1
+# Overall runs and constrained ratio
+# -------------------------
+fig, ax1 = plt.subplots(figsize=(12, 7))
+
+ax1.plot(
+    plotData['inningBallsRemaining'],
+    plotData['mean_t20'],
+    label='T20 runs to come',
+    linewidth=2
+)
+
+ax1.plot(
+    plotData['inningBallsRemaining'],
+    plotData['mean_hundred'],
+    label='Hundred runs to come',
+    linewidth=2
+)
+
+ax1.plot(
+    plotData['inningBallsRemaining'],
+    plotData['totalInningRunsToCome100Adj'],
+    label='Adjusted Hundred runs to come',
+    linewidth=2
+)
+
+ax1.set_xlabel('Scaled balls remaining')
+ax1.set_ylabel('Mean runs to come')
+ax1.grid(alpha=0.3)
+
+ax2 = ax1.twinx()
+
+ax2.plot(
+    plotData['inningBallsRemaining'],
+    plotData['ratio_hundred_vs_t20'],
+    '--',
+    linewidth=2,
+    label='Actual ratio'
+)
+
+ax2.plot(
+    plotData['inningBallsRemaining'],
+    plotData['ratio_pred_constrained'],
+    ':',
+    linewidth=3,
+    label='Constrained predicted ratio'
+)
+
+ax2.axvline(
+    powerplay_split,
+    linestyle=':',
+    linewidth=2,
+    alpha=0.5,
+    label='Powerplay boundary'
+)
+
+ax2.set_ylabel('Hundred / T20 ratio')
+
+lines1, labels1 = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+
+ax1.legend(
+    lines1 + lines2,
+    labels1 + labels2,
+    loc='best'
+)
+
+plt.title('T20 vs Hundred Runs to Come')
+plt.tight_layout()
+plt.show()
 
 
 # -------------------------
@@ -635,173 +582,167 @@ comparison['mean_hundred_adj'] = (
 )
 
 
-# # -------------------------
-# # Chart 2
-# # Runs and constrained ratio by wicket state
-# # -------------------------
-# fig, axes = plt.subplots(
-#     nrows=5,
-#     ncols=2,
-#     figsize=(18, 24),
-#     sharex=True
-# )
-#
-# axes = axes.flatten()
-#
-# for wicket in range(10):
-#     ax1 = axes[wicket]
-#
-#     wicketData = comparison[
-#         comparison['totalInningWickets'] == wicket
-#     ].copy()
-#
-#     wicketData = wicketData.dropna(
-#         subset=[
-#             'mean_t20',
-#             'mean_hundred',
-#             'mean_hundred_adj',
-#             'ratio_hundred_vs_t20',
-#             'ratio_pred_constrained'
-#         ]
-#     )
-#
-#     wicketData = wicketData.sort_values(
-#         'inningBallsRemaining'
-#     )
-#
-#     ax1.plot(
-#         wicketData['inningBallsRemaining'],
-#         wicketData['mean_t20'],
-#         label='T20 runs to come',
-#         linewidth=2
-#     )
-#
-#     ax1.plot(
-#         wicketData['inningBallsRemaining'],
-#         wicketData['mean_hundred'],
-#         label='Hundred runs to come',
-#         linewidth=2
-#     )
-#
-#     ax1.plot(
-#         wicketData['inningBallsRemaining'],
-#         wicketData['mean_hundred_adj'],
-#         label='Adjusted Hundred runs to come',
-#         linewidth=2
-#     )
-#
-#     ax1.set_xlabel('Scaled balls remaining')
-#     ax1.set_ylabel('Mean runs to come')
-#     ax1.grid(alpha=0.3)
-#
-#     ax2 = ax1.twinx()
-#
-#     ax2.plot(
-#         wicketData['inningBallsRemaining'],
-#         wicketData['ratio_hundred_vs_t20'],
-#         '--',
-#         linewidth=2,
-#         label='Actual ratio'
-#     )
-#
-#     ax2.plot(
-#         wicketData['inningBallsRemaining'],
-#         wicketData['ratio_pred_constrained'],
-#         ':',
-#         linewidth=3,
-#         label='Constrained predicted ratio'
-#     )
-#
-#     ax2.axvline(
-#         powerplay_split,
-#         linestyle=':',
-#         linewidth=2,
-#         alpha=0.5,
-#         label='Powerplay boundary'
-#     )
-#
-#     ax2.set_ylabel('Hundred / T20 ratio')
-#
-#     lines1, labels1 = ax1.get_legend_handles_labels()
-#     lines2, labels2 = ax2.get_legend_handles_labels()
-#
-#     ax1.legend(
-#         lines1 + lines2,
-#         labels1 + labels2,
-#         loc='best',
-#         fontsize=8
-#     )
-#
-#     ax1.set_title(
-#         f'{wicket} wickets lost'
-#     )
-#
-# fig.suptitle(
-#     'T20 vs Hundred Runs to Come by Wicket State',
-#     fontsize=18
-# )
-#
-# plt.tight_layout()
-# plt.show()
-#
-#
-# # -------------------------
-# # Wickets plot data
-# # -------------------------
-# wicketsPlotData = comparison_br[
-#     [
-#         'inningBallsRemaining',
-#         'mean_wickets_t20',
-#         'mean_wickets_hundred'
-#     ]
-# ].sort_values(
-#     'inningBallsRemaining'
-# )
-#
-#
-# # -------------------------
-# # Chart 3
-# # Average wickets lost
-# # -------------------------
-# plt.figure(figsize=(12, 7))
-#
-# plt.plot(
-#     wicketsPlotData['inningBallsRemaining'],
-#     wicketsPlotData['mean_wickets_t20'],
-#     label='T20 average wickets lost',
-#     linewidth=2
-# )
-#
-# plt.plot(
-#     wicketsPlotData['inningBallsRemaining'],
-#     wicketsPlotData['mean_wickets_hundred'],
-#     label='Hundred average wickets lost',
-#     linewidth=2
-# )
-#
-# plt.xlabel('Scaled balls remaining')
-# plt.ylabel('Average wickets lost')
-# plt.title('T20 vs Hundred Average Wickets Lost')
-# plt.grid(alpha=0.3)
-# plt.legend()
-# plt.tight_layout()
-# plt.show()
-
-
-
-
-
-comparison.to_csv(
-    PROJECT_ROOT / 'women/expBall&runsToCome/auxiliaries/hundredAdjusts.csv',
-    index=False
+# -------------------------
+# Chart 2
+# Runs and constrained ratio by wicket state
+# -------------------------
+fig, axes = plt.subplots(
+    nrows=5,
+    ncols=2,
+    figsize=(18, 24),
+    sharex=True
 )
 
-# comparison_br.to_csv(
-#     PROJECT_ROOT / 'women/expBall&runsToCome/auxiliaries/hundredAdjustsCompare.csv',
+axes = axes.flatten()
+
+for wicket in range(10):
+    ax1 = axes[wicket]
+
+    wicketData = comparison[
+        comparison['totalInningWickets'] == wicket
+    ].copy()
+
+    wicketData = wicketData.dropna(
+        subset=[
+            'mean_t20',
+            'mean_hundred',
+            'mean_hundred_adj',
+            'ratio_hundred_vs_t20',
+            'ratio_pred_constrained'
+        ]
+    )
+
+    wicketData = wicketData.sort_values(
+        'inningBallsRemaining'
+    )
+
+    ax1.plot(
+        wicketData['inningBallsRemaining'],
+        wicketData['mean_t20'],
+        label='T20 runs to come',
+        linewidth=2
+    )
+
+    ax1.plot(
+        wicketData['inningBallsRemaining'],
+        wicketData['mean_hundred'],
+        label='Hundred runs to come',
+        linewidth=2
+    )
+
+    ax1.plot(
+        wicketData['inningBallsRemaining'],
+        wicketData['mean_hundred_adj'],
+        label='Adjusted Hundred runs to come',
+        linewidth=2
+    )
+
+    ax1.set_xlabel('Scaled balls remaining')
+    ax1.set_ylabel('Mean runs to come')
+    ax1.grid(alpha=0.3)
+
+    ax2 = ax1.twinx()
+
+    ax2.plot(
+        wicketData['inningBallsRemaining'],
+        wicketData['ratio_hundred_vs_t20'],
+        '--',
+        linewidth=2,
+        label='Actual ratio'
+    )
+
+    ax2.plot(
+        wicketData['inningBallsRemaining'],
+        wicketData['ratio_pred_constrained'],
+        ':',
+        linewidth=3,
+        label='Constrained predicted ratio'
+    )
+
+    ax2.axvline(
+        powerplay_split,
+        linestyle=':',
+        linewidth=2,
+        alpha=0.5,
+        label='Powerplay boundary'
+    )
+
+    ax2.set_ylabel('Hundred / T20 ratio')
+
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+
+    ax1.legend(
+        lines1 + lines2,
+        labels1 + labels2,
+        loc='best',
+        fontsize=8
+    )
+
+    ax1.set_title(
+        f'{wicket} wickets lost'
+    )
+
+fig.suptitle(
+    'T20 vs Hundred Runs to Come by Wicket State',
+    fontsize=18
+)
+
+plt.tight_layout()
+plt.show()
+
+
+# -------------------------
+# Wickets plot data
+# -------------------------
+wicketsPlotData = comparison_br[
+    [
+        'inningBallsRemaining',
+        'mean_wickets_t20',
+        'mean_wickets_hundred'
+    ]
+].sort_values(
+    'inningBallsRemaining'
+)
+
+
+# -------------------------
+# Chart 3
+# Average wickets lost
+# -------------------------
+plt.figure(figsize=(12, 7))
+
+plt.plot(
+    wicketsPlotData['inningBallsRemaining'],
+    wicketsPlotData['mean_wickets_t20'],
+    label='T20 average wickets lost',
+    linewidth=2
+)
+
+plt.plot(
+    wicketsPlotData['inningBallsRemaining'],
+    wicketsPlotData['mean_wickets_hundred'],
+    label='Hundred average wickets lost',
+    linewidth=2
+)
+
+plt.xlabel('Scaled balls remaining')
+plt.ylabel('Average wickets lost')
+plt.title('T20 vs Hundred Average Wickets Lost')
+plt.grid(alpha=0.3)
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+
+# comparison.to_csv(
+#     PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/hundredAdjusts.csv',
 #     index=False
 # )
 
+# comparison_br.to_csv(
+#     PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/hundredAdjustsCompare.csv',
+#     index=False
+# )
 
-
-data.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w100.csv', index=False)
 

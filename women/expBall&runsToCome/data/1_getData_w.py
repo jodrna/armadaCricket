@@ -240,7 +240,9 @@ allData = allData[allData['inningBallsRemaining'] > 0]
 allData = allData[allData['totalInningRuns'] > -1]
 
 
-# export
+# -------------------------
+# import merge and export wicket stuff
+# -------------------------
 wkt_value_sum = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/wkt_sum_mean_w.csv')
 wkt_value_sum = wkt_value_sum.rename(columns={'matchid': 'matchID', 'innings': 'inningNumber', 'wickets': 'totalInningWickets', 'ballsremaining': 'inningBallsRemaining'})
 allData = allData.merge(wkt_value_sum, how='left')
