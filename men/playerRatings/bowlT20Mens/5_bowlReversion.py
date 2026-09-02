@@ -115,3 +115,4 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsRasoi3.csv', index=False)
         sql_upload.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/sqlUploadRasoi.csv', index=False)
 
+comps = pd.pivot_table(ratings, values='bowler', index='competition', aggfunc='count').reset_index()

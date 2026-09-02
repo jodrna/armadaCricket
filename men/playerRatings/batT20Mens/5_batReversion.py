@@ -190,6 +190,6 @@ for x in np.arange(0, 2, 1):
 
 
 
-comps = pd.pivot_table(ratings[ratings['matchid'] != 101], values='batsman', index='competition', aggfunc='count').reset_index()
+comps = pd.pivot_table(ratings, values='batsman', index='competition', aggfunc='count').reset_index()
 
 

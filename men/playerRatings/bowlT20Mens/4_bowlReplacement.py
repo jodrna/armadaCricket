@@ -6,6 +6,7 @@ from bowlFunctions import build_replacement_debug_tables
 from paths import PROJECT_ROOT
 DEBUG_CONFIG = globals().get('DEBUG_CONFIG', None)
 BOWL_REPLACEMENT_DEBUG_TABLES = None
+COMPETITION_REVERSION_SAMPLE_THRESHOLD = 5000
 
 
 def make_ohe(values, cats, prefix, drop_first=True):
@@ -19,6 +20,60 @@ def make_ohe(values, cats, prefix, drop_first=True):
         columns = [f'{prefix}__{cat}' for cat in cats]
 
     return pd.DataFrame(encoded, columns=columns)
+
+
+def revert_low_sample_competition_params(params, features, sample_threshold):
+    competition_columns = [
+        column
+        for column in features.columns
+        if column.startswith('competition__')
+    ]
+
+    competition_counts = features[competition_columns].sum(axis=0)
+    sampled_competition_columns = competition_counts[
+        competition_counts > 0
+    ].index.tolist()
+    raw_competition_params = params.loc[
+        sampled_competition_columns
+    ].copy()
+
+    # T20I Home is the omitted competition category, so its coefficient is
+    # zero. Include it in the peer average whenever its samples are present.
+    t20i_home_sample_count = (
+        features[competition_columns].sum(axis=1) == 0
+    ).sum()
+
+    if t20i_home_sample_count > 0:
+        raw_competition_params = pd.concat([
+            pd.Series({'competition__T20I Home': 0.0}),
+            raw_competition_params
+        ])
+
+    reverted_params = params.copy()
+
+    for competition_column in competition_columns:
+        sample_count = competition_counts.loc[competition_column]
+
+        if sample_count >= sample_threshold:
+            continue
+
+        other_competition_params = raw_competition_params.drop(
+            index=competition_column,
+            errors='ignore'
+        )
+
+        if other_competition_params.empty:
+            continue
+
+        other_competition_average = other_competition_params.mean()
+        competition_weight = sample_count / sample_threshold
+
+        reverted_params.loc[competition_column] = (
+            competition_weight * params.loc[competition_column]
+            + (1 - competition_weight) * other_competition_average
+        )
+
+    return reverted_params
 
 
 def get_competition_cats(ratings):
@@ -137,14 +192,8 @@ for x in np.arange(0, 2, 1):
     # -------------------------
     # 2) Filters (main comps only)
     # -------------------------
-    # bowl_data = bowl_data.loc[bowl_data['competition'].isin(['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
-    #                                                      'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League']), :]
-    #
-    # ratings = ratings.loc[ratings['competition'].isin(['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
-    #                                                   'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League']), :].reset_index(drop=True)
-
     competitions = ['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
-                    'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League',
+                    'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League', 'European T20 Premier League',
                     'Afghanistan Premier League', 'Bangladesh Premier League', 'New Zealand', 'ODDOMMO Bangladesh T20 Cup', 'Pakistan National T20 Cup', 'South Africa']
 
     bowl_data = bowl_data.loc[bowl_data['format'] == 't20', :].copy()
@@ -232,6 +281,30 @@ for x in np.arange(0, 2, 1):
         if row['feature_name'] in wkt_params.index:
             wkt_params.loc[row['feature_name']] = row['wkts']
 
+    # Revert final low-sample competition coefficients towards the average
+    # final coefficient of all other competition categories.
+    run_params = revert_low_sample_competition_params(
+        run_params,
+        X_run,
+        COMPETITION_REVERSION_SAMPLE_THRESHOLD
+    )
+    wkt_params = revert_low_sample_competition_params(
+        wkt_params,
+        X_wkt,
+        COMPETITION_REVERSION_SAMPLE_THRESHOLD
+    )
+
+    # Ensure training diagnostics use the final reverted parameters too.
+    bowl_data['rep_run_ratio'] = X_run.to_numpy() @ run_params.to_numpy()
+    bowl_data['rep_runs'] = (
+        bowl_data['rep_run_ratio'] * bowl_data['realexprbowl']
+    )
+
+    bowl_data['rep_wkt_ratio'] = X_wkt.to_numpy() @ wkt_params.to_numpy()
+    bowl_data['rep_wkt'] = (
+        bowl_data['rep_wkt_ratio'] * bowl_data['realexpwbowl']
+    )
+
     params = pd.merge(pd.DataFrame(run_params), pd.DataFrame(wkt_params), how='left', left_index=True, right_index=True).reset_index()
     aux = pd.DataFrame([['λ', str(transformers['experience_transformer'].lambdas_[0]), str(transformers['experience_transformer'].lambdas_[0])]], columns=params.columns)
     params = pd.concat([params, aux], axis=0)
@@ -305,4 +378,6 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsJungle2.csv', index=False)
     else:
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/outputs/bowlRatingsRasoi2.csv', index=False)
+
+
 

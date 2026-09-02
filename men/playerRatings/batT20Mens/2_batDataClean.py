@@ -271,10 +271,12 @@ bat_data = bat_data.drop(columns=['uniqueMatchMarker'])
 
 
 
-comps = pd.pivot_table(bat_data, values='batsman', index='competition', aggfunc='count').reset_index()
+# -------------------------
+# Export
+# -------------------------
+bat_data.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombinedClean.csv', index=False)
 
 
-# # -------------------------
-# # Export
-# # -------------------------
-# bat_data.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/data/batDataCombinedClean.csv', index=False)
+
+comps = pd.pivot_table(bat_data, values=['matchid'], index='competition', aggfunc='count').reset_index()
+
