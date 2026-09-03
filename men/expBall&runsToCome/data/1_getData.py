@@ -44,7 +44,7 @@ select matchid as "matchID", id as "ID", tier, date, year, competition, venue, h
        wickets as "totalInningWickets", t_wickets as "totalInningWicketsEnd", ballsremaining as "inningBallsRemaining", target, reduced, max_balls,
        noball as "noballRuns", wide as "wideRuns", ord, byes as "byeRuns", legbyes as "legbyeRuns", innperiod as "inningPhase",
        bowlerwicket as "isWicketBowler", realexprbat, realexpwbat, realexprbowl, realexpwbowl, rating_sample_size, major_nation,
-       batsmanballs as "batsmanBallsFaced", ovrexpr, ovrexpw, batsman as "batsmanName", nonstriker as "nonstrikerName", bowler, batterid, bowlerid,
+       batsmanballs as "batsmanBallsFaced", ovrexpr, ovrexpw, batsman as "batsmanName", nonstriker as "nonstrikerName", bowler, batterid, nonstrikerid, bowlerid,
        av_runs_bat, av_wkts_bat, style_new
 from match_data.t20_bbb tb
 where (tier = 1 or major_nation = 2)
@@ -221,11 +221,28 @@ allData = allData.loc[:, ['matchID', 'ID', 'tier', 'date', 'year', 'competition'
                      'totalInningRuns', 'totalInningRunsEnd', 'isWicket', 'totalInningWickets', 'totalInningWicketsEnd', 'inningBallsRemaining', 'target', 'noballRuns', 'wideRuns',
                      'ord', 'byeRuns', 'legbyeRuns', 'inningPhase', 'isWicketBowler', 'realexprbat', 'realexpwbat', 'realexprbowl', 'realexpwbowl', 'rating_sample_size',
                     'major_nation', 'batsmanBallsFaced',
-                     'ovrexpr', 'ovrexpw', 'batsmanName', 'bowler', 'batterid',
+                     'ovrexpr', 'ovrexpw', 'batsmanName', 'bowler', 'batterid', 'nonstrikerid',
 'bowlerid', 'nonstrikerName', 'extra', 'true_score', 'comp', 'totalInningRunsToCome', 'result',
                      'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'isPowerplay', 'isValid', 'isWide', 'isNoball', 'sample',
                      'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired']]
 
+
+
+
+
+allDataOld = allData.copy().rename(
+    columns={
+        'matchID': 'matchid',
+        'ID': 'id',
+        'battingTeam': 'battingteam',
+        'legbyeRuns': 'legbyes',
+        'inningPhase': 'innperiod',
+        'batsmanBallsFaced': 'batsmanballs',
+        'batsmanName': 'batsman',
+        'nonstrikerName': 'nonstriker',
+        'RA_Sum': 'RA_sum',
+    }
+)
 
 
 
@@ -234,6 +251,8 @@ allData = allData.loc[:, ['matchID', 'ID', 'tier', 'date', 'year', 'competition'
 # -------------------------
 if run_type == 1:
     allData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', index=False)
+    # allDataOld.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
+
 #     sqlupload = allData.loc[:,['ID', 'ball', 'totalInningRuns', 'inningBallsRemaining', 'totalInningWickets', 'target', 'ord', 'runsRequired', 'wkt_value_sum_smooth']]
 #     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a', 'wkt_value_sum_smooth']
 #

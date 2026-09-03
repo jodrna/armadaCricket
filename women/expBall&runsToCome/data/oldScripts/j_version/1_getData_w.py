@@ -317,27 +317,11 @@ allData = allData.loc[:, [
 
 
 
-allDataOld = allData.copy().rename(
-    columns={
-        'matchID': 'matchid',
-        'ID': 'id',
-        'battingTeam': 'battingteam',
-        'legbyeRuns': 'legbyes',
-        'inningPhase': 'innperiod',
-        'batsmanBallsFaced': 'batsmanballs',
-        'batsmanName': 'batsman',
-        'nonstrikerName': 'nonstriker',
-        'RA_Sum': 'RA_sum',
-    }
-)
-
 # -------------------------
 # Export
 # -------------------------
 if run_type == 1:
     allData.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
-    # allDataOld.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
-
 
 #     # allData = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_w.csv')
 #     sqlupload = allData.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]
