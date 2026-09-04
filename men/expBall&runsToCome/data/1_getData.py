@@ -303,8 +303,8 @@ allData = allData[(allData['competition'] != 'The Hundred (Men\'s Comp)')]
 # Export
 # -------------------------
 if run_type == 1:
-    allData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', index=False)
-    # allDataOld.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
+    allData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_new.csv', index=False)
+    allDataOld.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', index=False)
 
 #     sqlupload = allData.loc[:,['ID', 'ball', 'totalInningRuns', 'inningBallsRemaining', 'totalInningWickets', 'target', 'ord', 'runsRequired', 'wkt_value_sum_smooth']]
 #     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a', 'wkt_value_sum_smooth']

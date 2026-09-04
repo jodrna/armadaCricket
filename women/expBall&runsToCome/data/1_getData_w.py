@@ -335,8 +335,8 @@ allDataOld = allData.copy().rename(
 # Export
 # -------------------------
 if run_type == 1:
-    allData.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
-    # allDataOld.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
+    allData.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_new_w.csv', index=False)
+    allDataOld.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
 
 
 #     # allData = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_w.csv')

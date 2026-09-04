@@ -12,7 +12,7 @@ from paths import PROJECT_ROOT
 ######## need to run lineups_filler before running this!!!!!!!!!!!
 
 connection = engine.connect()
-raw_data_og = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', parse_dates=['date'])
+raw_data_og = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_new.csv', parse_dates=['date'])
 # raw_data_og_max_date = raw_data_og['date'].max()
 raw_data_og = raw_data_og.drop_duplicates(subset=['ID'])
 
