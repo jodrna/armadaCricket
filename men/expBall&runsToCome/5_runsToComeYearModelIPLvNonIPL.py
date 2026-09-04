@@ -51,7 +51,7 @@ trainData = trainData.dropna(subset=['vsAdjOvr', 'vsOvr'])
 test3 = trainData[trainData.year == 2026].groupby(['competition'])['ID'].count().reset_index()
 # # only train on 2018+ data
 # trainData = trainData.loc[trainData['year'] > 2018].copy()
-trainData['IPL'] = np.where((trainData['competition'] == 'Indian Premier League') | (trainData['competition'] == 'International League T20'), 1, 0)
+trainData['IPL'] = np.where(((trainData['competition'] == 'Indian Premier League') & (trainData['year'] >= 2023)) | ((trainData['competition'] == 'International League T20') & (trainData['year'] >= 2024)), 1, 0)
 
 print(trainData[trainData.IPL == 1])
 # create interaction terms between year trend and game state
@@ -60,6 +60,12 @@ trainData['daysGroup_inningBallNumber'] = trainData['daysGroup'] * trainData['in
 trainData['daysGroup_totalInningWickets_IPL'] = trainData['daysGroup_totalInningWickets'] * trainData['IPL']
 trainData['daysGroup_inningBallNumber_IPL'] = trainData['daysGroup_inningBallNumber'] * trainData['IPL']
 trainData['daysGroup_IPL'] = trainData['daysGroup'] * trainData['IPL']
+# richer terms so the year-trend's shape across wickets/ballNumber isn't forced to be linear -
+# still multiplied by daysGroup throughout, so still exactly zero at daysGroup=0 (no static
+# wicket/ballNumber level effect can leak in here - that stays RA_sum_wl_br's job below)
+trainData['daysGroup_totalInningWickets_sq'] = trainData['daysGroup'] * trainData['totalInningWickets'] ** 2
+trainData['daysGroup_inningBallNumber_sq'] = trainData['daysGroup'] * trainData['inningBallNumber'] ** 2
+trainData['daysGroup_wickets_ballNumber'] = trainData['daysGroup'] * trainData['totalInningWickets'] * trainData['inningBallNumber']
 
 test4 = trainData[trainData.year == 2026].groupby(['competition'])['ID'].count().reset_index()
 
@@ -70,7 +76,10 @@ features = [
     'daysGroup_totalInningWickets',
     'daysGroup_totalInningWickets_IPL',
     'daysGroup_inningBallNumber_IPL',
-    'daysGroup_IPL'
+    'daysGroup_IPL',
+    'daysGroup_totalInningWickets_sq',
+    'daysGroup_inningBallNumber_sq',
+    'daysGroup_wickets_ballNumber',
 ]
 
 log_method = 1
@@ -150,7 +159,7 @@ masterLookup['daysGroup'] = masterLookup['year'] - 2015
 
 # duplicate the latest year and relabel as 9.4, this gives us the number we want to match the match market
 extraRows = masterLookup.loc[masterLookup['daysGroup'] == 11].copy()
-extraRows['daysGroup'] = 11.01
+extraRows['daysGroup'] = 11.1
 
 
 # append future-year rows back onto master lookup
@@ -159,6 +168,9 @@ masterLookup = pd.concat([masterLookup, extraRows], ignore_index=True)
 # recreate interaction features for prediction
 masterLookup['daysGroup_totalInningWickets'] = masterLookup['daysGroup'] * masterLookup['totalInningWickets']
 masterLookup['daysGroup_inningBallNumber'] = masterLookup['daysGroup'] * masterLookup['inningBallNumber']
+masterLookup['daysGroup_totalInningWickets_sq'] = masterLookup['daysGroup'] * masterLookup['totalInningWickets'] ** 2
+masterLookup['daysGroup_inningBallNumber_sq'] = masterLookup['daysGroup'] * masterLookup['inningBallNumber'] ** 2
+masterLookup['daysGroup_wickets_ballNumber'] = masterLookup['daysGroup'] * masterLookup['totalInningWickets'] * masterLookup['inningBallNumber']
 if IPL == 0:
     masterLookup['daysGroup_IPL'] = 0
     masterLookup['daysGroup_totalInningWickets_IPL'] = 0
@@ -203,6 +215,9 @@ lookupForInruns['totalInningWickets'] = 0
 lookupForInruns['inningBallNumber'] = 1
 lookupForInruns['daysGroup_totalInningWickets'] = lookupForInruns['daysGroup'] * lookupForInruns['totalInningWickets']
 lookupForInruns['daysGroup_inningBallNumber'] = lookupForInruns['daysGroup'] * lookupForInruns['inningBallNumber']
+lookupForInruns['daysGroup_totalInningWickets_sq'] = lookupForInruns['daysGroup'] * lookupForInruns['totalInningWickets'] ** 2
+lookupForInruns['daysGroup_inningBallNumber_sq'] = lookupForInruns['daysGroup'] * lookupForInruns['inningBallNumber'] ** 2
+lookupForInruns['daysGroup_wickets_ballNumber'] = lookupForInruns['daysGroup'] * lookupForInruns['totalInningWickets'] * lookupForInruns['inningBallNumber']
 if IPL == 0:
     lookupForInruns['daysGroup_IPL'] = 0
     lookupForInruns['daysGroup_totalInningWickets_IPL'] = 0

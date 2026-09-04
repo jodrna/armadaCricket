@@ -101,7 +101,7 @@ masterLookup.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/6_masterLoo
 
 
 ras_input = masterLookup.copy()
-ras_input = ras_input[ras_input.daysGroup == 12.2]
+ras_input = ras_input[ras_input.daysGroup == 11.6]
 ras_input['code'] = ras_input['totalInningWickets'] + ((121 - ras_input['inningBallNumber']) / 1000)
 
 dfs = []
