@@ -62,7 +62,7 @@ allData = allData.sort_values(by=['matchID', 'inningNumber', 'delivery2']).reset
 # Initial cleaning
 # -------------------------
 allData['target'] = np.where(allData['inningNumber'] == 1, np.nan, allData['target'])
-allData['reduced'] = allData['reduced'].fillna(False)
+allData['reduced'] = allData['reduced'].astype('boolean').fillna(False)
 allData = allData.dropna(subset=['battingTeam'], axis=0)
 allData['venue'] = np.where(allData['venue'] == 'R.Premadasa Stadium', 'R Premadasa Stadium', allData['venue'])  # could add to this (chinniswamy)
 
@@ -80,23 +80,39 @@ allData = allData.merge(targets, how='left', on=['matchID', 'inningNumber'])
 allData['target'] = allData['target_x']
 allData = allData.drop(labels=['target_x'], axis=1)
 
+
+
 # -------------------------
-# Competition filters
+# Create over and extras variables
 # -------------------------
-# take out big bash after 2019 season because of the power surge
-allData = allData[(allData['competition'] != 'Big Bash League') | (allData['date'] < pd.Timestamp('2020-06-06'))]
-# take out the 100
-allData = allData[(allData['competition'] != 'The Hundred (Men\'s Comp)')]
-# for t20i only include the major nations
+allData['over_number'] = np.floor(allData['delivery2'])
+allData['overNumber'] = allData['over_number'] + 1
+allData['extra'] = np.where((allData['wideRuns'] + allData['noballRuns']) > 0, 1, 0)
+
+
+# -------------------------
+# t20i filters
+# -------------------------
 allData = allData[(allData['competition'] != 'T20I') |
                     (allData.home.isin(['England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']) &
                      allData.away.isin(['England', 'India', 'Afghanistan', 'Australia', 'New Zealand', 'West Indies', 'Sri Lanka', 'Bangladesh', 'South Africa', 'Pakistan']))]
 
 
 # -------------------------
-# Identify reduced games
+# Separate Hundred and T20 data
 # -------------------------
-pivot = pd.pivot_table(allData, values=['totalInningRunsEnd', 'totalInningWicketsEnd', 'max_balls', 'ball', 'noballRuns', 'wideRuns', 'target'], index=['matchID', 'inningNumber', 'reduced'],
+hundredData = allData[allData['competition'] == 'The Hundred (Men\'s Comp)'].copy()
+t20Data = allData[allData['competition'] != 'The Hundred (Men\'s Comp)'].copy()
+
+
+
+# -------------------------
+# CLEAN T20 DATA
+# -------------------------
+# -------------------------
+# Identify reduced T20 games that aren't already flagged on SQL as reduced
+# -------------------------
+pivot = pd.pivot_table(t20Data, values=['totalInningRunsEnd', 'totalInningWicketsEnd', 'max_balls', 'ball', 'noballRuns', 'wideRuns', 'target'], index=['matchID', 'inningNumber', 'reduced'],
                        aggfunc={'totalInningRunsEnd': 'max', 'totalInningWicketsEnd': 'max', 'max_balls': 'min', 'ball': 'count', 'noballRuns': 'sum', 'wideRuns': 'sum', 'target': 'max'}).reset_index()
 
 # -------------------------
@@ -137,39 +153,64 @@ pivot_2['remove'] = np.where((pivot_2['inningNumber'] == 2) & (pivot_2['reduced'
 # merge the reduced into the raw data then remove reduced games
 # -------------------------
 pivot = pd.concat([pivot_1, pivot_2], axis=0)
-allData = allData.merge(pivot.loc[:, ['matchID', 'inningNumber', 'remove']], how='left', on=['matchID', 'inningNumber'])
-allData = allData[allData['remove'] == 0]
-allData = allData.drop(labels=['reduced', 'remove', 'max_balls'], axis=1)  # same as dropping columns
+t20Data = t20Data.merge(pivot.loc[:, ['matchID', 'inningNumber', 'remove']], how='left', on=['matchID', 'inningNumber'])
+t20Data = t20Data[t20Data['remove'] == 0]
+t20Data = t20Data.drop(labels=['reduced', 'remove', 'max_balls'], axis=1)  # same as dropping columns
 
 
 
-# -------------------------
-# Create over and extras variables
-# -------------------------
-allData['over_number'] = np.floor(allData['delivery2'])
-allData['overNumber'] = allData['over_number'] + 1
-allData['extra'] = np.where((allData['wideRuns'] + allData['noballRuns']) > 0, 1, 0)
+
 # -------------------------
 # Fix ball number
 # -------------------------
-allData['extra_before'] = allData.groupby(['matchID', 'over_number', 'inningNumber'], sort=False)['extra'].cumsum() - allData['extra']
-allData['ball'] = allData['delivery2'] - (allData['extra_before'] / 100)
-allData['inningBallsRemaining'] = np.round(120 - ((np.floor(allData['ball']) * 6) + ((allData['ball'] - np.floor(allData['ball'])) * 100) - 1), 0)
-
-
-
+t20Data['extra_before'] = t20Data.groupby(['matchID', 'over_number', 'inningNumber'], sort=False)['extra'].cumsum() - t20Data['extra']
+t20Data['ball'] = t20Data['delivery2'] - (t20Data['extra_before'] / 100)
+t20Data['inningBallsRemaining'] = np.round(120 - ((np.floor(t20Data['ball']) * 6) + ((t20Data['ball'] - np.floor(t20Data['ball'])) * 100) - 1), 0)
 
 # -------------------------
-# fix the score, first find games where total score != stated score, for these games stick with stated score, for others go to rolling score
+# Fix score
 # -------------------------
-runs_comp = pd.pivot_table(allData, values=['totalRuns', 'totalInningRunsEnd'], index=['matchID', 'inningNumber'], aggfunc={'totalRuns': 'sum', 'totalInningRunsEnd': 'mean'}).reset_index()
+runs_comp = pd.pivot_table(t20Data, values=['totalRuns', 'totalInningRunsEnd'], index=['matchID', 'inningNumber'], aggfunc={'totalRuns': 'sum', 'totalInningRunsEnd': 'mean'}).reset_index()
 runs_comp['comp'] = runs_comp['totalRuns'] - runs_comp['totalInningRunsEnd']
-true_score = pd.DataFrame(allData.groupby(['matchID', 'inningNumber'], sort=False)['totalRuns'].rolling(200, min_periods=1, closed='left').sum()).reset_index().fillna(0)
-allData = allData.reset_index(drop=True)
-allData['true_score'] = true_score['totalRuns']  # does this join them effectively?
-allData = allData.merge(runs_comp.loc[:, ['matchID', 'inningNumber', 'comp']], on=['matchID', 'inningNumber'], how='left')
-allData['totalInningRuns'] = np.where(allData['comp'] != 0, allData['totalInningRuns'], allData['true_score'])
+t20Data['true_score'] = t20Data.groupby(['matchID', 'inningNumber'], sort=False)['totalRuns'].cumsum() - t20Data['totalRuns']
+t20Data = t20Data.merge(runs_comp[['matchID', 'inningNumber', 'comp']], how='left', on=['matchID', 'inningNumber'])
+t20Data['totalInningRuns'] = np.where(t20Data['comp'] != 0, t20Data['totalInningRuns'], t20Data['true_score'])
+t20Data['inningBallNumber'] = 121 - t20Data['inningBallsRemaining']
+t20Data['isPowerplay'] = np.where(t20Data['inningBallNumber'] <= 36, 1, 0)
 
+
+
+
+
+
+# -------------------------
+# CLEAN HUNDRED DATA
+# -------------------------
+# -------------------------
+# Fix ball number
+# -------------------------
+hundredData['extra_before'] = hundredData.groupby(['matchID', 'over_number', 'inningNumber'], sort=False)['extra'].cumsum() - hundredData['extra']
+hundredData['ball'] = round(hundredData['delivery2'] - (hundredData['extra_before'] / 100), 2)
+hundredData['inningBallsRemaining'] = np.round(100 - ((np.floor(hundredData['ball']) * 5) + ((hundredData['ball'] - np.floor(hundredData['ball'])) * 100) - 1), 0)
+
+# -------------------------
+# Fix score
+# -------------------------
+runs_comp = pd.pivot_table(hundredData, values=['totalRuns', 'totalInningRunsEnd'], index=['matchID', 'inningNumber'], aggfunc={'totalRuns': 'sum', 'totalInningRunsEnd': 'mean'}).reset_index()
+runs_comp['comp'] = runs_comp['totalRuns'] - runs_comp['totalInningRunsEnd']
+hundredData['true_score'] = hundredData.groupby(['matchID', 'inningNumber'], sort=False)['totalRuns'].cumsum() - hundredData['totalRuns']
+hundredData = hundredData.merge(runs_comp[['matchID', 'inningNumber', 'comp']], how='left', on=['matchID', 'inningNumber'])
+hundredData['totalInningRuns'] = np.where(hundredData['comp'] != 0, hundredData['totalInningRuns'], hundredData['true_score'])
+hundredData['inningBallNumber'] = 101 - hundredData['inningBallsRemaining']
+hundredData['isPowerplay'] = np.where(hundredData['inningBallNumber'] <= 75, 1, 0)
+
+
+
+
+# -------------------------
+# Combine Hundred and T20 data again
+# -------------------------
+allData = pd.concat([t20Data, hundredData], ignore_index=True)
 
 
 
@@ -243,6 +284,18 @@ allDataOld = allData.copy().rename(
         'RA_Sum': 'RA_sum',
     }
 )
+
+
+
+
+# -------------------------
+# Competition filters
+# -------------------------
+# take out big bash after 2019 season because of the power surge
+allData = allData[(allData['competition'] != 'Big Bash League') | (allData['date'] < pd.Timestamp('2020-06-06'))]
+# take out the 100
+allData = allData[(allData['competition'] != 'The Hundred (Men\'s Comp)')]
+
 
 
 
