@@ -328,4 +328,5 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsRasoi.csv', index=False)
 
 
+comps = pd.pivot_table(bat_data, values=['matchid'], index='competition', aggfunc='count').reset_index()
 

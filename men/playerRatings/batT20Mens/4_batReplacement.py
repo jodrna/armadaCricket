@@ -6,6 +6,7 @@ from batFunctions import build_replacement_debug_tables
 from paths import PROJECT_ROOT
 DEBUG_CONFIG = globals().get('DEBUG_CONFIG', None)
 BAT_REPLACEMENT_DEBUG_TABLES = None
+COMPETITION_REVERSION_SAMPLE_THRESHOLD = 5000
 
 
 def make_ohe(values, cats, prefix, drop_first=True):
@@ -32,6 +33,54 @@ def rep_weight(faced, rating, rep_ratio, mode='run'):
     rating_2 = (rep_ratio * weight) + ((1 - weight) * rating)
 
     return weight, rating_2
+
+
+def revert_low_sample_competition_params(params, features, sample_threshold):
+    competition_columns = [
+        column
+        for column in features.columns
+        if column.startswith('competition__')
+    ]
+
+    competition_counts = features[competition_columns].sum(axis=0)
+    raw_competition_params = params.loc[competition_columns].copy()
+
+    # T20I is the omitted competition category, so its coefficient is zero.
+    # Include it in the peer average whenever T20I samples are present.
+    t20i_sample_count = (
+        features[competition_columns].sum(axis=1) == 0
+    ).sum()
+
+    if t20i_sample_count > 0:
+        raw_competition_params = pd.concat([
+            pd.Series({'competition__T20I': 0.0}),
+            raw_competition_params
+        ])
+
+    reverted_params = params.copy()
+
+    for competition_column in competition_columns:
+        sample_count = competition_counts.loc[competition_column]
+
+        if sample_count >= sample_threshold:
+            continue
+
+        other_competition_params = raw_competition_params.drop(
+            index=competition_column
+        )
+
+        if other_competition_params.empty:
+            continue
+
+        other_competition_average = other_competition_params.mean()
+        competition_weight = sample_count / sample_threshold
+
+        reverted_params.loc[competition_column] = (
+            competition_weight * params.loc[competition_column]
+            + (1 - competition_weight) * other_competition_average
+        )
+
+    return reverted_params
 
 
 def build_training_features_bat(bat_data, transformers):
@@ -165,7 +214,8 @@ for x in np.arange(0, 2, 1):
     # 2) Filters
     # -------------------------
     competitions = ['International League T20', 'SA20', 'Big Bash League', 'Caribbean Premier League', 'Indian Premier League', 'Pakistan Super League',
-                    'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League']
+                    'The Hundred (Men\'s Comp)', 'Vitality Blast', 'T20I', 'Major League Cricket', 'tier_2', 'Lanka Premier League', 'European T20 Premier League',
+                    'Afghanistan Premier League', 'Bangladesh Premier League', 'New Zealand', 'ODDOMMO Bangladesh T20 Cup', 'Pakistan National T20 Cup', 'South Africa']
 
     bat_data = bat_data.loc[bat_data['format'] == 't20', :].copy()
     bat_data = bat_data.loc[bat_data['competition'].isin(competitions), :].copy()
@@ -205,10 +255,20 @@ for x in np.arange(0, 2, 1):
     y = pd.DataFrame(bat_data['run_ratio'])
     rep_run_ratio_model = sm.OLS(y, X_run, missing='drop').fit()
     run_params = rep_run_ratio_model.params.copy()
+    run_params = revert_low_sample_competition_params(
+        run_params,
+        X_run,
+        COMPETITION_REVERSION_SAMPLE_THRESHOLD
+    )
 
     y = pd.DataFrame(bat_data['wkt_ratio'])
     rep_wkt_ratio_model = sm.OLS(y, X_wkt, missing='drop').fit()
     wkt_params = rep_wkt_ratio_model.params.copy()
+    wkt_params = revert_low_sample_competition_params(
+        wkt_params,
+        X_wkt,
+        COMPETITION_REVERSION_SAMPLE_THRESHOLD
+    )
 
 
     # avg contributions for each parameter to be use in the batter debug report later
@@ -251,12 +311,12 @@ for x in np.arange(0, 2, 1):
     bat_data['run_factor'] = bat_data['run_factor'].fillna(allaway_runs)
     bat_data['wkt_factor'] = bat_data['wkt_factor'].fillna(allaway_wkts)
 
-    bat_data['rep_run_ratio'] = rep_run_ratio_model.predict(X_run)
+    bat_data['rep_run_ratio'] = X_run.to_numpy() @ run_params.to_numpy()
     bat_data['run_factor'] = np.minimum(1, bat_data['run_factor'] / allaway_runs)
     bat_data['rep_run_ratio'] = np.where((bat_data['competition'].isin(['T20I'])) & (bat_data['H/A_competition'] == 'Away'), bat_data['rep_run_ratio'] * bat_data['run_factor'], bat_data['rep_run_ratio'])
     bat_data['rep_runs'] = bat_data['rep_run_ratio'] * bat_data['realexprbat']
 
-    bat_data['rep_wkt_ratio'] = rep_wkt_ratio_model.predict(X_wkt)
+    bat_data['rep_wkt_ratio'] = X_wkt.to_numpy() @ wkt_params.to_numpy()
     bat_data['wkt_factor'] = np.maximum(1, bat_data['wkt_factor'] / allaway_wkts)
     bat_data['rep_wkt_ratio'] = np.where((bat_data['competition'].isin(['T20I'])) & (bat_data['H/A_competition'] == 'Away'), bat_data['rep_wkt_ratio'] * bat_data['wkt_factor'], bat_data['rep_wkt_ratio'])
     bat_data['rep_wkt'] = bat_data['rep_wkt_ratio'] * bat_data['realexpwbat']
@@ -352,5 +412,8 @@ for x in np.arange(0, 2, 1):
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsJungle2.csv', index=False)
     else:
         ratings.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/batRatingsRasoi2.csv', index=False)
+
+
+comps = pd.pivot_table(bat_data, values=['matchid'], index='competition', aggfunc='count').reset_index()
 
 

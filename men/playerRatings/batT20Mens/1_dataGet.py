@@ -272,3 +272,7 @@ combinedBowlData.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/bowlD
 balls_per_match.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/data/ballsPerMatch.csv', index=False)
 playerInfo.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/playerInfo.csv', index=False)
 tier_data.to_csv(PROJECT_ROOT / 'men/playerRatings/bowlT20Mens/auxiliaries/bowlTierData.csv', index=False)
+
+
+comps = pd.pivot_table(combinedBatData, values=['matchid'], index='competition', aggfunc='count').reset_index()
+

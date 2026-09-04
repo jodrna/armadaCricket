@@ -10,7 +10,7 @@ from db import engine
 from paths import PROJECT_ROOT
 from datetime import date
 
-######## need to run lineups_filler before running this!!!!!!!!!!!
+########ned to run lieups_filler befor running this!!!!!!!!!!!
 
 connection = engine.connect()
 raw_data_og = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', parse_dates=['date'])
@@ -22,7 +22,7 @@ raw_data_og = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_
 raw_data_og = raw_data_og.drop_duplicates(subset=['ID'])
 # # raw_data_og = raw_data_og[raw_data_og.matchid == 1233979]
 bowler_data = pd.read_sql_query("""select bowler, playerid as bowlerid, competition, host, date, run_rating as run_rating_pr_bo, wkt_rating as wkt_rating_pr_bo from player_ratings.bowler_ratings_historic_w""", con=connection)
-batter_data = pd.read_sql_query("""select batter as "batsmanName", playerid as batterid, matchid as "matchID", competition, host, date, run_rating as run_rating_pr_ba, wkt_rating as wkt_rating_pr_ba, balls_faced as balls_faced_pr_ba, ord as ord_pr_ba from player_ratings.batter_ratings_historic_w""", con=connection)
+batter_data = pd.read_sql_query("""select batter as "batsmanName", playerid as batterid, competition, host, date, run_rating as run_rating_pr_ba, wkt_rating as wkt_rating_pr_ba, balls_faced as balls_faced_pr_ba from player_ratings.batter_ratings_historic_w""", con=connection)
 ground_data = pd.read_sql_query("""select matchid as "matchID", venue, innperiod as "inningPhase", reverted_runs, reverted_wkts, runsratio_ground, wktsratio_ground from player_ratings.ground_table_w""", con=connection)
 wktvalues = pd.read_sql_query("""select overno as "overNumber", wktslost as "totalInningWickets", wktvalue from player_ratings.wkt_values_w""", con=connection)
 bblvalues = pd.read_sql_query("""select over as "overNumber", runs_ratio as bbl_runs_ratio, wkts_ratio as bbl_wkts_ratio from player_ratings.bbl_csv_w""", con=connection)
@@ -47,41 +47,21 @@ ground_data['reverted_wkts'] = ground_data['reverted_wkts']
 raw_data = raw_data_og.copy()
 raw_data['date'] = raw_data['date'].dt.date
 # raw_data = raw_data[raw_data.inningNumber == 2]
-# preserve the TRUE batting position (1-11) before the next line floors it at 2 for the
-# expected-runs-to-come-by-ord smoothing below - the order/balls-faced adjustments further down
-# need the real value, including ord=1 (openers), which that floored column no longer has
-raw_data['ord_real'] = raw_data['ord']
 raw_data['ord'] = np.maximum(2, raw_data['ord'])
 raw_data['count1'] = 1
-# 'ID' is NOT a reliable chronological order within a match/inningNumber - the same issue found and
-# fixed in the men's pipeline (2_adjData.py) also exists here: 239/1905 matches have at least one
-# ball out of true delivery order when sorted by ID (median displacement ~38 balls, up to 119), and
-# 215/1793 matches even have inningNumber 1's ID range overlapping/exceeding inningNumber 2's.
-# 'inningBallNumber' is a much more trustworthy chronological key, but unlike the men's data's
-# 'delivery2' it does NOT increment on a wide/no-ball - it stays tied with the legal ball that
-# completes it (confirmed against real data), so an explicit tiebreak is needed too: extras
-# (isWide/isNoball) are sorted before the legal ball they share an inningBallNumber with.
-raw_data['is_legal'] = np.where((raw_data['isWide'] == 1) | (raw_data['isNoball'] == 1), 0, 1)
-raw_data.sort_values(by=['matchID', 'inningNumber', 'inningBallNumber', 'is_legal', 'ID'], ascending=[True, True, True, True, True], inplace=True)
+raw_data.sort_values(by=['ID'], ascending=[True], inplace=True)
 raw_data = raw_data.reset_index(drop=True)
-raw_data = raw_data.loc[:, ['matchID', 'venue', 'inningNumber', 'date', 'host', 'competition', 'ID', 'inningBallNumber', 'is_legal', 'ord_real', 'batsmanBallsFaced', 'nonstrikerName', 'battingTeam', 'overNumber', 'inningBallsRemaining', 'totalInningWickets', 'ord', 'batsmanName', 'bowler', 'batterid', 'bowlerid', 'inningPhase', 'realexprbat', 'realexpwbat', 'realexprbowl', 'realexpwbowl', 'ovrexpr', 'ovrexpw', 'isPowerSurge']]
+raw_data = raw_data.loc[:, ['matchID', 'venue', 'inningNumber', 'date', 'host', 'competition', 'ID', 'nonstrikerName', 'battingTeam', 'overNumber', 'inningBallsRemaining', 'totalInningWickets', 'ord', 'batsmanName', 'bowler', 'batterid', 'bowlerid', 'inningPhase', 'realexprbat', 'realexpwbat', 'realexprbowl', 'realexpwbowl', 'ovrexpr', 'ovrexpw', 'isPowerSurge']]
 # his_max_date0 = raw_data['date'].max()
 ##get recovery values as back up for the historic player ratings, in case historic values aren't available for specifc games
 recoveries_bat = batter_data.groupby(['batterid'])[['run_rating_pr_ba', 'wkt_rating_pr_ba']].mean().reset_index()
 recoveries_bat.rename(columns={'run_rating_pr_ba': 'oppo_bat_runs_old', 'wkt_rating_pr_ba': 'oppo_bat_wkts_old'}, inplace=True)
-# fallback for expected_ord (ord_pr_ba) - mirrors recoveries_bat above, but nothing analogous existed
-# for order before: a batterid-only average across every rating row this batter has, anywhere, any
-# competition/date/host. Used below only when the (matchID, batterid) join itself misses (this
-# batter has genuinely never been individually rated in this specific match).
-recoveries_ord = batter_data.groupby(['batterid'])[['ord_pr_ba']].mean().reset_index()
-recoveries_ord.rename(columns={'ord_pr_ba': 'ord_pr_ba_old'}, inplace=True)
 recoveries_bowl = bowler_data.groupby(['bowlerid'])[['run_rating_pr_bo', 'wkt_rating_pr_bo']].mean().reset_index()
 recoveries_bowl.rename(columns={'run_rating_pr_bo': 'oppo_bowl_runs_old', 'wkt_rating_pr_bo': 'oppo_bowl_wkts_old'}, inplace=True)
 recoveries_ground = ground_data.groupby(['venue', 'inningPhase'])[['runsratio_ground', 'wktsratio_ground']].mean().reset_index()
 recoveries_ground.rename(columns={'runsratio_ground': 'ground_runs', 'wktsratio_ground': 'ground_wkts'}, inplace=True)
 
 raw_data = raw_data.merge(recoveries_bat, on='batterid', how='left')
-raw_data = raw_data.merge(recoveries_ord, on='batterid', how='left')
 raw_data = raw_data.merge(recoveries_bowl, on='bowlerid', how='left')
 raw_data = raw_data.merge(recoveries_ground, on=('venue', 'inningPhase'), how='left')
 raw_data_test00000 = raw_data[raw_data.competition == 'The Hundred (Women\'s Comp)']
@@ -93,45 +73,13 @@ raw_data['oppo_bowl_runs'] = raw_data['run_rating_pr_bo'].fillna(raw_data['oppo_
 raw_data['oppo_bowl_wkts'] = raw_data['wkt_rating_pr_bo'].fillna(raw_data['oppo_bowl_wkts_old'])
 # his_max_date2 = raw_data['date'].max()
 #
-# joined on (matchID, batterid) - NOT (date, batterid, competition, host). Verified: the old
-# date/competition/host join only matched 62.1% of rows, because (a) smaller competitions get
-# bucketed under generic labels in this table (e.g. 'tier_2', country names) that don't match the
-# raw data's real competition names, and (b) it requires an exact same-day rating snapshot, which
-# doesn't exist for most matches (ratings aren't refreshed daily). matchID+batterid is the precise,
-# unambiguous key both tables actually share - joining on it directly recovers 88.8% coverage instead.
-batter_data = batter_data.drop_duplicates(subset=['batterid', 'matchID'])
-raw_data = raw_data.merge(batter_data.loc[:, ['batterid', 'matchID', 'run_rating_pr_ba', 'wkt_rating_pr_ba', 'balls_faced_pr_ba', 'ord_pr_ba']], on=('matchID', 'batterid'), how='left')
+batter_data = batter_data.drop_duplicates(subset=['batterid', 'date', 'competition', 'host'])
+raw_data = raw_data.merge(batter_data.loc[:, ['batterid', 'date', 'competition', 'host', 'run_rating_pr_ba', 'wkt_rating_pr_ba', 'balls_faced_pr_ba']], on=('date', 'batterid', 'competition', 'host'), how='left')
 raw_data['run_rating_pr_ba'] = raw_data['run_rating_pr_ba'].fillna(raw_data['oppo_bat_runs_old'])
 raw_data['wkt_rating_pr_ba'] = raw_data['wkt_rating_pr_ba'].fillna(raw_data['oppo_bat_wkts_old'])
 raw_data['oppo_bat_runs'] = np.where(raw_data['balls_faced_pr_ba'] >= 150, raw_data['run_rating_pr_ba'], raw_data['oppo_bat_runs_old'])
 raw_data['oppo_bat_wkts'] = np.where(raw_data['balls_faced_pr_ba'] >= 150, raw_data['wkt_rating_pr_ba'], raw_data['oppo_bat_wkts_old'])
-# expected_ord fallback: if this batter wasn't individually rated in THIS match (the (matchID,
-# batterid) join missed), fall back to their own average rated order across every other match -
-# the same rescue oppo_bat_runs/oppo_bat_wkts already get above, just newly added for order since
-# nothing analogous existed for it before.
-raw_data['ord_pr_ba'] = raw_data['ord_pr_ba'].fillna(raw_data['ord_pr_ba_old'])
 raw_data_test0000 = raw_data[raw_data.competition == 'The Hundred (Women\'s Comp)']
-
-# ---- order adjustment (women/expBall&runsToCome/auxiliaries/byOrderAdjusts_w.py) ----
-# see men/expBall&runsToCome/data/2_adjData.py for the full reasoning - identical mechanism here.
-# Safe to apply here (per real ball, before any per-batter deduplication) because ord and
-# expected_ord don't change across a batter's own inningNumber.
-orderAdjusts = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/byOrderAdjusts_w.csv')
-raw_data['expected_ord_rounded'] = raw_data['ord_pr_ba'].round()
-raw_data = raw_data.merge(
-    orderAdjusts.rename(columns={'expected_ord': 'expected_ord_rounded', 'ord': 'ord_real'}),
-    on=['expected_ord_rounded', 'ord_real'], how='left'
-)
-raw_data['runsAdjustRatio'] = raw_data['runsAdjustRatio'].fillna(1.0)
-raw_data['wktsAdjustRatio'] = raw_data['wktsAdjustRatio'].fillna(1.0)
-
-# preadj = the clean, pre-order-adjustment values. oppo_bat_runs/oppo_bat_wkts get order-adjusted
-# in place from here on (used internally to compute RA_sum via `his` below), but are reset back to
-# these _preadj values right before export at the end of the script - see the comment there for why.
-raw_data['oppo_bat_runs_preadj'] = raw_data['oppo_bat_runs']
-raw_data['oppo_bat_wkts_preadj'] = raw_data['oppo_bat_wkts']
-raw_data['oppo_bat_runs'] = raw_data['oppo_bat_runs'] * raw_data['runsAdjustRatio']
-raw_data['oppo_bat_wkts'] = raw_data['oppo_bat_wkts'] * raw_data['wktsAdjustRatio']
 
 ###need to merge the ground stuff into separate columns for each inningPhase, this makes it easier to predict the amount of runs added by inningPhase later on:
 ground_data = ground_data.drop_duplicates(subset=['matchID', 'inningPhase'])
@@ -402,34 +350,18 @@ raw_data_test1 = raw_data[raw_data.competition == 'The Hundred (Women\'s Comp)']
 # lineups = pd.read_csv(fr'{user_name}\Documents\Tempdata\lineups_w.csv')
 # lineups = lineups[lineups.matchid == 1000161787]
 ####### applying to the data (both inningNumber):
-# non-striker's own live balls-faced-so-far isn't directly available per ball - raw_data's
-# 'batsmanBallsFaced' column only ever reflects whoever is STRIKING that specific ball. Build it
-# via an as-of lookup: for every ball, find that player's own most recent batsmanBallsFaced
-# checkpoint (the last ball where THEY were striking), within the same match/inningNumber. Ordered
-# by (inningBallNumber, is_legal) - not 'ID' - matching the raw_data master sort above; the
-# is_legal tiebreak also correctly resolves ties for a player's own wide-then-legal-ball pair (the
-# same player is usually the striker for both), so a backward match lands on the more complete
-# (post-legal-ball) count once that legal ball has actually happened.
-raw_data['_origIdx'] = raw_data.index
-ballCheckpoints = raw_data.loc[:, ['matchID', 'inningNumber', 'inningBallNumber', 'is_legal', 'batsmanName', 'batsmanBallsFaced']].rename(columns={'batsmanName': 'player'}).sort_values(['inningBallNumber', 'is_legal'])
-nonstrikerLookup = raw_data.loc[:, ['matchID', 'inningNumber', 'inningBallNumber', 'is_legal', 'nonstrikerName', '_origIdx']].rename(columns={'nonstrikerName': 'player'}).sort_values(['inningBallNumber', 'is_legal'])
-nonstrikerBalls = pd.merge_asof(nonstrikerLookup, ballCheckpoints, on='inningBallNumber', by=['matchID', 'inningNumber', 'player'], direction='backward')
-nonstrikerBalls = nonstrikerBalls.set_index('_origIdx').sort_index()
-raw_data['nonstriker_batsmanballs'] = nonstrikerBalls['batsmanBallsFaced'].fillna(0)
-raw_data = raw_data.drop(columns=['_origIdx'])
-
 his = raw_data.copy()
 # his_max_date = his['date'].max()
 # his = his[his.matchid == 1000162218]
 his['date'] = pd.to_datetime(his['date'])
 his['year'] = his['date'].dt.year
-his = his.loc[:, ['competition', 'inningBallsRemaining', 'totalInningWickets', 'matchID', 'batsmanName', 'nonstrikerName', 'battingTeam', 'ID', 'inningBallNumber', 'is_legal', 'inningNumber', 'er_tc_smooth_basic',  'ew_tc_smooth_basic', 'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum', 'year', 'batsmanBallsFaced', 'nonstriker_batsmanballs']]
+his = his.loc[:, ['competition', 'inningBallsRemaining', 'totalInningWickets', 'matchID', 'batsmanName', 'nonstrikerName', 'battingTeam', 'ID', 'er_tc_smooth_basic',  'ew_tc_smooth_basic', 'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum', 'year']]
 his = his.merge(lineups, on=('matchID', 'battingTeam')) #
 his['in_now'] = np.where((his['batsmanName'] == his['batter']) | (his['nonstrikerName'] == his['batter']), 1, 0)
 his['out'] = np.where((his['carded'] >= his['totalInningWickets'] + 2) | (his['in_now'] == 1), 1, 0)
 his['wkts_till_bat'] = np.maximum((his['carded'] - his['totalInningWickets']) - 2, 0)
-bat_ratings_game = raw_data.loc[:, ['matchID', 'batsmanName', 'oppo_bat_runs', 'oppo_bat_wkts', 'oppo_bat_runs_preadj', 'oppo_bat_wkts_preadj', 'expected_ord_rounded']].drop_duplicates(subset=['matchID', 'batsmanName'])
-bat_ratings_game.columns = ['matchID', 'batter', 'oppo_bat_runs', 'oppo_bat_wkts', 'oppo_bat_runs_preadj', 'oppo_bat_wkts_preadj', 'expected_ord_rounded']
+bat_ratings_game = raw_data.loc[:, ['matchID', 'batsmanName', 'oppo_bat_runs', 'oppo_bat_wkts']].drop_duplicates(subset=['matchID', 'batsmanName'])
+bat_ratings_game.columns = ['matchID', 'batter', 'oppo_bat_runs', 'oppo_bat_wkts']
 bat_ratings_comp = raw_data.loc[:, ['competition', 'batsmanName', 'oppo_bat_runs_old', 'oppo_bat_wkts_old']].drop_duplicates(subset=['competition', 'batsmanName'])
 bat_ratings_comp.columns = ['competition', 'batter', 'oppo_bat_runs_comp', 'oppo_bat_wkts_comp']
 bat_ratings_all = raw_data.loc[:, ['batsmanName', 'oppo_bat_runs_old', 'oppo_bat_wkts_old']].drop_duplicates(subset=['batsmanName'])
@@ -443,64 +375,8 @@ his['oppo_bat_runs'] = his['oppo_bat_runs'].fillna(his['oppo_bat_runs_comp'])
 his['oppo_bat_wkts'] = his['oppo_bat_wkts'].fillna(his['oppo_bat_wkts_comp'])
 his['oppo_bat_runs'] = his['oppo_bat_runs'].fillna(1) #just setting oppo_bat_runs to br_tc for now so they are same as above, trying to work out where difference comes from
 his['oppo_bat_wkts'] = his['oppo_bat_wkts'].fillna(1)
-
-# ---- survivor order substitution (women/expBall&runsToCome/auxiliaries/byOrderAdjusts_w.py) ----
-# see men/expBall&runsToCome/data/2_adjData.py for the full reasoning - identical mechanism here.
-survivorOrderByWickets = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/survivorOrderByWickets_w.csv')
-survivorOrderByWickets = survivorOrderByWickets.rename(columns={'wickets': 'totalInningWickets'})
-his = his.merge(survivorOrderByWickets, on='totalInningWickets', how='left')
-his['is_survivor'] = (his['in_now'] == 1) & (his['carded'] != his['totalInningWickets'] + 2)
-
-# avgSurvivorOrd is continuous - byOrderAdjusts_w.csv is gridded on whole numbers only, so
-# interpolate between its floor/ceiling rather than rounding and losing information (same
-# linear-interpolation pattern already used below for eff_ord/not-yet-arrived batters).
-his['survivor_ord_lower'] = np.clip(np.floor(his['avgSurvivorOrd']), 2, 11)
-his['survivor_ord_upper'] = np.clip(np.ceil(his['avgSurvivorOrd']), 2, 11)
-his['survivor_ord_upper_prop'] = his['avgSurvivorOrd'] - his['survivor_ord_lower']
-his['survivor_ord_lower_prop'] = 1 - his['survivor_ord_upper_prop']
-
-survivorOrderAdjusts_lower = orderAdjusts.rename(columns={'expected_ord': 'expected_ord_rounded', 'ord': 'survivor_ord_lower', 'runsAdjustRatio': 'survivorRunsRatio_lower', 'wktsAdjustRatio': 'survivorWktsRatio_lower'})
-his = his.merge(survivorOrderAdjusts_lower.loc[:, ['expected_ord_rounded', 'survivor_ord_lower', 'survivorRunsRatio_lower', 'survivorWktsRatio_lower']], on=['expected_ord_rounded', 'survivor_ord_lower'], how='left')
-survivorOrderAdjusts_upper = orderAdjusts.rename(columns={'expected_ord': 'expected_ord_rounded', 'ord': 'survivor_ord_upper', 'runsAdjustRatio': 'survivorRunsRatio_upper', 'wktsAdjustRatio': 'survivorWktsRatio_upper'})
-his = his.merge(survivorOrderAdjusts_upper.loc[:, ['expected_ord_rounded', 'survivor_ord_upper', 'survivorRunsRatio_upper', 'survivorWktsRatio_upper']], on=['expected_ord_rounded', 'survivor_ord_upper'], how='left')
-
-his['survivorRunsRatio'] = (his['survivorRunsRatio_upper'] * his['survivor_ord_upper_prop']) + (his['survivorRunsRatio_lower'] * his['survivor_ord_lower_prop'])
-his['survivorWktsRatio'] = (his['survivorWktsRatio_upper'] * his['survivor_ord_upper_prop']) + (his['survivorWktsRatio_lower'] * his['survivor_ord_lower_prop'])
-his['survivorRunsRatio'] = his['survivorRunsRatio'].fillna(1.0)
-his['survivorWktsRatio'] = his['survivorWktsRatio'].fillna(1.0)
-
-his['oppo_bat_runs'] = np.where(his['is_survivor'], his['oppo_bat_runs_preadj'] * his['survivorRunsRatio'], his['oppo_bat_runs'])
-his['oppo_bat_wkts'] = np.where(his['is_survivor'], his['oppo_bat_wkts_preadj'] * his['survivorWktsRatio'], his['oppo_bat_wkts'])
-
-# ---- balls-faced adjustment (women/expBall&runsToCome/auxiliaries/fxbAdjust_w.py) ----
-# see men/expBall&runsToCome/data/2_adjData.py for the full reasoning - identical mechanism here,
-# including the striker-vs-non-striker R19 asymmetry (batsmanBallsFaced is inclusive of the
-# CURRENT row's own ball, so the striker needs -1; nonstriker_batsmanballs is already a completed,
-# inclusive-of-a-past-ball count via the merge_asof lookup above, so it needs no further -1).
-his['R19'] = np.where(
-    his['batsmanName'] == his['batter'], np.clip(his['batsmanBallsFaced'] - 1, 0, 10),
-    np.where(his['nonstrikerName'] == his['batter'], np.clip(his['nonstriker_batsmanballs'], 0, 10), np.nan)
-)
-fxbAdjusts = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/auxiliaries/fxbBallsFacedAdjust_w.csv')
-fxbAdjusts = fxbAdjusts.rename(columns={'ord': 'carded'}).loc[:, ['carded', 'totalInningWickets', 'inningBallsRemaining', 'R19', 'inningNumber', 'fxbRunsAdjustRatio', 'fxbWktsAdjustRatio']]
-his = his.merge(fxbAdjusts, on=['carded', 'totalInningWickets', 'inningBallsRemaining', 'R19', 'inningNumber'], how='left')
-# not-in_now rows (R19 is NaN, so nothing can match above) and any other missing combination
-# default to 1.0 - no adjustment - rather than being silently dropped
-his['fxbRunsAdjustRatio'] = his['fxbRunsAdjustRatio'].fillna(1.0)
-his['fxbWktsAdjustRatio'] = his['fxbWktsAdjustRatio'].fillna(1.0)
-# fxb (the settling-in curve) isn't meaningful at 0 wickets down - it only applies once at least one
-# wicket has fallen - so force it neutral there regardless of what the lookup returned
-his['fxbRunsAdjustRatio'] = np.where(his['totalInningWickets'] == 0, 1.0, his['fxbRunsAdjustRatio'])
-his['fxbWktsAdjustRatio'] = np.where(his['totalInningWickets'] == 0, 1.0, his['fxbWktsAdjustRatio'])
-his['oppo_bat_runs'] = his['oppo_bat_runs'] * his['fxbRunsAdjustRatio']
-his['oppo_bat_wkts'] = his['oppo_bat_wkts'] * his['fxbWktsAdjustRatio']
-
 his['extra_ord'] = ((1 / his['oppo_bat_wkts']) - 1) * his['out']
-# sorted by (inningNumber, inningBallNumber, is_legal), not 'ID' - this rolling window is grouped
-# only by matchID (not inningNumber), so it also depends on inningNumber 1 sorting entirely before
-# inningNumber 2, which ID cannot be trusted to do (see the note above the raw_data sort_values near
-# the top of the script)
-his.sort_values(by=['matchID', 'inningNumber', 'inningBallNumber', 'is_legal', 'carded'], ascending=[True, True, True, True, True], inplace=True)
+his.sort_values(by=['ID', 'carded'], ascending=[True, True], inplace=True)
 ord_total = his.groupby(['matchID'], sort=False)['extra_ord'].transform(lambda x: x.rolling(150, min_periods=1, closed='left').mean()).reset_index().fillna(0)
 his['extra_ord_tot'] = ord_total['extra_ord']
 his['carded'] = np.maximum(2, his['carded'])
@@ -519,11 +395,8 @@ expr_pred.rename(columns={'ord_lower': 'ord', 'er_tc_smooth_lower': 'er_tc_smoot
 his['er_tc_smooth'] = np.where(his['batsmanName'] == his['batter'], his['er_tc_smooth_basic'], his['er_tc_smooth']) ###we do this to use the er_tc which is derived from just in now data, which will be more accurate for in batters than the model which looks at batters who aren't in yet as well.
 his['ew_tc_smooth'] = np.where(his['batsmanName'] == his['batter'], his['ew_tc_smooth_basic'], his['ew_tc_smooth']) ###we do this to use the er_tc which is derived from just in now data, which will be more accurate for in batters than the model which looks at batters who aren't in yet as well.
 
-# apply 'out' here - previously only used for extra_ord/eff_ord above, never to stop a batter's
-# own expected FUTURE contribution from accumulating for the rest of the inningNumber once they're
-# out (same pre-existing gap found and fixed in the men's pipeline - see 2_adjData.py)
-his['rar_bat'] = (his['oppo_bat_runs'] - 1) * his['er_tc_smooth'] * his['out']
-his['raw_bat'] = (1 - his['oppo_bat_wkts']) * his['ew_tc_smooth'] * his['out']
+his['rar_bat'] = (his['oppo_bat_runs'] - 1) * his['er_tc_smooth']
+his['raw_bat'] = (1 - his['oppo_bat_wkts']) * his['ew_tc_smooth']
 his = his.sort_values(by='year', ascending=False)
 
 new_data = his.copy()
@@ -532,30 +405,14 @@ new_data = pd.pivot_table(new_data, values=['rar_bat', 'raw_bat',  'rar_ground_s
 new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum'] + new_data['rar_bbl_sum'] + new_data['raw_bbl_sum']
 
 raw_data_for_hundredAdjusts = raw_data_og.merge(new_data.loc[:, ['ID', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum', 'RA_sum']], on='ID', how='left')
-
-# oppo_bat_runs/oppo_bat_wkts get exported CLEAN (pre order-adjustment), not the order-adjusted
-# version used internally above to compute RA_sum. byOrderAdjusts_w.py (and fxbAdjust_w.py) read
-# this exported column back in as the baseline to compare real performance against, to DERIVE
-# runsAdjustRatio/wktsAdjustRatio in the first place - exporting the already-adjusted version would
-# make that circular. RA_sum itself, which reflects both adjustments, is unaffected by this - it
-# was already computed above from oppo_bat_runs/oppo_bat_wkts before they get reset here.
-raw_data['oppo_bat_runs'] = raw_data['oppo_bat_runs_preadj']
-raw_data['oppo_bat_wkts'] = raw_data['oppo_bat_wkts_preadj']
-
-# oppo_bat_runs/oppo_bat_wkts and ord_pr_ba (-> expected_ord below) weren't previously exported at
-# all - needed as the baseline dataClean_w.csv gives byOrderAdjusts_w.py/fxbAdjust_w.py to derive
-# their adjustment ratios from (mirrors the men's pipeline's equivalent final merge)
-raw_data_for_hundredAdjusts = raw_data_for_hundredAdjusts.merge(raw_data.loc[:, ['ID', 'oppo_bowl_runs', 'oppo_bowl_wkts', 'oppo_bat_runs', 'oppo_bat_wkts', 'ground_runs', 'ground_wkts', 'ord_pr_ba']], on='ID', how='left')
-
 raw_data_for_hundredAdjusts_test1 = raw_data_for_hundredAdjusts[raw_data_for_hundredAdjusts.competition == 'The Hundred (Women\'s Comp)']
 
 dataClean_w = raw_data_for_hundredAdjusts.drop(columns=['rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'rar_bbl_sum', 'raw_bbl_sum'])
 dataClean_w['totalInningRunsToComeAdj'] = dataClean_w['totalInningRunsToCome'] - dataClean_w['RA_sum']
-dataClean_w['runsRequiredAdj'] = dataClean_w['runsRequired'] - dataClean_w['RA_sum']
-dataClean_w = dataClean_w.rename(columns={'RA_sum': 'RA_Sum', 'ord_pr_ba': 'expected_ord'})
-
+dataClean_w = dataClean_w.rename(columns={'RA_sum': 'RA_Sum'})
 
 dataClean_w.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_adjusted_runs_to_come_w.csv', index=False)
+
 
 
 
@@ -601,5 +458,3 @@ dataClean_w.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3
 # dive = dive[(dive.inningBallsRemaining == 120) & (dive.inningNumber == 2)]
 # dive = dive[(dive.required_adjusted >= 150) & (dive.required_adjusted < 155)]
 # dive = dive.sort_values(by=['RA_sum'])
-
-

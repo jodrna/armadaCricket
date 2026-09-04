@@ -22,9 +22,14 @@ __pycache__/
 !**/data/*.py
 !**/data/.gitkeep
 
+# Keep oldScripts folders and everything inside them
+!**/data/oldScripts/
+!**/data/oldScripts/**
+
 # -------------------------
 # KEEP auxiliaries (including CSVs)
 # -------------------------
 !**/auxiliaries/
-!**/auxiliaries/**.env
-/.env
+
+.env
+

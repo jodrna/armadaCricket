@@ -427,5 +427,10 @@ chaseLookup.insert(col_position, 'lookup', (chaseLookup['totalInningWickets'] + 
 
 # exports
 chaseLookup.to_csv(PROJECT_ROOT / 'men/matchMarket/outputs/1_chaseLookup.csv', index=False)
+#
+# chaseLookupComparison = chaseLookup.loc[:, ['inningBallNumber', 'inningBallsRemaining', 'totalInningWickets', 'runsRequired', 'chaseSample', 'chaseWin%', 'm_chaseWin%Main', 'm_chaseWin%_Death', 'm_chaseWin%LO', 'm_chaseWin%', 'm_chaseWin%Year']]
 
-chaseLookupComparison = chaseLookup.loc[:, ['inningBallNumber', 'inningBallsRemaining', 'totalInningWickets', 'runsRequired', 'chaseSample', 'chaseWin%', 'm_chaseWin%Main', 'm_chaseWin%_Death', 'm_chaseWin%LO', 'm_chaseWin%', 'm_chaseWin%Year']]
+trainData = trainData.loc[:, ['matchID', 'ID', 'm_chaseWin%']]
+trainData.to_csv(PROJECT_ROOT / 'men/matchMarket/outputs/neuralPreds.csv', index=False)
+
+

@@ -8,10 +8,18 @@ import seaborn as sns
 from sklearn.linear_model import LogisticRegression
 from paths import PROJECT_ROOT
 
-# testing
 # import and filter to 1st innings only
 trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
 trainData = trainData[trainData['inningNumber'] == 1]
+
+# # remove IPL and ILT20 after 2023 because of sub rule
+# trainData = trainData[
+#     ~(
+#         trainData['competition'].isin(['Indian Premier League', 'International League T20']) &
+#         (trainData['year'] > 2022)
+#     )
+# ]
+# comps = pd.pivot_table(trainData, values=['batsmanRuns'], index=['competition'], columns=['year'], aggfunc='count').reset_index()
 
 # extras averages, must be done here at the start before we remove these for modelling ball by ball
 extras = pd.pivot_table(trainData, values=['wideRuns', 'noballRuns', 'isWide', 'isNoball', 'byeRuns'], index=['overNumber'], aggfunc=['sum', 'mean']).reset_index()
@@ -212,7 +220,7 @@ masterLookup['predTotalInningRuns'] = np.where(masterLookup['predTotalInningRuns
 
 
 # export
-masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/1_masterLookup.csv', index=False)
+# masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/1_masterLookup.csv', index=False)
 
 
 

@@ -189,3 +189,7 @@ for x in np.arange(0, 2, 1):
         sql_upload.to_csv(PROJECT_ROOT / 'men/playerRatings/batT20Mens/outputs/sqlUploadRasoi.csv', index=False)
 
 
+
+comps = pd.pivot_table(ratings, values='batsman', index='competition', aggfunc='count').reset_index()
+
+

@@ -240,7 +240,9 @@ allData = allData[allData['inningBallsRemaining'] > 0]
 allData = allData[allData['totalInningRuns'] > -1]
 
 
-# export
+# -------------------------
+# import merge and export wicket stuff
+# -------------------------
 wkt_value_sum = pd.read_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/wkt_sum_mean_w.csv')
 wkt_value_sum = wkt_value_sum.rename(columns={'matchid': 'matchID', 'innings': 'inningNumber', 'wickets': 'totalInningWickets', 'ballsremaining': 'inningBallsRemaining'})
 allData = allData.merge(wkt_value_sum, how='left')
@@ -315,11 +317,27 @@ allData = allData.loc[:, [
 
 
 
+allDataOld = allData.copy().rename(
+    columns={
+        'matchID': 'matchid',
+        'ID': 'id',
+        'battingTeam': 'battingteam',
+        'legbyeRuns': 'legbyes',
+        'inningPhase': 'innperiod',
+        'batsmanBallsFaced': 'batsmanballs',
+        'batsmanName': 'batsman',
+        'nonstrikerName': 'nonstriker',
+        'RA_Sum': 'RA_sum',
+    }
+)
+
 # -------------------------
 # Export
 # -------------------------
 if run_type == 1:
     allData.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
+    # allDataOld.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
+
 
 #     # allData = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_w.csv')
 #     sqlupload = allData.loc[:, ['id', 'ball', 'score', 'ballsremaining', 'wickets', 'target', 'ord', 'required']]
