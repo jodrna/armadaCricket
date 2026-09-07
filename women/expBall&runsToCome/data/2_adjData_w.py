@@ -13,7 +13,7 @@ from datetime import date
 ######## need to run lineups_filler before running this!!!!!!!!!!!
 
 connection = engine.connect()
-raw_data_og = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', parse_dates=['date'])
+raw_data_og = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/Cleaned_t20bbb3_new_w.csv', parse_dates=['date'])
 # raw_data_og['runs_to_come'] = raw_data_og['t_runs'] - raw_data_og['score']
 # raw_data_og = raw_data_og[raw_data_og.competition == 'The Hundred (Women\'s Comp)']
 # test = raw_data_og.groupby(['inningBallsRemaining'])['runs_to_come'].mean().reset_index()
