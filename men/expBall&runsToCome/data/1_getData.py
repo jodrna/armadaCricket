@@ -1,12 +1,13 @@
+import subprocess
+from sqlalchemy import text
 from pathlib import Path
 from datetime import timedelta, date
-import subprocess
 import pandas as pd
 import numpy as np
 from db import engine
 from paths import PROJECT_ROOT
 user_name = Path.home()
-connection = engine.connect()
+
 
 
 # -------------------------
@@ -53,7 +54,12 @@ and reduced is not true
 order by matchid, innings, id
 '''
 
-allData = pd.read_sql_query(sql_query, con=connection, params=(format_date,))
+with engine.connect() as connection:
+    allData = pd.read_sql_query(
+        sql_query,
+        con=connection,
+        params=(format_date,)
+    )
 allData['date'] = pd.to_datetime(allData['date'], errors='raise')
 allData = allData.sort_values(by=['matchID', 'inningNumber', 'delivery2']).reset_index(drop=True)
 
@@ -264,7 +270,7 @@ allData = allData.loc[:, ['matchID', 'ID', 'tier', 'date', 'year', 'competition'
                     'major_nation', 'batsmanBallsFaced',
                      'ovrexpr', 'ovrexpw', 'batsmanName', 'bowler', 'batterid', 'nonstrikerid',
 'bowlerid', 'nonstrikerName', 'extra', 'true_score', 'comp', 'totalInningRunsToCome', 'result',
-                     'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'isPowerplay', 'isValid', 'isWide', 'isNoball', 'sample',
+                     'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'ball', 'isPowerplay', 'isValid', 'isWide', 'isNoball', 'sample',
                      'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired']]
 
 
@@ -303,94 +309,94 @@ allData = allData[(allData['competition'] != 'The Hundred (Men\'s Comp)')]
 # Export
 # -------------------------
 if run_type == 1:
-    allData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', index=False)
-    # allDataOld.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_w.csv', index=False)
+    allData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_new.csv', index=False)
+    allDataOld.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', index=False)
 
-#     sqlupload = allData.loc[:,['ID', 'ball', 'totalInningRuns', 'inningBallsRemaining', 'totalInningWickets', 'target', 'ord', 'runsRequired', 'wkt_value_sum_smooth']]
-#     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a', 'wkt_value_sum_smooth']
-#
-#     with connection.begin():
-#         connection.execute(text("TRUNCATE TABLE player_ratings.t20_bbb_clean"))
-#         sqlupload.to_sql(
-#             "t20_bbb_clean",
-#             con=connection,
-#             schema="player_ratings",
-#             if_exists='append',
-#             index=False
-#         )
-#
-#         connection.execute(text("""
-#             UPDATE match_data.t20_bbb a
-#             SET ballsremaining         = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
-#                 score                  = COALESCE(t.score_clean_a, a.score),
-#                 target                 = COALESCE(t.target_clean_a, a.target),
-#                 ord                    = COALESCE(t.ord_clean_a, a.ord),
-#                 id_clean_a             = t.id_clean_a,
-#                 ball2_clean_a          = t.ball2_clean_a,
-#                 score_clean_a          = t.score_clean_a,
-#                 ballsremaining_clean_a = t.ballsremaining_clean_a,
-#                 wickets_clean_a        = t.wickets_clean_a,
-#                 target_clean_a         = t.target_clean_a,
-#                 ord_clean_a            = t.ord_clean_a,
-#                 required_clean_a       = t.required_clean_a
-#             FROM player_ratings.t20_bbb_clean t
-#             WHERE a.id = t.id_clean_a
-#               AND a.id_clean_a IS NULL
-#         """))
-#
-# else:
-#     sqlupload = allData.loc[:,['ID', 'ball', 'totalInningRuns', 'inningBallsRemaining', 'totalInningWickets', 'target', 'ord', 'runsRequired', 'wkt_value_sum_smooth']]
-#     sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a', 'wkt_value_sum_smooth']
-#
-#     with connection.begin():
-#         sqlupload.to_sql(
-#             "t20_bbb_clean_temp",
-#             con=connection,
-#             schema="player_ratings",
-#             if_exists='replace',
-#             index=False
-#         )
-#
-#         connection.execute(text("""
-#             INSERT INTO player_ratings.t20_bbb_clean (id_clean_a, ball2_clean_a, score_clean_a, ballsremaining_clean_a, wickets_clean_a, target_clean_a, ord_clean_a, required_clean_a, wkt_value_sum_smooth)
-#             SELECT *
-#             FROM player_ratings.t20_bbb_clean_temp t
-#             WHERE NOT EXISTS (
-#                 SELECT 1 FROM player_ratings.t20_bbb_clean c
-#                 WHERE c.id_clean_a = t.id_clean_a
-#             )
-#         """))
-#
-#         connection.execute(text("""
-#             UPDATE match_data.t20_bbb a
-#             SET ballsremaining         = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
-#                 score                  = COALESCE(t.score_clean_a, a.score),
-#                 target                 = COALESCE(t.target_clean_a, a.target),
-#                 ord                    = COALESCE(t.ord_clean_a, a.ord),
-#                 id_clean_a             = t.id_clean_a,
-#                 ball2_clean_a          = t.ball2_clean_a,
-#                 score_clean_a          = t.score_clean_a,
-#                 ballsremaining_clean_a = t.ballsremaining_clean_a,
-#                 wickets_clean_a        = t.wickets_clean_a,
-#                 target_clean_a         = t.target_clean_a,
-#                 ord_clean_a            = t.ord_clean_a,
-#                 required_clean_a       = t.required_clean_a
-#             FROM player_ratings.t20_bbb_clean_temp t
-#             WHERE a.id = t.id_clean_a
-#               AND a.id_clean_a IS NULL
-#         """))
-#
-#         connection.execute(text("DROP TABLE player_ratings.t20_bbb_clean_temp"))
-#
-#     allData = allData.sort_values(by='date', ascending=False)
-#     date_df = allData.head(1)
-#     date_df['date_of_run'] = pd.Timestamp(date.today())
-#     date_df = date_df.loc[:,['date', 'date_of_run']]
-#     date_df.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/latest_data_clean.csv', index=False)
-#
-#     subprocess.run(['git', 'add', str(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/latest_data_clean.csv')])
-#     subprocess.run(['git', 'commit', '-m', 'update csv files'])
-#     subprocess.run(['git', 'push'])
+    sqlupload = allData.loc[:, ['ID', 'ball', 'totalInningRuns', 'inningBallsRemaining', 'totalInningWickets', 'target', 'ord', 'runsRequired']]
+    sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a', 'wkt_value_sum_smooth']
+
+    with engine.begin() as connection:
+        connection.execute(text("TRUNCATE TABLE player_ratings.t20_bbb_clean"))
+        sqlupload.to_sql(
+            "t20_bbb_clean",
+            con=connection,
+            schema="player_ratings",
+            if_exists='append',
+            index=False
+        )
+
+        connection.execute(text("""
+            UPDATE match_data.t20_bbb a
+            SET ballsremaining         = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
+                score                  = COALESCE(t.score_clean_a, a.score),
+                target                 = COALESCE(t.target_clean_a, a.target),
+                ord                    = COALESCE(t.ord_clean_a, a.ord),
+                id_clean_a             = t.id_clean_a,
+                ball2_clean_a          = t.ball2_clean_a,
+                score_clean_a          = t.score_clean_a,
+                ballsremaining_clean_a = t.ballsremaining_clean_a,
+                wickets_clean_a        = t.wickets_clean_a,
+                target_clean_a         = t.target_clean_a,
+                ord_clean_a            = t.ord_clean_a,
+                required_clean_a       = t.required_clean_a
+            FROM player_ratings.t20_bbb_clean t
+            WHERE a.id = t.id_clean_a
+              AND a.id_clean_a IS NULL
+        """))
+
+else:
+    sqlupload = allData.loc[:, ['ID', 'ball', 'totalInningRuns', 'inningBallsRemaining', 'totalInningWickets', 'target', 'ord', 'runsRequired']]
+    sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a', 'wkt_value_sum_smooth']
+
+    with engine.begin() as connection:
+        sqlupload.to_sql(
+            "t20_bbb_clean_temp",
+            con=connection,
+            schema="player_ratings",
+            if_exists='replace',
+            index=False
+        )
+
+        connection.execute(text("""
+            INSERT INTO player_ratings.t20_bbb_clean (id_clean_a, ball2_clean_a, score_clean_a, ballsremaining_clean_a, wickets_clean_a, target_clean_a, ord_clean_a, required_clean_a, wkt_value_sum_smooth)
+            SELECT *
+            FROM player_ratings.t20_bbb_clean_temp t
+            WHERE NOT EXISTS (
+                SELECT 1 FROM player_ratings.t20_bbb_clean c
+                WHERE c.id_clean_a = t.id_clean_a
+            )
+        """))
+
+        connection.execute(text("""
+            UPDATE match_data.t20_bbb a
+            SET ballsremaining         = COALESCE(t.ballsremaining_clean_a, a.ballsremaining),
+                score                  = COALESCE(t.score_clean_a, a.score),
+                target                 = COALESCE(t.target_clean_a, a.target),
+                ord                    = COALESCE(t.ord_clean_a, a.ord),
+                id_clean_a             = t.id_clean_a,
+                ball2_clean_a          = t.ball2_clean_a,
+                score_clean_a          = t.score_clean_a,
+                ballsremaining_clean_a = t.ballsremaining_clean_a,
+                wickets_clean_a        = t.wickets_clean_a,
+                target_clean_a         = t.target_clean_a,
+                ord_clean_a            = t.ord_clean_a,
+                required_clean_a       = t.required_clean_a
+            FROM player_ratings.t20_bbb_clean_temp t
+            WHERE a.id = t.id_clean_a
+              AND a.id_clean_a IS NULL
+        """))
+
+        connection.execute(text("DROP TABLE player_ratings.t20_bbb_clean_temp"))
+
+    allData = allData.sort_values(by='date', ascending=False)
+    date_df = allData.head(1)
+    date_df['date_of_run'] = pd.Timestamp(date.today())
+    date_df = date_df.loc[:,['date', 'date_of_run']]
+    date_df.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/latest_data_clean.csv', index=False)
+
+    subprocess.run(['git', 'add', str(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/latest_data_clean.csv')])
+    subprocess.run(['git', 'commit', '-m', 'update csv files'])
+    subprocess.run(['git', 'push'])
 
 connection.close()
 
