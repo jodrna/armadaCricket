@@ -30,6 +30,7 @@ __pycache__/
 # KEEP auxiliaries (including CSVs)
 # -------------------------
 !**/auxiliaries/
-
+# Ignore player info files
+**/playerInfo*.csv
 .env
 
