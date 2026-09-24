@@ -269,7 +269,7 @@ allData = allData.loc[:, ['matchID', 'ID', 'tier', 'date', 'year', 'competition'
                      'ord', 'byeRuns', 'legbyeRuns', 'inningPhase', 'isWicketBowler', 'realexprbat', 'realexpwbat', 'realexprbowl', 'realexpwbowl', 'rating_sample_size',
                     'major_nation', 'batsmanBallsFaced',
                      'ovrexpr', 'ovrexpw', 'batsmanName', 'bowler', 'batterid', 'nonstrikerid',
-'bowlerid', 'nonstrikerName', 'extra', 'true_score', 'comp', 'totalInningRunsToCome', 'result',
+'bowlerid', 'nonstrikerName', 'extra', 'true_score', 'comp', 'totalInningRunsToCome', 'result', 'delivery2',
                      'overNumber', 'daysGroup', 'overBallNumber', 'inningBallNumber', 'ball', 'isPowerplay', 'isValid', 'isWide', 'isNoball', 'sample',
                      'totalInningWicketsToCome', 'batsmanRuns', 'isWicketRunOut', 'chaseWin', 'runsRequired']]
 

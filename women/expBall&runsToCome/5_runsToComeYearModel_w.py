@@ -22,11 +22,9 @@ masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/4_ma
 # only use first innings data
 trainData = trainData.loc[trainData['inningNumber'] == 1].copy()
 
-# when wickets > 7, use adj number
-trainData['totalInningRunsToComeAdj'] = np.where(
-    trainData['totalInningWickets'] > 7,
-    trainData['totalInningRunsToCome'],
-    trainData['totalInningRunsToComeAdj'])
+# totalInningRunsToComeAdj (from dataClean_w100.csv, = totalInningRunsToCome - RA_Sum) is used
+# as-is for every wicket count now - no override to raw for wickets > 7, so vsAdjOvr/yearFactor
+# are trained on a consistent quality-neutral basis across the whole grid (matches men's fix).
 
 
 # keep only one row per wickets + ball combination
@@ -129,11 +127,68 @@ if log_method == 1:
 trainData['yearFactor120'] = np.where(trainData['inningBallNumber'] == 1, trainData['yearFactor120'], np.nan)
 
 ###getting remaining trends from model data:
-testing_wl = trainData.groupby(['totalInningWickets'])[['yearFactor', 'yearFactor2', 'yearFactor120']].mean().reset_index()
+# yearFactor (Adj path) normalizer: built per (wickets, ballNumber) cell, balanced in RUN terms
+# (Adj-weighted, not a flat ratio average) and smoothed via a sample-weighted, CV-selected-degree
+# polynomial surface - same fix as men's model. A flat per-wicket ratio average of the raw
+# prediction treats every ball number as equally important even though real runs-remaining (and
+# so how much each row's error actually matters) varies hugely within a wicket group, so ratio
+# errors that cancel on average don't cancel in run terms. A flat per-(wicket, ballNumber) mean
+# fixes that but is too noisy at sparse cells - hence the same weighted-surface treatment used
+# for RA_Sum below.
+trainData['_yfAdjNum'] = trainData['yearFactor'] * trainData['totalInningRunsToComeAdj']
+yearFactor_cell_stats = trainData.groupby(['totalInningWickets', 'inningBallNumber']).agg(
+    sum_yfAdj=('_yfAdjNum', 'sum'), sum_Adj=('totalInningRunsToComeAdj', 'sum'),
+    n=('_yfAdjNum', 'size')).reset_index()
+trainData = trainData.drop(columns=['_yfAdjNum'])
+yearFactor_cell_stats['cellFactor'] = yearFactor_cell_stats['sum_yfAdj'] / yearFactor_cell_stats['sum_Adj']
 
+MIN_SAMPLE_YF_SURFACE = 100
+fitCellsYF = yearFactor_cell_stats[yearFactor_cell_stats['n'] >= MIN_SAMPLE_YF_SURFACE].reset_index(drop=True)
+print(f"yearFactor normalizer surface: cells with sample >= {MIN_SAMPLE_YF_SURFACE}: "
+      f"{len(fitCellsYF)} of {len(yearFactor_cell_stats)}")
+
+
+def loo_cv_yf(degree):
+    Xa = fitCellsYF[['totalInningWickets', 'inningBallNumber']].values
+    ya = fitCellsYF['cellFactor'].values
+    wa = fitCellsYF['n'].values
+    errs = []
+    for i in range(len(fitCellsYF)):
+        mask = np.ones(len(fitCellsYF), dtype=bool)
+        mask[i] = False
+        poly = PolynomialFeatures(degree=degree, include_bias=False)
+        Xtr = poly.fit_transform(Xa[mask])
+        m = LinearRegression()
+        m.fit(Xtr, ya[mask], sample_weight=wa[mask])
+        pred = m.predict(poly.transform(Xa[i:i + 1]))[0]
+        errs.append((pred - ya[i]) ** 2 * wa[i])
+    return np.sqrt(np.sum(errs) / np.sum(wa))
+
+
+print("=== yearFactor normalizer surface: LOO-CV weighted RMSE by degree ===")
+yfSurfaceScores = {d: loo_cv_yf(d) for d in [1, 2]}
+for d, s in yfSurfaceScores.items():
+    print(f"degree {d}: {s:.6f}")
+YF_SURFACE_DEGREE = min(yfSurfaceScores, key=yfSurfaceScores.get)
+print(f"  -> using degree {YF_SURFACE_DEGREE}")
+
+poly_yf_surface = PolynomialFeatures(degree=YF_SURFACE_DEGREE, include_bias=False)
+reg_yf_surface = LinearRegression()
+reg_yf_surface.fit(poly_yf_surface.fit_transform(fitCellsYF[['totalInningWickets', 'inningBallNumber']]),
+                    fitCellsYF['cellFactor'], sample_weight=fitCellsYF['n'])
+
+
+def predict_yf_normalizer(wickets, ballNumber):
+    Xp = poly_yf_surface.transform(np.column_stack([wickets, ballNumber]))
+    return reg_yf_surface.predict(Xp)
+
+
+# yearFactor2 (non-Adj path) and yearFactor120 (ball=1-only path) keep the original flat
+# per-wicket normalization - not part of this fix
+testing_wl = trainData.groupby(['totalInningWickets'])[['yearFactor2', 'yearFactor120']].mean().reset_index()
 trainData = trainData.merge(testing_wl, on='totalInningWickets', how='left', suffixes=('_old', '_wl'))
 
-trainData['yearFactor'] = trainData['yearFactor_old'] / trainData['yearFactor_wl']
+trainData['yearFactor'] = trainData['yearFactor'] / predict_yf_normalizer(trainData['totalInningWickets'], trainData['inningBallNumber'])
 trainData['yearFactor2'] = trainData['yearFactor2_old'] / trainData['yearFactor2_wl']
 trainData['yearFactor120'] = trainData['yearFactor120_old'] / trainData['yearFactor120_wl']
 
@@ -155,20 +210,84 @@ testing_wl_br = trainData.groupby(['totalInningWickets', 'inningBallNumber'])[['
 testing_br = trainData.groupby(['inningBallNumber'])[['yearFactor', 'yearFactor2']].mean().reset_index()
 testing_RA_sum_br = trainData.groupby(['inningBallNumber'])[['RA_Sum']].mean().reset_index()
 testing_RA_sum_wl = trainData.groupby(['totalInningWickets'])['RA_Sum'].mean().reset_index()
-RA_sum_wl_br = trainData.groupby(['totalInningWickets', 'inningBallNumber'])['RA_Sum'].mean().reset_index()
+# No demeaning by inningBallNumber - the raw RA_Sum surface is fit and used as-is, including
+# whatever overall bias exists at each ball number (matches men's fix - no reason to force it to
+# net to zero per ball).
+RA_sum_wl_br = trainData.groupby(['totalInningWickets', 'inningBallNumber']).agg(
+    RA_Sum=('RA_Sum', 'mean'), sample=('RA_Sum', 'size')).reset_index()
 
-# model for RA_sum prediction
-testing_RA_sum_wl_br = RA_sum_wl_br.dropna()
-model_RA_sum = Pipeline([
-    ('poly', PolynomialFeatures(degree=2, include_bias=False)),
-    ('reg',  LinearRegression())
-])
-model_RA_sum.fit(RA_sum_wl_br[['totalInningWickets', 'inningBallNumber']], RA_sum_wl_br['RA_Sum'])
-RA_sum_wl_br['predicted_RA_Sum'] = model_RA_sum.predict(RA_sum_wl_br[['totalInningWickets', 'inningBallNumber']])
-trainData['predicted_RA_Sum'] = model_RA_sum.predict(trainData[['totalInningWickets', 'inningBallNumber']])
-RA_sum_factoring = trainData.groupby(['inningBallNumber'])['predicted_RA_Sum'].mean().reset_index()
-RA_sum_wl_br = RA_sum_wl_br.merge(RA_sum_factoring, on='inningBallNumber', suffixes=('', '_factoring'))
-RA_sum_wl_br['predicted_RA_Sum'] = RA_sum_wl_br['predicted_RA_Sum'] - RA_sum_wl_br['predicted_RA_Sum_factoring']
+# ============================================================================================
+# model for RA_sum prediction - same methodology as men's model: an unweighted, unfiltered
+# polynomial fit across the WHOLE (wickets, ballNumber) grid lets near-empty cells distort the
+# surface just as much as cells with thousands of samples - especially relevant here given
+# women's data has fewer samples per cell than men's (hence step 6's own extra wickets-smoothing
+# pass downstream). Fix, in the same three pieces:
+#   1. MIN_CELL_SAMPLE filter - only fit on cells with real sample support
+#   2. sample-weighted regression - a large-sample cell should outweigh a tiny one
+#   3. cross-validated degree selection, capped at 2
+# ============================================================================================
+MIN_CELL_SAMPLE_RA_SUM = 100
+fitCellsRA = RA_sum_wl_br[RA_sum_wl_br['sample'] >= MIN_CELL_SAMPLE_RA_SUM].reset_index(drop=True)
+print(f"\nRA_Sum surface: cells with sample >= {MIN_CELL_SAMPLE_RA_SUM} used for fitting: "
+      f"{len(fitCellsRA)} of {len(RA_sum_wl_br)}")
+
+
+def loo_cv_ra_sum(degree):
+    X_all = fitCellsRA[['totalInningWickets', 'inningBallNumber']].values
+    y_all = fitCellsRA['RA_Sum'].values
+    w_all = fitCellsRA['sample'].values
+    errs = []
+    for i in range(len(fitCellsRA)):
+        mask = np.ones(len(fitCellsRA), dtype=bool)
+        mask[i] = False
+        poly = PolynomialFeatures(degree=degree, include_bias=False)
+        Xtr = poly.fit_transform(X_all[mask])
+        model = LinearRegression()
+        model.fit(Xtr, y_all[mask], sample_weight=w_all[mask])
+        pred = model.predict(poly.transform(X_all[i:i + 1]))[0]
+        errs.append((pred - y_all[i]) ** 2 * w_all[i])
+    return np.sqrt(np.sum(errs) / np.sum(w_all))
+
+
+print("=== RA_Sum surface: LOO-CV weighted RMSE by degree (sample-filtered cells) ===")
+MAX_DEGREE_RA_SUM = 2
+raSumScores = {d: loo_cv_ra_sum(d) for d in range(1, MAX_DEGREE_RA_SUM + 1)}
+for d, s in raSumScores.items():
+    print(f"degree {d}: {s:.5f}")
+RA_SUM_DEGREE = min(raSumScores, key=raSumScores.get)
+print(f"  -> using degree {RA_SUM_DEGREE}")
+
+poly_RA_sum = PolynomialFeatures(degree=RA_SUM_DEGREE, include_bias=False)
+reg_RA_sum = LinearRegression()
+reg_RA_sum.fit(poly_RA_sum.fit_transform(fitCellsRA[['totalInningWickets', 'inningBallNumber']]),
+                fitCellsRA['RA_Sum'], sample_weight=fitCellsRA['sample'])
+
+
+def predict_RA_sum(wickets, ballNumber):
+    X = poly_RA_sum.transform(np.column_stack([wickets, ballNumber]))
+    return reg_RA_sum.predict(X)
+
+
+RA_sum_wl_br['predicted_RA_Sum'] = predict_RA_sum(RA_sum_wl_br['totalInningWickets'], RA_sum_wl_br['inningBallNumber'])
+
+# ============================================================================================
+# EXTRAPOLATION SAFETY: per wickets row, the trusted cells (sample >= MIN_CELL_SAMPLE_RA_SUM)
+# form one contiguous run of ballNumbers - keep the model's own smoothed prediction inside that
+# trusted range; outside it, hold the value at the nearest trusted-range boundary instead of
+# letting the polynomial keep extrapolating further (matches men's fix).
+# ============================================================================================
+trustedByRow = RA_sum_wl_br[RA_sum_wl_br['sample'] >= MIN_CELL_SAMPLE_RA_SUM].groupby('totalInningWickets')['inningBallNumber'].agg(['min', 'max'])
+
+
+def clamp_to_trusted_range(row):
+    if row['totalInningWickets'] not in trustedByRow.index:
+        return row['predicted_RA_Sum']
+    lo, hi = trustedByRow.loc[row['totalInningWickets'], ['min', 'max']]
+    b = np.clip(row['inningBallNumber'], lo, hi)
+    return predict_RA_sum([row['totalInningWickets']], [b])[0]
+
+
+RA_sum_wl_br['predicted_RA_Sum'] = RA_sum_wl_br.apply(clamp_to_trusted_range, axis=1)
 RA_sum_wl_br = RA_sum_wl_br.loc[:, ['totalInningWickets', 'inningBallNumber', 'predicted_RA_Sum']]
 
 # create year grouping used for prediction
@@ -199,9 +318,10 @@ if log_method == 1:
     masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] = np.expm1(masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj']) + vsAdjOvrMin
     masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] = np.expm1(masterLookup['totalInningRunsToComeSimBiasSplineYearRate']) + vsOvrMin
 
-# this is to allow for overall bias in the by year adjust model, this means the overall adjust for each wicket will be 1.000
+# this is to allow for overall bias in the by year adjust model - yearFactor (Adj path) uses the
+# (wickets, ballNumber) surface normalizer fit above; yearFactor2 keeps the flat per-wicket one
 masterLookup = masterLookup.merge(testing_wl, on='totalInningWickets', how='left')
-masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] / masterLookup['yearFactor']
+masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRateAdj'] / predict_yf_normalizer(masterLookup['totalInningWickets'], masterLookup['inningBallNumber'])
 masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] = masterLookup['totalInningRunsToComeSimBiasSplineYearRate'] / masterLookup['yearFactor2']
 
 # apply predicted year factors to baseline spline values
@@ -242,9 +362,10 @@ if log_method == 1:
 lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj2'] = (lookupForInruns['totalInningRunsToComeSimBiasSplineYearRateAdj'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']) - lookupForInruns['predicted_RA_Sum']
 lookupForInruns['totalInningRunsToComeSimBiasSplineYear2'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']
 lookupForInruns['totalInningRunsToComeSimBiasSplineYear1202'] = (lookupForInruns['totalInningRunsToComeSimBiasSplineYearRate120'] * lookupForInruns['totalInningRunsToComeSimBiasSpline']) - lookupForInruns['predicted_RA_Sum']
-# this is to allow for overall bias in the by year adjust model, this means the overall adjust for each wicket will be 1.000
+# this is to allow for overall bias in the by year adjust model - lookupForInruns is always at
+# wickets=0/ball=1, so the surface normalizer is evaluated directly at that point
 lookupForInruns = lookupForInruns.merge(testing_wl, on='totalInningWickets', how='left')
-lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj3'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj2'] / lookupForInruns['yearFactor']
+lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj3'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYearAdj2'] / predict_yf_normalizer(lookupForInruns['totalInningWickets'], lookupForInruns['inningBallNumber'])
 lookupForInruns['totalInningRunsToComeSimBiasSplineYear3'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYear2'] / lookupForInruns['yearFactor2']
 lookupForInruns['totalInningRunsToComeSimBiasSplineYear1203'] = lookupForInruns['totalInningRunsToComeSimBiasSplineYear1202'] / lookupForInruns['yearFactor120']
 

@@ -11,6 +11,8 @@ from paths import PROJECT_ROOT
 
 ######## need to run lineups_filler before running this!!!!!!!!!!!
 
+ground_today_values = 1
+
 connection = engine.connect()
 raw_data_og = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_new.csv', parse_dates=['date'])
 # raw_data_og_max_date = raw_data_og['date'].max()
@@ -34,9 +36,14 @@ wktvalues = pd.read_sql_query("""select overno as "overNumber", wktslost as "tot
 # ground_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\grounddataformatch.csv')
 # wktvalues = pd.read_csv(fr'{user_name}\Documents\Tempdata\wktvalueformatch.csv')
 
-
-ground_data['reverted_runs'] = ground_data['reverted_runs']
-ground_data['reverted_wkts'] = ground_data['reverted_wkts']
+if ground_today_values == 1:
+    ground_data['reverted_runs'] = ground_data['reverted_runs']
+    ground_data['reverted_wkts'] = ground_data['reverted_wkts']
+    suffix = ''
+else:
+    ground_data['reverted_runs'] = ground_data['runsratio_ground']
+    ground_data['reverted_wkts'] = ground_data['wktsratio_ground']
+    suffix = '_non_today_groundRASum'
 
 
 raw_data = raw_data_og.copy()
@@ -555,12 +562,12 @@ raw_data['oppo_bat_wkts'] = raw_data['oppo_bat_wkts_preadj']
 
 raw_data_og = raw_data_og.merge(raw_data.loc[:,['ID', 'oppo_bowl_runs', 'oppo_bowl_wkts', 'oppo_bat_runs', 'oppo_bat_wkts', 'ground_runs', 'ground_wkts', 'ord_pr_ba']], on='ID', how='left')
 
-dataClean_w = raw_data_og.drop(columns=['rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum'])
+dataClean_w = raw_data_og.copy() # .drop(columns=['rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum']))
 dataClean_w['totalInningRunsToComeAdj'] = dataClean_w['totalInningRunsToCome'] - dataClean_w['RA_sum']
 dataClean_w['runsRequiredAdj'] = dataClean_w['runsRequired'] - dataClean_w['RA_sum']
 dataClean_w = dataClean_w.rename(columns={'RA_sum': 'RA_Sum', 'ord_pr_ba': 'expected_ord'})
 
-dataClean_w.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/Data/dataClean.csv', index=False)
+dataClean_w.to_csv(PROJECT_ROOT / f'men/expBall&runsToCome/Data/dataClean{suffix}.csv', index=False)
 
 # ##testing:
 # raw_data_og = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_adjusted_runs_to_come_{for_match}.csv')
