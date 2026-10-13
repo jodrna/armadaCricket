@@ -312,10 +312,14 @@ if run_type == 1:
     allData.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_new.csv', index=False)
     allDataOld.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3.csv', index=False)
 
-    sqlupload = allData.loc[:, ['ID', 'ball', 'totalInningRuns', 'inningBallsRemaining', 'totalInningWickets', 'target', 'ord', 'runsRequired']]
-    sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a', 'wkt_value_sum_smooth']
+    sqlupload = allDataOld.loc[:, ['id', 'ball', 'totalInningRuns', 'inningBallsRemaining', 'totalInningWickets', 'target', 'ord', 'runsRequired']]
+    sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a']
 
     with engine.begin() as connection:
+        # wkt_value_sum_smooth isn't built here (it's filled outside this script), so keep its existing values across the
+        # rebuild by ball id; new balls get it empty until that runs
+        existing = pd.read_sql_query(text("SELECT id_clean_a, wkt_value_sum_smooth FROM player_ratings.t20_bbb_clean"), connection)
+        sqlupload = sqlupload.merge(existing.drop_duplicates('id_clean_a'), on='id_clean_a', how='left')
         connection.execute(text("TRUNCATE TABLE player_ratings.t20_bbb_clean"))
         sqlupload.to_sql(
             "t20_bbb_clean",
@@ -345,8 +349,8 @@ if run_type == 1:
         """))
 
 else:
-    sqlupload = allData.loc[:, ['ID', 'ball', 'totalInningRuns', 'inningBallsRemaining', 'totalInningWickets', 'target', 'ord', 'runsRequired']]
-    sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a', 'wkt_value_sum_smooth']
+    sqlupload = allDataOld.loc[:, ['id', 'ball', 'totalInningRuns', 'inningBallsRemaining', 'totalInningWickets', 'target', 'ord', 'runsRequired']]
+    sqlupload.columns = ['id_clean_a', 'ball2_clean_a', 'score_clean_a', 'ballsremaining_clean_a', 'wickets_clean_a', 'target_clean_a', 'ord_clean_a', 'required_clean_a']
 
     with engine.begin() as connection:
         sqlupload.to_sql(
@@ -358,8 +362,8 @@ else:
         )
 
         connection.execute(text("""
-            INSERT INTO player_ratings.t20_bbb_clean (id_clean_a, ball2_clean_a, score_clean_a, ballsremaining_clean_a, wickets_clean_a, target_clean_a, ord_clean_a, required_clean_a, wkt_value_sum_smooth)
-            SELECT *
+            INSERT INTO player_ratings.t20_bbb_clean (id_clean_a, ball2_clean_a, score_clean_a, ballsremaining_clean_a, wickets_clean_a, target_clean_a, ord_clean_a, required_clean_a)
+            SELECT id_clean_a, ball2_clean_a, score_clean_a, ballsremaining_clean_a, wickets_clean_a, target_clean_a, ord_clean_a, required_clean_a
             FROM player_ratings.t20_bbb_clean_temp t
             WHERE NOT EXISTS (
                 SELECT 1 FROM player_ratings.t20_bbb_clean c

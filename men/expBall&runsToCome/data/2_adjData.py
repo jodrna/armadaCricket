@@ -11,7 +11,9 @@ from paths import PROJECT_ROOT
 
 ######## need to run lineups_filler before running this!!!!!!!!!!!
 
-ground_today_values = 1
+# RA_Sum is built twice in one run: RA_Sum uses the day's reverted ground values (ground_table reverted_runs/wkts - the
+# match's own scoring, reverted), RA_Sum_nonDay uses the ground's normal level (runsratio_ground/wktsratio_ground).
+# Everything else is shared. The _nonDay columns replace the old ground toggle and its *_non_today_groundRASum file
 
 connection = engine.connect()
 raw_data_og = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/Cleaned_t20bbb3_new.csv', parse_dates=['date'])
@@ -36,14 +38,6 @@ wktvalues = pd.read_sql_query("""select overno as "overNumber", wktslost as "tot
 # ground_data = pd.read_csv(fr'{user_name}\Documents\Tempdata\grounddataformatch.csv')
 # wktvalues = pd.read_csv(fr'{user_name}\Documents\Tempdata\wktvalueformatch.csv')
 
-if ground_today_values == 1:
-    ground_data['reverted_runs'] = ground_data['reverted_runs']
-    ground_data['reverted_wkts'] = ground_data['reverted_wkts']
-    suffix = ''
-else:
-    ground_data['reverted_runs'] = ground_data['runsratio_ground']
-    ground_data['reverted_wkts'] = ground_data['wktsratio_ground']
-    suffix = '_non_today_groundRASum'
 
 
 raw_data = raw_data_og.copy()
@@ -170,6 +164,12 @@ raw_data['ground_runs_2'] = raw_data['ground_runs_2'].fillna(raw_data['ground_ru
 raw_data['ground_wkts_2'] = raw_data['ground_wkts_2'].fillna(raw_data['ground_wkts'])
 raw_data['ground_runs_3'] = raw_data['ground_runs_3'].fillna(raw_data['ground_runs'])
 raw_data['ground_wkts_3'] = raw_data['ground_wkts_3'].fillna(raw_data['ground_wkts'])
+# the same by inningPhase factors at the ground's normal level (non-day), for RA_Sum_nonDay
+for phase in [1, 2, 3]:
+    groundNonDay = ground_data[ground_data.inningPhase == phase].rename(columns={'runsratio_ground': f'ground_runs_{phase}_nonDay', 'wktsratio_ground': f'ground_wkts_{phase}_nonDay'})
+    raw_data = raw_data.merge(groundNonDay.loc[:, ['matchID', f'ground_runs_{phase}_nonDay', f'ground_wkts_{phase}_nonDay']], on='matchID', how='left')
+    raw_data[f'ground_runs_{phase}_nonDay'] = raw_data[f'ground_runs_{phase}_nonDay'].fillna(raw_data['ground_runs'])
+    raw_data[f'ground_wkts_{phase}_nonDay'] = raw_data[f'ground_wkts_{phase}_nonDay'].fillna(raw_data['ground_wkts'])
 
 #merge in wkt_values and make the wkt_value * exp_wkts values so we have a value in runs for exp totalInningWickets
 wktvalues = wktvalues.drop_duplicates(subset=['overNumber', 'totalInningWickets'])
@@ -385,7 +385,10 @@ raw_data['ew_tc_3'] = model22.predict(X_predict24)
 raw_data['ew_tc_3'] = np.maximum(raw_data['ew_tc_3'], 0)
 
 raw_data['rar_ground_sum'] = ((raw_data['ground_runs_1'] - 1) * raw_data['er_tc_1']) + ((raw_data['ground_runs_2'] - 1) * raw_data['er_tc_2']) + ((raw_data['ground_runs_3'] - 1) * raw_data['er_tc_3'])
-raw_data['raw_ground_sum'] = -(((raw_data['ground_wkts_1'] - 1) * raw_data['er_tc_1']) + ((raw_data['ground_wkts_2'] - 1) * raw_data['ew_tc_2']) + ((raw_data['ground_wkts_3'] - 1) * raw_data['ew_tc_3']))
+raw_data['raw_ground_sum'] = -(((raw_data['ground_wkts_1'] - 1) * raw_data['ew_tc_1']) + ((raw_data['ground_wkts_2'] - 1) * raw_data['ew_tc_2']) + ((raw_data['ground_wkts_3'] - 1) * raw_data['ew_tc_3']))
+# same formulas and exposures at the ground's normal level, for RA_Sum_nonDay
+raw_data['rar_ground_sum_nonDay'] = ((raw_data['ground_runs_1_nonDay'] - 1) * raw_data['er_tc_1']) + ((raw_data['ground_runs_2_nonDay'] - 1) * raw_data['er_tc_2']) + ((raw_data['ground_runs_3_nonDay'] - 1) * raw_data['er_tc_3'])
+raw_data['raw_ground_sum_nonDay'] = -(((raw_data['ground_wkts_1_nonDay'] - 1) * raw_data['er_tc_1']) + ((raw_data['ground_wkts_2_nonDay'] - 1) * raw_data['ew_tc_2']) + ((raw_data['ground_wkts_3_nonDay'] - 1) * raw_data['ew_tc_3']))
 
 # raw_data.to_csv(fr'{user_name}\Documents\Tempdata\raw_data_mmrra2.csv', index=False)
 
@@ -422,7 +425,7 @@ his = raw_data.copy()
 # his = his[his.matchID == 80457]
 his['date'] = pd.to_datetime(his['date'])
 his['year'] = his['date'].dt.year
-his = his.loc[:, ['competition', 'inningBallsRemaining', 'totalInningWickets', 'matchID', 'batsmanName', 'nonstrikerName', 'battingTeam', 'ID', 'inningBallNumber', 'er_tc_smooth_basic',  'ew_tc_smooth_basic', 'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'year', 'inningNumber', 'batsmanBallsFaced', 'nonstriker_batsmanballs']]
+his = his.loc[:, ['competition', 'inningBallsRemaining', 'totalInningWickets', 'matchID', 'batsmanName', 'nonstrikerName', 'battingTeam', 'ID', 'inningBallNumber', 'er_tc_smooth_basic',  'ew_tc_smooth_basic', 'rar_ground_sum', 'raw_ground_sum', 'rar_ground_sum_nonDay', 'raw_ground_sum_nonDay', 'rar_bowl_sum', 'raw_bowl_sum', 'year', 'inningNumber', 'batsmanBallsFaced', 'nonstriker_batsmanballs']]
 his = his.merge(lineups, on=('matchID', 'battingTeam')) #
 his['in_now'] = np.where((his['batsmanName'] == his['batter']) | (his['nonstrikerName'] == his['batter']), 1, 0)
 his['out'] = np.where((his['carded'] >= his['totalInningWickets'] + 2) | (his['in_now'] == 1), 1, 0)
@@ -544,11 +547,12 @@ his['raw_bat'] = (1 - his['oppo_bat_wkts']) * his['ew_tc_smooth'] * his['out']
 his = his.sort_values(by='year', ascending=False)
 
 new_data = his.copy()
-new_data = pd.pivot_table(new_data, values=['rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum'], index=['ID'], aggfunc={'rar_bat': 'sum', 'raw_bat': 'sum', 'rar_ground_sum': 'mean', 'raw_ground_sum': 'mean', 'rar_bowl_sum': 'mean', 'raw_bowl_sum': 'mean'}).reset_index()
+new_data = pd.pivot_table(new_data, values=['rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_ground_sum_nonDay', 'raw_ground_sum_nonDay', 'rar_bowl_sum', 'raw_bowl_sum'], index=['ID'], aggfunc={'rar_bat': 'sum', 'raw_bat': 'sum', 'rar_ground_sum': 'mean', 'raw_ground_sum': 'mean', 'rar_ground_sum_nonDay': 'mean', 'raw_ground_sum_nonDay': 'mean', 'rar_bowl_sum': 'mean', 'raw_bowl_sum': 'mean'}).reset_index()
 
 new_data['RA_sum'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum'] + new_data['raw_ground_sum'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum']
+new_data['RA_sum_nonDay'] = new_data['rar_bat'] + new_data['raw_bat'] + new_data['rar_ground_sum_nonDay'] + new_data['raw_ground_sum_nonDay'] + new_data['rar_bowl_sum'] + new_data['raw_bowl_sum']
 
-raw_data_og = raw_data_og.merge(new_data.loc[:, ['ID', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum', 'RA_sum']], on='ID', how='left')
+raw_data_og = raw_data_og.merge(new_data.loc[:, ['ID', 'rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_ground_sum_nonDay', 'raw_ground_sum_nonDay', 'rar_bowl_sum', 'raw_bowl_sum', 'RA_sum', 'RA_sum_nonDay']], on='ID', how='left')
 
 # oppo_bat_runs/oppo_bat_wkts get exported CLEAN (pre order-adjustment), not the order-adjusted
 # version used internally above to compute RA_sum. byOrderAdjusts.py (and fxbAdjust.py) read this
@@ -565,9 +569,11 @@ raw_data_og = raw_data_og.merge(raw_data.loc[:,['ID', 'oppo_bowl_runs', 'oppo_bo
 dataClean_w = raw_data_og.copy() # .drop(columns=['rar_bat', 'raw_bat',  'rar_ground_sum', 'raw_ground_sum', 'rar_bowl_sum', 'raw_bowl_sum']))
 dataClean_w['totalInningRunsToComeAdj'] = dataClean_w['totalInningRunsToCome'] - dataClean_w['RA_sum']
 dataClean_w['runsRequiredAdj'] = dataClean_w['runsRequired'] - dataClean_w['RA_sum']
-dataClean_w = dataClean_w.rename(columns={'RA_sum': 'RA_Sum', 'ord_pr_ba': 'expected_ord'})
+dataClean_w['totalInningRunsToComeAdj_nonDay'] = dataClean_w['totalInningRunsToCome'] - dataClean_w['RA_sum_nonDay']
+dataClean_w['runsRequiredAdj_nonDay'] = dataClean_w['runsRequired'] - dataClean_w['RA_sum_nonDay']
+dataClean_w = dataClean_w.rename(columns={'RA_sum': 'RA_Sum', 'RA_sum_nonDay': 'RA_Sum_nonDay', 'ord_pr_ba': 'expected_ord'})
 
-dataClean_w.to_csv(PROJECT_ROOT / f'men/expBall&runsToCome/Data/dataClean{suffix}.csv', index=False)
+dataClean_w.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/Data/dataClean.csv', index=False)
 
 # ##testing:
 # raw_data_og = pd.read_csv(fr'{user_name}\OneDrive - Decimal Data Services Ltd\PythonData\Cleaned_t20bbb3_adjusted_runs_to_come_{for_match}.csv')

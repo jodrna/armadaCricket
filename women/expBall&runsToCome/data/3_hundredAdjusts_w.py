@@ -515,6 +515,22 @@ data.loc[
     ]
 )
 
+# the non-day RA_Sum version gets the same Hundred ratio (fitted above on the day version) - the ratio is a
+# format effect (100 balls vs 120), not a ground one
+data.loc[
+    hundred_adjustment_mask,
+    'totalInningRunsToComeAdj_nonDay'
+] = (
+    data.loc[
+        hundred_adjustment_mask,
+        'totalInningRunsToComeAdj_nonDay'
+    ]
+    / data.loc[
+        hundred_adjustment_mask,
+        'ratio_pred_constrained'
+    ]
+)
+
 
 # -------------------------
 # Merge constrained ratio into state comparison

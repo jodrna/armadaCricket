@@ -14,7 +14,7 @@ IPL = 0
 trainData = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/data/dataClean.csv', parse_dates=['date'])
 print(trainData[trainData.competition == 'Indian Premier League'])
 # import master lookup table from previous modeling step
-masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/4_masterLookup.csv')
+masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/4_masterLookup_v2.csv')
 #
 # only use first innings data
 trainData = trainData.loc[trainData['inningNumber'] == 1].copy()
@@ -357,7 +357,7 @@ masterLookup = masterLookup.merge(RA_sum_wl_br, on=('totalInningWickets', 'innin
 masterLookup['totalInningRunsToComeSimBiasSplineYearAdj'] = masterLookup['totalInningRunsToComeSimBiasSplineYearAdjUncalibrated'] - masterLookup['predicted_RA_Sum']
 
 # #export final lookup table
-masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup.csv', index=False)
+masterLookup.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_masterLookup_v2.csv', index=False)
 
 ##below is for making an output of the values each daysGroup will give
 lookupForInruns = pd.DataFrame({'daysGroup': np.arange(5, 20.1, 0.1)})
@@ -607,6 +607,6 @@ _diagPanels = "".join(
 )
 
 _diagHtml = _DIAG_HTML_TEMPLATE.replace('__PANELS__', _diagPanels).replace('__DATA_JSON__', json.dumps(_diagData))
-with open(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_diagnostics.html', 'w') as f:
+with open(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_diagnostics_v2.html', 'w') as f:
     f.write(_diagHtml)
-print("Wrote diagnostics dashboard to outputs/5_diagnostics.html")
+print("Wrote diagnostics dashboard to outputs/5_diagnostics_v2.html")

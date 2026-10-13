@@ -228,6 +228,28 @@ notOutProbs = notOutProbs.reindex(columns=runOutcomes, fill_value=0)
 for i in runOutcomes:
     masterLookup[f'notOutRuns_{i}'] = notOutProbs[i].to_numpy()
 
+# v2: the same wicket and not out runs models with the striker's batting order added (ord 1-2 grouped as 2, 11+ as 11),
+# so the sim can use the rates for whoever's on strike. Held out by match (2026-10-09): runs calibration by order went from
+# ~13x noise to noise level; leaf 400 matched or beat 200 and smaller leaves overfit the runs
+# position in the over (1-6) as its own input: the 6th ball's real dip in runs (men ~4%, strike farming / taking a single)
+# was only half captured from the ball number alone; held out by match it improved men's runs and wickets (women neutral)
+trainData['ordK'] = trainData['ord'].clip(2, 11).astype(int)
+trainData['ballInOver'] = ((trainData['inningBallNumber'] - 1) % 6 + 1).astype(int)
+ordFeatures = ['inningBallNumber', 'totalInningWickets', 'ordK', 'ballInOver']
+masterLookupOrd = pd.DataFrame([(b, w, o) for w in range(10) for b in range(1, 121) for o in range(2, 12)], columns=ordFeatures[:3])
+masterLookupOrd['ballInOver'] = ((masterLookupOrd['inningBallNumber'] - 1) % 6 + 1).astype(int)
+ordWicketModel = HistGradientBoostingClassifier(min_samples_leaf=400, random_state=42)
+ordWicketModel.fit(trainData[ordFeatures], trainData['isWicket'])
+masterLookupOrd['m_isWicketBall'] = ordWicketModel.predict_proba(masterLookupOrd[ordFeatures])[:, 1]
+ordRunsModel = HistGradientBoostingClassifier(min_samples_leaf=400, random_state=42)
+ordNotOut = trainData[trainData['isWicket'] == 0]
+ordRunsModel.fit(ordNotOut[ordFeatures], ordNotOut['batsmanRuns'].clip(0, 6))
+ordNotOutProbs = pd.DataFrame(ordRunsModel.predict_proba(masterLookupOrd[ordFeatures]), columns=ordRunsModel.classes_)
+ordNotOutProbs = ordNotOutProbs.reindex(columns=runOutcomes, fill_value=0)
+for i in runOutcomes:
+    masterLookupOrd[f'notOutRuns_{i}'] = ordNotOutProbs[i].to_numpy()
+masterLookupOrd.to_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/1_masterLookupOrd_v2.csv', index=False)
+
 # discrete extras distributions by over, for the sim
 masterLookup = masterLookup.merge(invalidRunsDist, how='left', on=['overNumber'])
 masterLookup = masterLookup.merge(byeRunsDist, how='left', on=['overNumber'])

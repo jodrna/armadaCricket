@@ -15,12 +15,18 @@ from paths import PROJECT_ROOT
 #   - a wicket off a wide/no ball now brings in a new batter (the old sim just added to the wicket count)
 #   - no rate trajectory (momentum) adjustment: tested against average team spread (auxiliaries/rateTrajectory_v2.py),
 #     no version improved it once team quality was removed and none had the best means, so it's switched off
-#   - uses the Aug FXB.csv / SLW.csv curves (adds overs 19-20) instead of the June fxbXslw.csv
+#   - uses the FXB_newest / FXB_other / SLW curves (FXB_all, split 2026-10-12) instead of the June fxbXslw.csv
 # reads step 1 v2 directly - the sim only ever used step 1's columns, step 2's ord/year rows were being dropped
+#   - FXB/SLW are looked up on the ball count including the current ball (both curves count it), SLW only where FXB_all
+#     fits it (a wicket down, striker not the newest batter) - tested 2026-10-09, little effect on results
+#   - the not out runs distribution and wicket chance come from step 1's batting order models, for whoever is on strike
+#     (1_masterLookupOrd_v2.csv); FXB/SLW are applied on top unchanged
 
 # import files
 masterLookup = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/1_masterLookup_v2.csv')
-fxbRaw = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/FXB.csv')
+# FXB is split by whether the striker is the newest batter (ord == wickets + 2, or no wicket down yet), see FXB_all.py
+fxbNewestRaw = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/FXB_newest.csv')
+fxbOtherRaw = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/FXB_other.csv')
 slwRaw = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/auxiliaries/SLW.csv')
 
 masterLookup = masterLookup.drop_duplicates(subset=['totalInningWickets', 'inningBallNumber']).reset_index(drop=True)
@@ -105,6 +111,16 @@ for i, row in enumerate(masterLookup[['totalInningWickets', 'inningBallNumber'] 
                                        byeRunsCdfs[i].tolist(), wicketRunsCdfs[i].tolist())
 
 
+# step 1's per ball rates by striker batting order (2-11): ordLookup[(wickets, inningBallNumber, ord)] -> (dot ball prob, scoring cdf, wicket prob)
+masterLookupOrd = pd.read_csv(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/1_masterLookupOrd_v2.csv')
+ordNotOutProbs = masterLookupOrd[[f'notOutRuns_{i}' for i in range(8)]].to_numpy(dtype=float)
+ordNotOutProbs = ordNotOutProbs / ordNotOutProbs.sum(axis=1, keepdims=True)
+ordScoringCdfs = np.cumsum(ordNotOutProbs[:, 1:], axis=1)
+ordScoringCdfs = ordScoringCdfs / ordScoringCdfs[:, [-1]]
+ordLookup = {(int(w), int(b), int(o)): (ordNotOutProbs[i, 0], ordScoringCdfs[i].tolist(), p)
+             for i, (w, b, o, p) in enumerate(masterLookupOrd[['totalInningWickets', 'inningBallNumber', 'ordK', 'm_isWicketBall']].itertuples(index=False))}
+
+
 def draw(cdf, u):
     # inverse cdf draw, returns the outcome index
     k, last = 0, len(cdf) - 1
@@ -133,7 +149,8 @@ def decode_curve(raw):
     return {(int(r.ord), int(r.over), int(r.ballsFaced)): (r.runscurve, r.wktscurve) for r in curve.itertuples(index=False)}
 
 
-fxbLookup = decode_curve(fxbRaw)
+fxbNewestLookup = decode_curve(fxbNewestRaw)
+fxbOtherLookup = decode_curve(fxbOtherRaw)
 slwLookup = decode_curve(slwRaw)
 
 # unique sim ids across every call (the original used the ms timestamp, which collides once sims run this fast)
@@ -203,22 +220,31 @@ def simulate_innings(ballsRemainingSet, totalInningWicketsSet, numberOfSims, sta
             non_striker_balls = non_striker['ballsFaced']
             non_striker_runs = non_striker['runs']
 
-            # curves are looked up on balls already faced (as the original sim did - tested better than counting the current ball)
+            # both curves count the current ball (FXB 1 = the batter's 1st ball faced, SLW 1 = the 1st legal ball after the
+            # wicket), so look them up on balls before this one + 1. FXB applies to every batter (newest or other curve). SLW applies on top only where
+            # FXB_all fits it: a wicket has fallen and the striker isn't the newest batter (it drops wickets == ord - 2, the
+            # arrival's own count, which is FXB's effect again). A missing SLW row leaves FXB on its own
             overKey = int(current_over)
             curveOrd = striker_id_before if striker_id_before > 2 else 2
-            fxbBalls = striker_balls_before if striker_balls_before < FXB_MAX_BALLS else FXB_MAX_BALLS
-            slwBalls = ballsSinceLastWicket if ballsSinceLastWicket < FXB_MAX_BALLS else FXB_MAX_BALLS
-            fxbRow = fxbLookup.get((curveOrd, overKey, fxbBalls))
-            slwRow = slwLookup.get((curveOrd, overKey, slwBalls))
+            fxbBalls = striker_balls_before + 1 if striker_balls_before + 1 < FXB_MAX_BALLS else FXB_MAX_BALLS
+            slwBalls = ballsSinceLastWicket + 1 if ballsSinceLastWicket + 1 < FXB_MAX_BALLS else FXB_MAX_BALLS
+            isNewest = totalInningWickets == 0 or striker_id_before == totalInningWickets + 2
+            fxbRow = (fxbNewestLookup if isNewest else fxbOtherLookup).get((curveOrd, overKey, fxbBalls))
+            slwRow = None if isNewest else slwLookup.get((curveOrd, overKey, slwBalls))
 
-            if fxbRow is None or slwRow is None:
+            if fxbRow is None:
                 run_adjust, wkt_adjust = 1, 1
-            elif striker_balls_before < non_striker_balls:
+            elif slwRow is None:
                 run_adjust = fxbRow[0]
                 wkt_adjust = fxbRow[1]
             else:
                 run_adjust = fxbRow[0] * slwRow[0]
                 wkt_adjust = fxbRow[1] * slwRow[1]
+
+            # per ball rates for the striker's batting order
+            ordKey = striker_id_before if striker_id_before > 2 else 2
+            ordKey = ordKey if ordKey < 11 else 11
+            dotProbBall, scoringCdf, m_isWicketBall = ordLookup[(totalInningWickets, inningBallNumber, ordKey)]
 
             isWicketBall = wkt_adjust * m_isWicketBall
 
