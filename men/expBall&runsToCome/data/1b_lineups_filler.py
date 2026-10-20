@@ -1,3 +1,12 @@
+# PROCESS: stage 3 - fills player_ratings.t20_lineups_updated. Run BEFORE 2_adjData. Writes to the DB.
+# See PROCESS.txt at the top of prod_model for the whole run order.
+# project root = the first folder above this script holding paths.py, so paths / db / shared modules come from THIS
+# project wherever it is (OneDrive, GitHub, a copy) - no PYTHONPATH needed (20 Oct 2026)
+import sys as _sys
+from pathlib import Path as _Path
+_root = str(next(p for p in _Path(__file__).resolve().parents if (p / 'paths.py').exists()))
+if _root in _sys.path: _sys.path.remove(_root)
+_sys.path.insert(0, _root)
 import pandas as pd
 from paths import PROJECT_ROOT
 

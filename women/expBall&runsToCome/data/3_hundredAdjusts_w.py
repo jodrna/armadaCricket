@@ -1,3 +1,13 @@
+# PROCESS: stage 3 [W only] - Hundred adjusts: Cleaned_t20bbb3_adjusted_runs_to_come_w.csv -> data/dataClean_w.csv.
+#   Imports simToDataClean.
+# See PROCESS.txt at the top of prod_model for the whole run order.
+# project root = the first folder above this script holding paths.py, so paths / db / shared modules come from THIS
+# project wherever it is (OneDrive, GitHub, a copy) - no PYTHONPATH needed (20 Oct 2026)
+import sys as _sys
+from pathlib import Path as _Path
+_root = str(next(p for p in _Path(__file__).resolve().parents if (p / 'paths.py').exists()))
+if _root in _sys.path: _sys.path.remove(_root)
+_sys.path.insert(0, _root)
 from sklearn.linear_model import LinearRegression
 import pandas as pd
 import numpy as np
@@ -819,5 +829,8 @@ comparison.to_csv(
 
 
 
+# live sim results (runs to come at ball 1 and every 12 balls) kept in dataClean - prod_model/simToDataClean.py
+import simToDataClean
+data = simToDataClean.add(data, 'women')
 data.to_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv', index=False)
 

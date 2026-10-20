@@ -1,3 +1,13 @@
+# PROCESS: stage 4 - expected ball model -> outputs/1_masterLookup_w_v2.csv, 1_masterLookupOrd_w_v2.csv (the sim's
+#   base). Reads the MEN's 1_masterLookup_v2.csv - run men's step 1 first.
+# See PROCESS.txt at the top of prod_model for the whole run order.
+# project root = the first folder above this script holding paths.py, so paths / db / shared modules come from THIS
+# project wherever it is (OneDrive, GitHub, a copy) - no PYTHONPATH needed (20 Oct 2026)
+import sys as _sys
+from pathlib import Path as _Path
+_root = str(next(p for p in _Path(__file__).resolve().parents if (p / 'paths.py').exists()))
+if _root in _sys.path: _sys.path.remove(_root)
+_sys.path.insert(0, _root)
 import pandas as pd
 import numpy as np
 # from optree.version import suffix

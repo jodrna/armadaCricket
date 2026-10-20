@@ -1,4 +1,12 @@
-import subprocess
+# PROCESS: stage 3 - ball data: DB -> data/Cleaned_t20bbb3_new_w.csv (also refreshes the t20_bbb_clean tables).
+# See PROCESS.txt at the top of prod_model for the whole run order.
+# project root = the first folder above this script holding paths.py, so paths / db / shared modules come from THIS
+# project wherever it is (OneDrive, GitHub, a copy) - no PYTHONPATH needed (20 Oct 2026)
+import sys as _sys
+from pathlib import Path as _Path
+_root = str(next(p for p in _Path(__file__).resolve().parents if (p / 'paths.py').exists()))
+if _root in _sys.path: _sys.path.remove(_root)
+_sys.path.insert(0, _root)
 from sqlalchemy import text
 from pathlib import Path
 from datetime import timedelta, date
@@ -427,9 +435,6 @@ else:
     date = date.loc[:,['date', 'date_of_run']]
     date.to_csv(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv', index=False)
 
-    subprocess.run(['git', 'add', str(PROJECT_ROOT / 'Women/expBall&runsToCome/auxiliaries/latest_data_clean_w.csv')])
-    subprocess.run(['git', 'commit', '-m', 'update csv files'])
-    subprocess.run(['git', 'push'])
 
 connection.close()
 

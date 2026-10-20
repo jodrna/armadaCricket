@@ -1,3 +1,13 @@
+# PROCESS: stage 5 - runs to come step 5: year model -> outputs/5_masterLookup_v2.csv, 5_inrunsLookup_v2.csv. [M only;
+#   women: 5_runsToComeYearModel_w_v2.py]
+# See PROCESS.txt at the top of prod_model for the whole run order.
+# project root = the first folder above this script holding paths.py, so paths / db / shared modules come from THIS
+# project wherever it is (OneDrive, GitHub, a copy) - no PYTHONPATH needed (20 Oct 2026)
+import sys as _sys
+from pathlib import Path as _Path
+_root = str(next(p for p in _Path(__file__).resolve().parents if (p / 'paths.py').exists()))
+if _root in _sys.path: _sys.path.remove(_root)
+_sys.path.insert(0, _root)
 import json
 import pandas as pd
 import numpy as np
@@ -306,8 +316,12 @@ RA_sum_wl_br = RA_sum_wl_br.loc[:, ['totalInningWickets', 'inningBallNumber', 'p
 masterLookup['daysGroup'] = masterLookup['year'] - 2015
 
 # duplicate the latest year and relabel as 9.4, this gives us the number we want to match the match market
-extraRows = masterLookup.loc[masterLookup['daysGroup'] == 11].copy()
-extraRows['daysGroup'] = 11.1
+# the 'today' row: the LATEST DATA DATE (max training daysGroup, 2 dp), the same position as 5_inrunsLookup's current year
+# (user, 20 Oct 2026; was hardcoded 11.1). Step 6 and 7_distribs read it via outputs/5_today*_v2.csv
+TODAY_DG = round(float(trainData['daysGroup'].max()), 2)
+extraRows = masterLookup.loc[masterLookup['daysGroup'] == masterLookup['daysGroup'].max()].copy()
+assert TODAY_DG > extraRows['daysGroup'].iloc[0], 'today must be after 1 Jan of the latest year in the lookup'
+extraRows['daysGroup'] = TODAY_DG
 
 
 # append future-year rows back onto master lookup
@@ -610,3 +624,57 @@ _diagHtml = _DIAG_HTML_TEMPLATE.replace('__PANELS__', _diagPanels).replace('__DA
 with open(PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_diagnostics_v2.html', 'w') as f:
     f.write(_diagHtml)
 print("Wrote diagnostics dashboard to outputs/5_diagnostics_v2.html")
+
+# ---- t20_inruns inputs for v2/8_runsToComeTables (armadacricket-d0/87, 15 Oct 2026, user's decision) ----
+# The raw-path runs to come (as totalInningRunsToComeSimBiasSplineYear) at the daysGroup step 8 should use for each year:
+# past years at MID-YEAR (year - 2015 + 0.5, the average level of that year's matches), the current year and next year at
+# the LATEST DATA DATE (max training daysGroup - no extrapolation). The masterLookup rows above are left as they were
+# (1 Jan of each year plus the 'today' row at TODAY_DG, which step 6 reads).
+_today = TODAY_DG  # the masterLookup 'today' row's daysGroup (latest data date)
+_cur = int(trainData['date'].max().year)
+_grid = masterLookupSingle.loc[:, ['totalInningWickets', 'inningBallNumber', 'totalInningRunsToComeSimBiasSpline']].copy()
+_inr = []
+for _y in range(2015, _cur + 2):
+    _g = _grid.copy()
+    _g['year'] = _y
+    _g['daysGroup'] = _y - 2015 + 0.5 if _y < _cur else _today
+    _inr.append(_g)
+_inr = pd.concat(_inr, ignore_index=True)
+_dg, _w, _b = _inr['daysGroup'], _inr['totalInningWickets'], _inr['inningBallNumber']
+_cand = {'daysGroup': _dg, 'daysGroup_inningBallNumber': _dg * _b, 'daysGroup_totalInningWickets': _dg * _w,
+         'daysGroup_totalInningWickets_sq': _dg * _w ** 2, 'daysGroup_inningBallNumber_sq': _dg * _b ** 2,
+         'daysGroup_wickets_ballNumber': _dg * _w * _b, 'daysGroup_IPL': 0 * _dg, 'daysGroup_totalInningWickets_IPL': 0 * _dg,
+         'daysGroup_inningBallNumber_IPL': 0 * _dg}
+for _p in range(2, 6):
+    _cand['_'.join(['daysGroup'] * _p)] = _dg ** _p
+_X = pd.DataFrame({f: _cand[f] for f in features})
+_rate = model_raw.predict(_X)
+if log_method == 1:
+    _rate = np.expm1(_rate) + vsOvrMin
+_rate = _rate / _inr['totalInningWickets'].map(testing_wl.set_index('totalInningWickets')['yearFactor2']).to_numpy()
+_inr['totalInningRunsToComeSimBiasSplineYear'] = _rate * _inr['totalInningRunsToComeSimBiasSpline']
+
+# ADJUSTED (average-team) version - what t20_inruns is built from (user, 15 Oct 2026): t20_inruns is the 'par' in realexp's
+# second-innings required ratio, and the chasing side's own quality already comes in through the ratings, so par is the
+# average team's runs to come (the masterLookup's ...YearAdj: model_adj, the (wickets, ball) normaliser, x spline, minus
+# predicted_RA_Sum), not the raw value (which also carries the typical quality of teams that reach each state)
+_rateA = model_adj.predict(_X)
+if log_method == 1:
+    _rateA = np.expm1(_rateA) + vsAdjOvrMin
+_rateA = _rateA / predict_yf_normalizer(_inr['totalInningWickets'], _inr['inningBallNumber'])
+_inr = _inr.merge(RA_sum_wl_br[['totalInningWickets', 'inningBallNumber', 'predicted_RA_Sum']], on=['totalInningWickets', 'inningBallNumber'], how='left')
+_inr['totalInningRunsToComeSimBiasSplineYearAdj'] = _rateA * _inr['totalInningRunsToComeSimBiasSpline'] - _inr['predicted_RA_Sum'].fillna(0)
+_inr.loc[:, ['year', 'daysGroup', 'totalInningWickets', 'inningBallNumber', 'totalInningRunsToComeSimBiasSplineYear', 'totalInningRunsToComeSimBiasSplineYearAdj']].to_csv(
+    PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_inrunsLookup_v2.csv', index=False)
+print(f'wrote men/expBall&runsToCome/outputs/5_inrunsLookup_v2.csv (past years mid-year, {_cur}-{_cur + 1} at daysGroup {_today:.2f})')
+# TODAY'S MEAN (user, 20 Oct 2026): first-innings runs to come at ball 1, no wickets down, at the latest data date - the same
+# values step 8 uploads for the current year. Step 6 (ras_input) and 7_distribs (mean_estimate) read this file
+_t = _inr[(_inr['year'] == _cur) & (_inr['inningBallNumber'] == 1) & (_inr['totalInningWickets'] == 0)].iloc[0]
+pd.DataFrame([{'dataDate': trainData['date'].max().date(), 'daysGroup': TODAY_DG,
+               'meanRuns': round(float(_t['totalInningRunsToComeSimBiasSplineYear']), 2),
+               'meanRunsAdj': round(float(_t['totalInningRunsToComeSimBiasSplineYearAdj']), 2)}]).to_csv(
+    PROJECT_ROOT / 'men/expBall&runsToCome/outputs/5_today_v2.csv', index=False)
+print(f"TODAY (men, data to {trainData['date'].max().date()}, daysGroup {TODAY_DG}): mean runs at ball 1 = "
+      f"{_t['totalInningRunsToComeSimBiasSplineYear']:.1f} raw, {_t['totalInningRunsToComeSimBiasSplineYearAdj']:.1f} adjusted (average team) "
+      f"-> outputs/5_today_v2.csv")
+
