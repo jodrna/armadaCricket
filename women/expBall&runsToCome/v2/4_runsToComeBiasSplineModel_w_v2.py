@@ -26,13 +26,15 @@ from paths import PROJECT_ROOT
 
 # import necessary data
 trainData = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv',
-                        usecols=['matchID', 'inningNumber', 'inningBallNumber', 'totalInningWickets', 'totalInningRunsToCome', 'totalInningWicketsToCome', 'competition'])
+                        usecols=['matchID', 'inningNumber', 'inningBallNumber', 'totalInningWickets', 'totalInningRunsToCome', 'totalInningWicketsToCome', 'competition', 'date'])
 trainData = trainData[trainData['inningNumber'] == 1].reset_index(drop=True)
 # v2: The Hundred is left out - its innings end at ball 100, so in this 120 ball frame its runs to come, per ball rates by
 # ball number and crease states don't match a T20 (it pulled real runs to come down ~2-3 runs before ball 100 and made a
 # step at ball 100 that step 4 couldn't remove). Note the joins are on inningBallNumber, which 3_hundredAdjusts_w.py doesn't
 # rescale (only inningBallsRemaining), so the Hundred can't simply be mapped onto this 120 ball frame either
 trainData = trainData[trainData['competition'] != "The Hundred (Women's Comp)"].reset_index(drop=True)
+# surge-era WBBL (from WBBL|08, 2022 - user, 15 Oct 2026) out: it must not shape ball-by-ball values. It stays in dataClean_w for 5_runsToComeYearModel only
+trainData = trainData[~((trainData['competition'] == "Women's Big Bash League") & (pd.to_datetime(trainData['date']) > pd.Timestamp('2022-06-01')))].reset_index(drop=True)
 simSituationRunsToCome = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/ballSimsClassOrdSummary_w_v2.csv')
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/2_masterLookup_w_v2.csv')
 

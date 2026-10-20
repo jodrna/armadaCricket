@@ -16,6 +16,8 @@ trainData = trainData[trainData['inningNumber'] == 1]
 # step at ball 100 that step 4 couldn't remove). Note the joins are on inningBallNumber, which 3_hundredAdjusts_w.py doesn't
 # rescale (only inningBallsRemaining), so the Hundred can't simply be mapped onto this 120 ball frame either
 trainData = trainData[trainData['competition'] != "The Hundred (Women's Comp)"]
+# surge-era WBBL (from WBBL|08, 2022 - user, 15 Oct 2026) out: it must not shape ball-by-ball values. It stays in dataClean_w for 5_runsToComeYearModel only
+trainData = trainData[~((trainData['competition'] == "Women's Big Bash League") & (pd.to_datetime(trainData['date']) > pd.Timestamp('2022-06-01')))]
 masterLookup = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/outputs/1_masterLookup_w_v2.csv')
 
 # do some random cleaning and prep

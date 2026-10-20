@@ -46,7 +46,7 @@ select matchid as "matchID", id as "ID", tier, date, year, competition, venue, h
        noball as "noballRuns", wide as "wideRuns", ord, byes as "byeRuns", legbyes as "legbyeRuns", innperiod as "inningPhase",
        bowlerwicket as "isWicketBowler", realexprbat, realexpwbat, realexprbowl, realexpwbowl, rating_sample_size, major_nation,
        batsmanballs as "batsmanBallsFaced", ovrexpr, ovrexpw, batsman as "batsmanName", nonstriker as "nonstrikerName", bowler, batterid, nonstrikerid, bowlerid,
-       av_runs_bat, av_wkts_bat, style_new
+       av_runs_bat, av_wkts_bat, style_new, power_surge as "isPowerSurge"
 from match_data.t20_bbb tb
 where (tier = 1 or major_nation = 2)
 and date > %s
@@ -297,8 +297,10 @@ allDataOld = allData.copy().rename(
 # -------------------------
 # Competition filters
 # -------------------------
-# take out big bash after 2019 season because of the power surge
-allData = allData[(allData['competition'] != 'Big Bash League') | (allData['date'] < pd.Timestamp('2020-06-06'))]
+# Big Bash after the 2019 season (power surge era) is KEPT here (user, 15 Oct 2026) so 2_adjData can build RA_Sum for those games
+# with the surge priced by chance (PythonData/bbl_surge). It must be taken out before ball values / runs to come are modelled:
+# 2_adjData writes those balls to dataClean_bblSurge.csv and drops them from dataClean.csv (see the note there). Used to be dropped
+# here: allData = allData[(allData['competition'] != 'Big Bash League') | (allData['date'] < pd.Timestamp('2020-06-06'))]
 # take out the 100
 allData = allData[(allData['competition'] != 'The Hundred (Men\'s Comp)')]
 

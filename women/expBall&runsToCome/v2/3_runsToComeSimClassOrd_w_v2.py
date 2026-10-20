@@ -42,13 +42,15 @@ toSim = toSim[['totalInningWickets', 'inningBallNumber']]
 # sample whole real states from it, which keeps all of those consistent with each other
 realStates = pd.read_csv(PROJECT_ROOT / 'women/expBall&runsToCome/data/dataClean_w.csv',
                          usecols=['matchID', 'inningNumber', 'batsmanName', 'nonstrikerName', 'ord', 'totalInningWickets',
-                                  'inningBallNumber', 'isValid', 'batsmanBallsFaced', 'competition'])
+                                  'inningBallNumber', 'isValid', 'batsmanBallsFaced', 'competition', 'date'])
 realStates = realStates[realStates['inningNumber'] == 1]
 # v2: The Hundred is left out - its innings end at ball 100, so in this 120 ball frame its runs to come, per ball rates by
 # ball number and crease states don't match a T20 (it pulled real runs to come down ~2-3 runs before ball 100 and made a
 # step at ball 100 that step 4 couldn't remove). Note the joins are on inningBallNumber, which 3_hundredAdjusts_w.py doesn't
 # rescale (only inningBallsRemaining), so the Hundred can't simply be mapped onto this 120 ball frame either
 realStates = realStates[realStates['competition'] != "The Hundred (Women's Comp)"]
+# surge-era WBBL (from WBBL|08, 2022 - user, 15 Oct 2026) out: it must not shape ball-by-ball values. It stays in dataClean_w for 5_runsToComeYearModel only
+realStates = realStates[~((realStates['competition'] == "Women's Big Bash League") & (pd.to_datetime(realStates['date']) > pd.Timestamp('2022-06-01')))]
 inningKeys = ['matchID', 'inningNumber']
 ordLookup = realStates[inningKeys + ['batsmanName', 'ord']].drop_duplicates(subset=inningKeys + ['batsmanName'])
 realStates = realStates[realStates['isValid'] == 1].copy()
@@ -133,11 +135,11 @@ def draw(cdf, u):
         k += 1
     return k
 
-# FXB (batter's own balls faced) and SLW (balls since last wicket) curves, the Aug versions that replace the June fxbXslw.csv.
-# code = ballsFaced*1000 + over + ord/100 + inningNumber/1000, same decoding as auxiliaries/fxbAdjust.py. They cover ord 2-8
-# (openers are floored to 2, same as the rest of the pipeline), overs 3-20 and ballsFaced 1-21 (21 = 21+, clamped like fxbAdjust.py).
-# FXB splits overs 19-20 by innings - this is a first innings sim so those use inningNumber 1, everything else the universal (0) rows
-FXB_MAX_BALLS = 21
+# FXB (batter's own balls faced) and SLW (balls since last wicket) curves.
+# code = ballsFaced*1000 + over + ord/100 + inningNumber/1000, same decoding as auxiliaries/fxbAdjust.py. The ball cap, the
+# batting positions covered and the innings rows are all read from the files, so the same code reads the older curves (ord 2-8,
+# overs 3-20, cap 21, universal rows plus innings rows for overs 19-20) and the 2026-10-13 refit (ord 1-11, overs 1-20, cap 40,
+# innings 1 and 2 rows everywhere). This is a first innings sim: innings 1 rows where they exist, the universal (0) row otherwise
 
 
 def decode_curve(raw):
@@ -148,8 +150,8 @@ def decode_curve(raw):
     scaled = np.round((remainder - curve['over']) * 1000).astype(int)
     curve['ord'] = scaled // 10
     curve['inningNumber'] = scaled % 10
-    curve = curve[(curve['inningNumber'] == 0) | ((curve['inningNumber'] == 1) & (curve['over'] >= 19))]
-    # where an over has both, the first innings row wins over the universal one
+    curve = curve[curve['inningNumber'].isin([0, 1])]
+    # where a cell has both, the first innings row wins over the universal one
     curve = curve.sort_values('inningNumber').drop_duplicates(subset=['ord', 'over', 'ballsFaced'], keep='last')
     return {(int(r.ord), int(r.over), int(r.ballsFaced)): (r.runscurve, r.wktscurve) for r in curve.itertuples(index=False)}
 
@@ -157,6 +159,9 @@ def decode_curve(raw):
 fxbNewestLookup = decode_curve(fxbNewestRaw)
 fxbOtherLookup = decode_curve(fxbOtherRaw)
 slwLookup = decode_curve(slwRaw)
+# ball cap (the top row stands for it and above) and lowest batting position covered (openers use it if it's above 1)
+FXB_MAX_BALLS = max(k[2] for k in fxbNewestLookup)
+CURVE_MIN_ORD = min(k[0] for k in fxbNewestLookup)
 
 # unique sim ids across every call (the original used the ms timestamp, which collides once sims run this fast)
 simIDCounter = itertools.count()
@@ -230,7 +235,7 @@ def simulate_innings(ballsRemainingSet, totalInningWicketsSet, numberOfSims, sta
             # FXB_all fits it: a wicket has fallen and the striker isn't the newest batter (it drops wickets == ord - 2, the
             # arrival's own count, which is FXB's effect again). A missing SLW row leaves FXB on its own
             overKey = int(current_over)
-            curveOrd = striker_id_before if striker_id_before > 2 else 2
+            curveOrd = striker_id_before if striker_id_before > CURVE_MIN_ORD else CURVE_MIN_ORD
             fxbBalls = striker_balls_before + 1 if striker_balls_before + 1 < FXB_MAX_BALLS else FXB_MAX_BALLS
             slwBalls = ballsSinceLastWicket + 1 if ballsSinceLastWicket + 1 < FXB_MAX_BALLS else FXB_MAX_BALLS
             isNewest = totalInningWickets == 0 or striker_id_before == totalInningWickets + 2
