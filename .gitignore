@@ -34,3 +34,5 @@ __pycache__/
 **/playerInfo*.csv
 .env
 
+# never push CSVs
+*.csv
