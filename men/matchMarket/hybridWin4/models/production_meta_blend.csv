@@ -1,0 +1,7 @@
+key,type,value
+name,str,smooth_003
+kind,str,smooth
+penalty,float,0.003
+trainingRows,int,42758
+converged,bool,True
+constantReference,float,0.9321753924948729
